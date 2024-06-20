@@ -2,7 +2,7 @@
   <div class="container">
     <div class="question-container">
       <label for="question"><h2>Q.</h2></label>
-      <p id="question">{{ message.data.question }}</p>
+      <p id="question">{{ question }}</p>
     </div>
 
     <div class="choice-container">
@@ -22,7 +22,6 @@
 </template>
 
 <script>
-import axios from 'axios';
 import {mapState} from "vuex";
 
 export default {
@@ -42,11 +41,18 @@ export default {
   },
   data() {
     return {
-      choice: ''
+      choice: '',
+      question: 'OX를 골라주세요'
     };
   },
   computed: {
     ...mapState(["socket"]),
+  },
+  mounted() {
+    if(this.message.data.question !== ""){
+      this.question = this.message.data.question
+    }
+
   },
   methods: {
     selectChoice(choice) {

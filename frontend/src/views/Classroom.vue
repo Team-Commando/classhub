@@ -174,8 +174,12 @@ export default {
     toggleWidgetModal1() {
       this.isWidgetModalOpen1 = !this.isWidgetModalOpen1;
     },
-    toggleWidgetModal2() {
-        this.isWidgetModalOpen2 = !this.isWidgetModalOpen2;
+    toggleWidgetModal2(forceToggle) {
+        if(typeof forceToggle === "boolean"){
+          this.isWidgetModalOpen2 = forceToggle;
+        }else {
+          this.isWidgetModalOpen2 = !this.isWidgetModalOpen2;
+        }
     },
 
   },

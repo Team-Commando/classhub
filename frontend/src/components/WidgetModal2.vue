@@ -8,7 +8,7 @@
       <div class="modal-body">
         <component :is="currentComponent"
                    @switchComponent="switchComponent" @startPicker="startPicker" @endPicker="endPicker" @toggleWidgetModal="toggleWidgetModal"
-                   :classCode="classCode" :sender="sender" :message="this.message"/>
+                   :classCode="classCode" :sender="sender" :message="this.message" :question="question"/>
       </div>
     </div>
   </div>
@@ -54,7 +54,8 @@ export default {
   data() {
     return {
       currentComponent: 'OXPicker',
-      message:{}
+      message:{},
+      question: '',
     };
   },
   computed: {
@@ -64,18 +65,18 @@ export default {
     this.$store.watch(
         (state) => state.pickerStarts.length,
         (newLength) => {
-          const event = this.pickerStarts[newLength - 1];
-          if (event) {
-            this.handlePickerStart(event);
+          const startEvent = this.pickerStarts[newLength - 1];
+          if (startEvent) {
+            this.handlePickerStart(startEvent);
           }
         }
     );
     this.$store.watch(
         (state) => state.pickerEnds.length,
         (newLength) => {
-          const event = this.pickerEnds[newLength - 1];
-          if (event) {
-            this.handlePickerEnd(event);
+          const endEvent = this.pickerEnds[newLength - 1];
+          if (endEvent) {
+            this.handlePickerEnd(endEvent);
           }
         }
     );
@@ -86,27 +87,27 @@ export default {
       this.endPicker();
       this.switchComponent('OXPicker');
     },
-    toggleWidgetModal() {
-      this.$emit('toggleWidgetModal');
+    toggleWidgetModal(forceToggle) {
+      console.log('forceToggle', forceToggle);
+      this.$emit('toggleWidgetModal', forceToggle);
     },
-    switchComponent(componentName) {
+    switchComponent(componentName, question='') {
       this.currentComponent = componentName;
+      this.question = question;
     },
     handlePickerStart(message) {
       // Handle picker start event for students
       this.message = message;
       this.switchComponent('OXPickerSelect');
-      this.toggleWidgetModal();
-      console.log("Picker start event received:", message);
+      this.toggleWidgetModal(true);
     },
     handlePickerEnd(){
       // Handle picker end event for students
-      this.toggleWidgetModal();
+      this.toggleWidgetModal(false);
     },
     startPicker(question) {
       // Implement the logic for starting selection for teacher
       alert('Selection started!');
-      // this.switchToComponentB();
       // 메시지 전송
       const message = JSON.stringify({
         type: "PICKER/START",
@@ -121,12 +122,14 @@ export default {
           body: message,
         });
       }
-      this.switchComponent('OXPickerResult');
+      if(question===''){
+        question = 'OX를 골라주세요'
+      }
+      this.switchComponent('OXPickerResult', question);
     },
     endPicker() {
       // Implement the logic for starting selection for teacher
       alert('Selection end!');
-      // this.switchToComponentB();
       // 메시지 전송
       const message = JSON.stringify({
         type: "PICKER/END",

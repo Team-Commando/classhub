@@ -2,7 +2,7 @@
   <div class="container">
     <div class="question-container">
       <label for="question"><h2>Q.</h2></label>
-      <input type="text" id="question" v-model="question" readonly/>
+      <p id="question">{{ question }}</p>
     </div>
 
     <div class="choice-container">
@@ -34,7 +34,7 @@
     </div>
 
     <div class="action-container">
-      <button @click="this.$emit('switchComponent', 'OXPicker')" class="action-button">질문 생성으로 돌아가기</button>
+      <button @click="backToOXPicker" class="action-button">질문 생성으로 돌아가기</button>
       <button @click="endResult" class="action-button end-button">종료</button>
     </div>
 
@@ -42,7 +42,6 @@
 </template>
 
 <script>
-import axios from 'axios';
 import { mapState } from "vuex";
 
 export default {
@@ -56,10 +55,12 @@ export default {
       type: String,
       required: true,
     },
+    question: {
+      type: String,
+    },
   },
   data() {
     return {
-      question: '',
       circleCount: 0,
       crossCount: 0,
       responseCount: 0,
@@ -99,11 +100,16 @@ export default {
       }
 
     },
+    backToOXPicker(){
+      this.$emit('endPicker');
+      this.$emit('switchComponent', 'OXPicker');
+    },
+
     endResult() {
       this.$emit('toggleWidgetModal')
       this.$emit('endPicker');
-      this.$emit('switchComponent', 'OXPicker')
-    }
+      this.$emit('switchComponent', 'OXPicker');
+    },
   }
 };
 </script>
