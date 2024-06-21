@@ -1,4 +1,3 @@
-"use strict";
 export var upred;
 (function (upred) {
     var ui;
@@ -163,6 +162,7 @@ var upred;
                 this.canvasTag.style.zIndex = '700';
                 this.canvasTag.style.touchAction = 'none';
                 this.canvasTag.style.cursor = 'crosshair';
+                console.log(document.getElementById('WORKAREA'));
                 document.getElementById('WORKAREA').appendChild(this.canvasTag);
                 this.textCanvas = ui.HTML.newDivStyled({
                     position: 'absolute',
@@ -664,27 +664,27 @@ var upred;
             CommonUI.prototype.Init = function () {
                 this.uiButtons = {
                     select: {
-                        img: '../assets/bt_select.svg',
+                        img: '/assets/bt_select.svg',
                         txt: '선택',
                         handler: this.OnClickSelect.bind(this),
                     },
                     rotateLeft: {
-                        img: '../assets/bt_rotate_left.svg',
+                        img: '/assets/bt_rotate_left.svg',
                         txt: '회전',
                         handler: this.OnClickRotateLeft.bind(this),
                     },
                     rotateRight: {
-                        img: '../assets/bt_rotate_right.svg',
+                        img: '/assets/bt_rotate_right.svg',
                         txt: '회전',
                         handler: this.OnClickRotateRight.bind(this),
                     },
                     duplicate: {
-                        img: '../assets/bt_duplicate.svg',
+                        img: '/assets/bt_duplicate.svg',
                         txt: '복제',
                         handler: this.OnClickDuplicate.bind(this),
                     },
                     delete: {
-                        img: '../assets/bt_delete.svg',
+                        img: '/assets/bt_delete.svg',
                         txt: '삭제',
                         handler: this.OnClickDelete.bind(this),
                     },
@@ -695,27 +695,27 @@ var upred;
                         handler: this.OnClickColorTools.bind(this),
                     },
                     penThin: {
-                        img: '../assets/bt_pen_thin.svg',
+                        img: '/assets/bt_pen_thin.svg',
                         txt: '펜',
                         handler: this.OnClickThin.bind(this),
                     },
                     penThick: {
-                        img: '../assets/bt_pen_thick.svg',
+                        img: '/assets/bt_pen_thick.svg',
                         txt: '색연필',
                         handler: this.OnClickThick.bind(this),
                     },
                     text: {
-                        img: '../assets/bt_text.svg',
+                        img: '/assets/bt_text.svg',
                         txt: '글자입력',
                         handler: this.OnClickText.bind(this),
                     },
                     eraser: {
-                        img: '../assets/bt_eraser.svg',
+                        img: '/assets/bt_eraser.svg',
                         txt: '지우개',
                         handler: this.OnClickEraser.bind(this),
                     },
                     trash: {
-                        img: '../assets/bt_trash.svg',
+                        img: '/assets/bt_trash.svg',
                         txt: '새로시작',
                         handler: this.OnClickRestart.bind(this),
                     },
@@ -971,27 +971,27 @@ var upred;
                         handler: this.OnClickColorTools.bind(this),
                     },
                     penThin: {
-                        img: '../assets/bt_pen_thin.svg',
+                        img: '/assets/bt_pen_thin.svg',
                         txt: '펜',
                         handler: this.OnClickThin.bind(this),
                     },
                     penThick: {
-                        img: '../assets/bt_pen_thick.svg',
+                        img: '/assets/bt_pen_thick.svg',
                         txt: '색연필',
                         handler: this.OnClickThick.bind(this),
                     },
                     text: {
-                        img: '../assets/bt_text.svg',
+                        img: '/assets/bt_text.svg',
                         txt: '글자입력',
                         handler: this.OnClickText.bind(this),
                     },
                     eraser: {
-                        img: '../assets/bt_eraser.svg',
+                        img: '/assets/bt_eraser.svg',
                         txt: '지우개',
                         handler: this.OnClickEraser.bind(this),
                     },
                     trash: {
-                        img: '../assets/bt_trash.svg',
+                        img: '/assets/bt_trash.svg',
                         txt: '새로시작',
                         handler: function () {
                             location.reload();
@@ -2159,8 +2159,8 @@ var upred;
         })(DragMode = math.DragMode || (math.DragMode = {}));
         var Tangrams = (function () {
             function Tangrams() {
-                this.FIGURE_BASESIZE = 400;
-                this.WORKSIZE = 400;
+                this.FIGURE_BASESIZE = 100;
+                this.WORKSIZE = 100;
                 this.dragMode = DragMode.NONE;
                 this.xyBefore = {x: 0, y: 0};
                 this.xyNow = {x: 0, y: 0};
@@ -2189,6 +2189,7 @@ var upred;
             Tangrams.prototype.InitPalette = function () {
                 this.svgCanvas = new upred.ui.SVGCanvas();
                 this.paletteTag = document.getElementById('UI_PALETTE');
+                console.log(this.paletteTag);
                 var colors = [
                     41, 133, 77,
                     234, 127, 85,
@@ -2521,11 +2522,11 @@ var upred;
                 var _a;
                 this.InitPalette();
                 (_a = upred.ui.uiModule) === null || _a === void 0 ? void 0 : _a.AddCustomModifier('flip', {
-                    img: '../assets/icon_flip.png',
+                    img: '/assets/icon_flip.png',
                     txt: '뒤집기',
                     handler: this.OnClickFlip.bind(this)
                 });
-                upred.ui.GuideViewer.Show('../assets/guide.png');
+                upred.ui.GuideViewer.Show('/assets/guide.png');
             };
             return Tangrams;
         }());

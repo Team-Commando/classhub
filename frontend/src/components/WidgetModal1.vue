@@ -9,25 +9,10 @@
       <!-- modal-header end -->
 
       <!-- modal body start -->
-<!--      v-if="initDraw(isWidgetModalOpen)"-->
-      <div class="modal-body">
-<!--        <svg>-->
-<!--          <filter id="filterOutline">-->
-<!--            <feMorphology in="SourceAlpha" result="EXP" operator="dilate" radius="2"></feMorphology>-->
-
-<!--            <feFlood flood-color="#1F618D" flood-opacity="1" result="LINECOLOR"></feFlood>-->
-<!--            <feComposite in="LINECOLOR" in2="EXP" operator="in" result="OUTLINE"></feComposite>-->
-
-<!--            <feMerge>-->
-<!--              <feMergeNode in="OUTLINE" />-->
-<!--              <feMergeNode in="SourceGraphic" />-->
-<!--            </feMerge>-->
-<!--          </filter>-->
-<!--        </svg>-->
-        <button @click="checkDiv">과연!</button>
-        <div ref="b" id="UI_PALETTE" style="background: #535bf2"></div>
-        <div id="UI_TOOLBAR" style="background: firebrick"></div>
+      <div class="modal-body" @load="drawingCanvas">
         <div id="WORKAREA" ref="a"></div>
+        <div ref="b" id="UI_PALETTE"></div>
+        <div id="UI_TOOLBAR"></div>
       </div>
       <!-- modal body end -->
     </div>
@@ -40,20 +25,11 @@ import {upred} from "../../public/code/tangram.js";
 export default {
   name: 'WidgetModal',
   mounted() {
-    // this.drawingCanvas();
-    // DOM 업데이트가 완료된 후 drawingCanvas 메서드 호출
-    // this.ensureElementsExist(['#WORK_AREA', '#UI_PALETTE', '#UI_TOOLBAR'], this.drawingCanvas);
-    // this.$nextTick(() => {
-    //   this.ensureElementsExist(['#WORK_AREA', '#UI_PALETTE', '#UI_TOOLBAR'], this.drawingCanvas);
-    // });
-    // this.$nextTick(() => {
-    //   this.drawingCanvas();
-    // })
-
   },
   data() {
     return {
-      upred: upred
+      upred: upred,
+      isWidgetModalOpen: this.isWidgetModalOpen
     }
   },
   props: {
@@ -66,26 +42,23 @@ export default {
       default: 'Modal Title1'
     }
   },
-
   methods: {
     closeModal() {
       this.$emit('close');
     },
     drawingCanvas() {
+      console.log("start drawing Canvas");
       new upred.ui.CommonUI().Start(new upred.math.Tangrams());
-    },
-    initDraw(state) {
-      if (state) {
-        this.drawingCanvas();
+    }
+  },
+  watch: {
+    isWidgetModalOpen(state) {  // isWidgetModalOpen의 상태를 감시
+      if (state) {  // isWidgetModalOpen == true (모달창이 활성화 되면)
+        this.$nextTick(() => {
+          // DOM이 완전히 업데이트된 이후 drawingCanvas() 호출
+          this.drawingCanvas();
+        })
       }
-    },
-    checkDiv() {
-      const a = this.$refs.a;
-      console.log("돔 접근 : ",a);
-
-      console.log(this.$refs.b);
-
-      this.drawingCanvas();
     }
   }
 }
@@ -139,20 +112,7 @@ export default {
   padding: 20px;
    */
 }
-/* 좌측 칠교판 도형 및 모형 스타일 적용 */
-#UI_PALETTE {
-  display: flex;
-  flex-direction: column;
-  align-items: center; /* Center horizontally */
-  justify-content: flex-start; /* Align items from the top */
-  height: 100%; /* Ensure the container takes full height */
-  background: #b7ffff;
-  width: 154px;
-}
 
-#UI_PALETTE svg {
-  margin: 8px; /* 칠교 모형 (4가지) 사이 간격 */
-}
 
 /* 좌측 칠교판 도형 및 모형 스타일 적용 */
 #UI_PALETTE {
@@ -160,8 +120,8 @@ export default {
   flex-direction: column;
   align-items: center; /* Center horizontally */
   justify-content: flex-start; /* Align items from the top */
-  height: 100%; /* Ensure the container takes full height */
-  background: #b7ffff;
+  height: auto; /* Ensure the container takes full height */
+  background: azure;
   width: 200px;
 }
 
@@ -174,10 +134,12 @@ export default {
   display: flex;
   gap: 10px;
   width: 1200px;
-  background: #faff23;
+  height: 60px;
+  align-items: center;
 }
 
-.uiButtonDef, .uiButtonDefGrayed {
+
+.uiButtonDef img, .uiButtonDefGrayed img {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -186,25 +148,20 @@ export default {
   border: none;
   background: none;
   cursor: pointer;
+  width: 5px !important;
+  height: 5px !important;
 }
 
-.uiButtonDef img, .uiButtonDefGrayed img {
-  width: 24px; /* Adjust icon size */
-  height: 24px;
-}
-
+/*
 .uiButtonDefColor {
-  width: 24px; /* Adjust color button size */
+  width: 24px;
   height: 24px;
-  border-radius: 50%; /* Ensure round shape for color button */
+  border-radius: 50%;
 }
 
 .uiButtonDefText {
-  font-size: 12px; /* Adjust text size */
-  margin-top: 4px; /* Adjust spacing between icon and text */
-}
+  font-size: 12px;
+  margin-top: 4px;
+} */
 
-#WORKAREA canvas {
-  background: #646cff;
-}
 </style>
