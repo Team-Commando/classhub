@@ -9,9 +9,9 @@
       <!-- modal-header end -->
 
       <!-- modal body start -->
-      <div class="modal-body" @load="drawingCanvas">
-        <div id="WORKAREA" ref="a"></div>
-        <div ref="b" id="UI_PALETTE"></div>
+      <div class="modal-body">
+        <div id="WORKAREA"></div>
+        <div id="UI_PALETTE"></div>
         <div id="UI_TOOLBAR"></div>
       </div>
       <!-- modal body end -->
@@ -59,7 +59,7 @@ export default {
           this.drawingCanvas();
         })
       }
-    }
+    },
   }
 }
 </script>
@@ -80,9 +80,11 @@ export default {
   background: white;
   border-radius: 8px;
   width: 1200px;
-  height: 700px;
+  height: 800px;
   pointer-events: all;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
 }
 
 .modal-header {
@@ -108,60 +110,64 @@ export default {
 }
 
 .modal-body {
-  /*
-  padding: 20px;
-   */
+  flex: 1;
+  display: flex;
+  position: relative;
 }
 
+div {
+  font-family: sans-serif;
+}
 
-/* 좌측 칠교판 도형 및 모형 스타일 적용 */
+#WORKAREA {
+  flex: 1;
+  position: relative;
+}
+
+#WORKAREA canvas, #WORKAREA div, #WORKAREA svg {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+}
+
 #UI_PALETTE {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 80px;
+  width: 200px;
+  height: auto;
+  border-right: #CCD1D1 1px solid;
+  padding: 8px 4px;
+  z-index: 800;
+  background: #ffffff;
+  background: linear-gradient(to right, #e1e1e1 0%, #f6f6f6 100%);
   display: flex;
   flex-direction: column;
-  align-items: center; /* Center horizontally */
-  justify-content: flex-start; /* Align items from the top */
-  height: auto; /* Ensure the container takes full height */
-  background: azure;
-  width: 200px;
+  justify-content: center;
+  align-items: center;
 }
 
 #UI_PALETTE svg {
-  margin: 8px; /* 칠교 모형 (4가지) 사이 간격 */
+  margin: 8px;
 }
 
-/* 하단 ToolBar 스타일 적용 */
 #UI_TOOLBAR {
+  user-select: none;
+  position: absolute;
   display: flex;
-  gap: 10px;
-  width: 1200px;
-  height: 60px;
-  align-items: center;
-}
-
-
-.uiButtonDef img, .uiButtonDefGrayed img {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  flex-direction: row;
+  flex-wrap: nowrap;
   justify-content: center;
-  padding: 5px;
-  border: none;
-  background: none;
-  cursor: pointer;
-  width: 5px !important;
-  height: 5px !important;
+  align-items: center;
+  z-index: 50000;
+  left: 0;
+  width: 100%;
+  bottom: 0;
+  height: 80px;
+  background: #f2f6f8;
+  background: linear-gradient(to bottom, #f2f6f8 0%, #d8e1e7 50%, #b5c6d0 51%, #e0eff9 100%);
 }
-
-/*
-.uiButtonDefColor {
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-}
-
-.uiButtonDefText {
-  font-size: 12px;
-  margin-top: 4px;
-} */
-
 </style>

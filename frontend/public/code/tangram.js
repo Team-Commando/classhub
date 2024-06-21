@@ -1,4 +1,5 @@
 export var upred;
+import WidgetModal1 from "../../src/components/WidgetModal1.vue";
 (function (upred) {
     var ui;
     (function (ui) {
@@ -162,7 +163,6 @@ var upred;
                 this.canvasTag.style.zIndex = '700';
                 this.canvasTag.style.touchAction = 'none';
                 this.canvasTag.style.cursor = 'crosshair';
-                console.log(document.getElementById('WORKAREA'));
                 document.getElementById('WORKAREA').appendChild(this.canvasTag);
                 this.textCanvas = ui.HTML.newDivStyled({
                     position: 'absolute',
@@ -562,12 +562,45 @@ var upred;
                 }
             };
             CommonUI.prototype.MakeButton = function (binfo) {
+                // #UI_TOOLBAR 버튼 생성 및 디자인 적용
                 var bt = ui.HTML.newNode('button');
                 bt.className = 'uiButtonDef';
+                Object.assign(bt.style, {
+                    width: '8vh',
+                    height: '7vh',
+                    minWidth: '50px',
+                    minHeight: '50px',
+                    border: 'none',
+                    background: 'transparent',
+                    verticalAlign: 'middle',
+                    borderRadius: '10px',
+                    transition: 'all 0.5s ease-out'
+                    // border: 'none',
+                    // background: 'transparent',
+                    // margin: '0px 5px',
+                    // padding: '0px 5px',
+                    // cursor: 'pointer',
+                    // fontSize: '16px',
+                    // color: '#000',
+                    // placeItems: 'center',
+                    // width: '80px',
+                    // height: '70px'
+                });
                 if (binfo.img) {
                     var img = new Image();
                     img.src = binfo.img;
-                    console.log("img.src = ", img.src);
+                    // 픽셀 단위로 버튼 내부 image 가로, 세로 크기 조정
+                    // img.width = 40;
+                    // img.height = 40;
+                    Object.assign(img.style, {
+                        width: '40px',
+                        height: '40px',
+                        minWidth: '20px',
+                        minHeight: '20px',
+                        objectFit: 'contain',
+                        opacity: '0.5',
+                        pointerEvents: 'none'
+                    });
                     bt.appendChild(img);
                 } else if (binfo.bgColor) {
                     var clr = ui.HTML.newNode('div');
@@ -578,6 +611,10 @@ var upred;
                 var txt = ui.HTML.newNode('div');
                 txt.className = 'uiButtonDefText';
                 txt.innerHTML = binfo.txt;
+                Object.assign(txt.style, {
+                    fontSize: '1.5vh',
+                    color: '#2471A3'
+                });
                 bt.appendChild(txt);
                 if (binfo.handler)
                     bt.onclick = binfo.handler;
@@ -716,7 +753,7 @@ var upred;
                     },
                     trash: {
                         img: '/assets/bt_trash.svg',
-                        txt: '새로시작',
+                        txt: '새로 시작',
                         handler: this.OnClickRestart.bind(this),
                     },
                 };
@@ -967,7 +1004,7 @@ var upred;
                     color: {
                         img: null,
                         bgColor: '#C0392B',
-                        txt: '색상변경',
+                        txt: '색상 변경',
                         handler: this.OnClickColorTools.bind(this),
                     },
                     penThin: {
@@ -982,7 +1019,7 @@ var upred;
                     },
                     text: {
                         img: '/assets/bt_text.svg',
-                        txt: '글자입력',
+                        txt: '글자 입력',
                         handler: this.OnClickText.bind(this),
                     },
                     eraser: {
@@ -1888,7 +1925,7 @@ var upred;
                     display: 'none'
                 });
                 this.rotaterCircle = this.MakeTagStyled(this.groupTag, 'image', {
-                    href: './asset/icon_rotate.png',
+                    href: '/assets/icon_rotate.png',
                     width: (this.rotaterHandleRadius * 2).toString(),
                     height: (this.rotaterHandleRadius * 2).toString()
                 }, {
@@ -2159,8 +2196,8 @@ var upred;
         })(DragMode = math.DragMode || (math.DragMode = {}));
         var Tangrams = (function () {
             function Tangrams() {
-                this.FIGURE_BASESIZE = 100;
-                this.WORKSIZE = 100;
+                this.FIGURE_BASESIZE = 50;
+                this.WORKSIZE = 50;
                 this.dragMode = DragMode.NONE;
                 this.xyBefore = {x: 0, y: 0};
                 this.xyNow = {x: 0, y: 0};
@@ -2189,7 +2226,6 @@ var upred;
             Tangrams.prototype.InitPalette = function () {
                 this.svgCanvas = new upred.ui.SVGCanvas();
                 this.paletteTag = document.getElementById('UI_PALETTE');
-                console.log(this.paletteTag);
                 var colors = [
                     41, 133, 77,
                     234, 127, 85,
