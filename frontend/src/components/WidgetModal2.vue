@@ -50,7 +50,7 @@ export default {
     },
     pickerType: {
       type: Number,
-      required: true,
+      required: false,
     },
     userType: {
       type: String,
@@ -95,7 +95,6 @@ export default {
       this.switchComponent('Picker');
     },
     toggleWidgetModal(forceToggle, pickerType) {
-      console.log('forceToggle', forceToggle);
       this.$emit('toggleWidgetModal', forceToggle, pickerType);
     },
     switchComponent(componentName, question='', choices) {
