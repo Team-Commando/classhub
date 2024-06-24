@@ -3,7 +3,7 @@
     <div class="modal-window">
       <div class="modal-header">
         <span class="modal-title">{{ title }}</span>
-        <button class="close-button" @click="thisModalOFF">X</button>
+        <button class="close-button" @click="thisModalOFF" v-if="userType === 'teacher'">X</button>
       </div>
       <div class="modal-body">
         <component :is="currentComponent"
@@ -50,6 +50,10 @@ export default {
     },
     pickerType: {
       type: Number,
+      required: true,
+    },
+    userType: {
+      type: String,
       required: true,
     },
   },
