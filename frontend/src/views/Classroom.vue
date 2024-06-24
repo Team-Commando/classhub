@@ -100,9 +100,9 @@ export default {
     },
   },
   setup() {
-    const students = reactive({});
+    // const students = reactive({});
     const modalData = reactive({ modalTitle: '', modalBody: '' });
-    return { students, modalData };
+    return { modalData };
   },
   data() {
     return {
@@ -118,18 +118,11 @@ export default {
     };
   },
   computed: {
-    ...mapState(["socket"]),
+    ...mapState(["socket", "students"]),
   },
   mounted() {
     this.$store.dispatch("subscribeToClass", { classCode: this.classCode, userType: this.userType });
 
-    this.$store.subscribe((mutation, state) => {
-      if (mutation.type === "addJoin") {
-        this.handleStudentListJoin(mutation.payload);
-      } else if (mutation.type === "addLeave") {
-        this.handleStudentListLeave(mutation.payload);
-      }
-    });
     window.addEventListener("beforeunload", this.unLoadEvent);
   },
   methods: {
@@ -151,25 +144,6 @@ export default {
           destination: `/pub/leave/${this.classCode}`,
           body: message,
         });
-      }
-    },
-    handleStudentListJoin(message) {
-      try {
-        console.log("handleStudentListJoin", message);
-        const { sender, sessionId } = message;
-        this.students[sessionId] = sender;
-        console.log( this.students);
-      } catch (error) {
-        console.error(error);
-      }
-    },
-    handleStudentListLeave(message) {
-      try {
-        console.log("handleStudentListLeave", message);
-        const { sessionId } = message;
-        delete this.students[sessionId];
-      } catch (error) {
-        console.error(error);
       }
     },
     toggleStudentList() {

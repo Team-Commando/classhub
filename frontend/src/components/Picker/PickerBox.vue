@@ -19,6 +19,13 @@
   import axios from 'axios';
   
   export default {
+    name: 'PickerBox',
+    props: {
+      pickerType: {
+        type: Number,
+        required: true,
+      },
+    },
     data() {
       return {
         questions: [],
@@ -32,8 +39,8 @@
       fetchQuestions() {
         axios.get('http://localhost:8080/api/picker/get-questions', {
           params: {
-            classroomid: 1,
-            type: 0
+            classroomId: 1,
+            type: this.pickerType
           }
         })
         .then(response => {

@@ -47,9 +47,7 @@
 
 <script>
 import { mapState } from "vuex";
-// import {Chart, registerable} from 'chart.js'
 import styles from '../../assets/css/Picker.module.css';
-// Chart.register(...registerable)
 
 export default {
   name: 'OXPickerResult',
@@ -78,14 +76,14 @@ export default {
       circleCount: 0,
       crossCount: 0,
       responseCount: 0,
-      totalStudents: 21,
+      totalStudents: 0,
       choicesCount: {}, // 초기 선택 수
       respondedSessionIds: new Set(), // 응답한 세션 ID 저장
 
     };
   },
   computed: {
-    ...mapState(["socket", "pickerSelects"]),
+    ...mapState(["socket", "pickerSelects", "students"]),
     $style() {
       return styles;
     },
@@ -109,6 +107,8 @@ export default {
     if(this.pickerType === 1){
       this.renderChart();
     }
+    console.log("this.students", Object.keys(this.students).length );
+    this.totalStudents =  Object.keys(this.students).length;
 
   },
   methods: {

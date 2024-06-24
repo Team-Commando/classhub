@@ -26,8 +26,8 @@ public class PickerController {
 
     @GetMapping("/get-questions")
     @ResponseStatus(HttpStatus.OK)
-    public List<Map<String, Object>> getQuestionsByClassroomIdAndType(@RequestParam int classroomid, @RequestParam int type) {
-        List<Map<String, Object>> questions = pickerService.getQuestionsByClassroomIdAndType(classroomid, type);
+    public List<Map<String, Object>> getQuestionsByClassroomIdAndType(@RequestParam("classroomId") int classroomId, @RequestParam("type") int type) {
+        List<Map<String, Object>> questions = pickerService.getQuestionsByClassroomIdAndType(classroomId, type);
         return questions;
     }
 }
