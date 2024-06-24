@@ -1,5 +1,5 @@
 export var upred;
-import WidgetModal1 from "../../src/components/WidgetModal1.vue";
+
 (function (upred) {
     var ui;
     (function (ui) {
