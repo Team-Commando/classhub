@@ -75,8 +75,8 @@ const store = createStore({
         triggerPickerStart({ commit }, pickerStart) {
             commit('addPickerStart', pickerStart);
         },
-        triggerPickerEnd({ commit }, pickerStart) {
-            commit('addPickerStart', pickerStart);
+        triggerPickerEnd({ commit }, pickerEnd) {
+            commit('addPickerEnd', pickerEnd);
         },
         triggerPickerSelect({ commit }, pickerSelect) {
             commit('addPickerSelect', pickerSelect);

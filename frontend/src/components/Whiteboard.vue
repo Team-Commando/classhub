@@ -1,36 +1,64 @@
 <template>
-  <div id="whiteboard">
-    <canvas
-        ref="canvas"
-        @mousedown="handleMouseDown"
-        @mousemove="handleMouseMove"
-        @mouseup="handleMouseUp"
-        style="z-index: 1"
-    >
-    </canvas>
-    <!--    <canvas ref="canvas2" style="z-index: 2;"></canvas>/-->
+
+  <canvas class="fabric" ref="canvas"></canvas>
+
     <div id="designTool">
-      <button @click="buttonErase">모두 지우기</button>
+      <button type="button" class="btn btn-secondary" @click="buttonErase">모두 지우기</button>
+      <br>
+      <button type="button" class="btn btn-secondary" @click="eraser">지우개</button>
       <br>
       <label for="drawing-line-width">Line width : </label>
       <span class="info">{{ lineWidth }}</span>
-      <input type="range" :value="lineWidth" min="0" max="100" id="drawing-line-width" ref="drawingLineWidthEl" @change="changLineWidth"><br>
+      <input type="range" :value="lineWidth" min="0" max="100" id="drawing-line-width" ref="drawingLineWidthEl" @input="changeLineWidth"><br>
 
-      <label for="drawing-color">Line color : </label>
+      <label for="drawing-color">그리기 색 : </label>
       <span class="info">{{ color }}</span>
-      <input type="color" :value="color" id="drawing-color" ref="drawingColorEl" @change="changeColor"><br>
+      <input type="color" :value="color" id="drawing-color" ref="drawingColorEl" @input="changeColor"><br>
 
-      <button type="button" id="togglePen" ref="toggleButtonEl" @click="toggleDrawMode">그리기</button><br>
-      <button type="button" id="drawing-rect" ref="drawingRectEl" @click="toggleRectMode">사각형 추가</button><br>
-      <button type="button" id="clickObject" @click="clickObject">객체 선택</button><br>
+      <label for="drawing-color">도형 색 : </label>
+      <span class="info">{{ fillColor }}</span>
+      <input type="color" :value="fillColor" id="fill-color" ref="drawingFillColorEl" @input="changeFillColor"><br>
 
+      <button type="button"
+              class="btn btn-secondary"
+              data-bs-toggle="button"
+              @click="toggleDrawMode">그리기
+      </button>
+      <br>
+      <button type="button"
+              class="btn btn-secondary"
+              data-bs-toggle="button"
+              @click="test">테스트
+      </button>
+      <br>
+      <!-- Default dropstart button -->
+      <div class="btn-group dropstart">
+        <button type="button"
+                class="btn btn-secondary dropdown-toggle"
+                data-bs-toggle="dropdown"
+                aria-expanded="false">
+          도형 추가
+        </button>
+        <ul class="dropdown-menu" >
+          <!-- Dropdown menu links -->
+          <li><a class="dropdown-item" @click="toggleMode('rect')">정사각형</a></li>
+          <li><a class="dropdown-item" @click="toggleMode('triangle')">정삼각형</a></li>
+          <li><a class="dropdown-item" @click="toggleMode('circle')">원</a></li>
+        </ul>
+      </div>
+      <br>
+      <button type="button"
+              class="btn btn-secondary"
+              data-bs-toggle="button"
+              @click="clickObject">객체 선택
+      </button>
     </div>
-  </div>
+
 </template>
 
 <script>
 import { mapState } from "vuex";
-
+import {fabric} from "fabric";
 export default {
   name: "Whiteboard",
   props: {
@@ -45,32 +73,29 @@ export default {
   },
   data() {
     return {
-      drawing: false,
-      context: null,
-      lastX: 0,
-      lastY: 0,
-      scaleFactorX: 1,
-      scaleFactorY: 1,
-      // 화면 속성 변수
-      width: 1850,
-      height: 837,
-      mouseX: 0,
-      mouseY: 0,
+
+      // fabric
+      mode:'',
+      brush:{},
+      x:0,
+      y:0,
+      lineCap:'round',
+      fillColor:'#ffffff',
+      pointer:{},
+      draw:[],
       rect:{},
-      // 캔버스 모드 변수
-      drawMode:false,
-      rectMode:false,
-      // 두 수의 차이
-      xMinusX:0,
-      yMinusY:0,
+      triangle:{},
+      circle:{},
+      message:{},
+      drawing: false,
+
+      // 화면 속성 변수
+
       // 속성 변수
-      strokeStyle: '',
       lineWidth: 10,
       color: '#ffffff',
-      lineCap: 'round',
       // 사각형 변수
-      rectStartX: 0,
-      rectStartY: 0,
+
     };
   },
   computed: {
@@ -84,173 +109,408 @@ export default {
         const event = this.events[newLength - 1];
         if (event) {
           this.handleIncomingDrawing(event);
+          console.log("watch 실행 : " ,event)
         }
       }
     );
-    // window.addEventListener("resize", this.resizeCanvas);
-  },
-  beforeUnmount() {
-    // window.removeEventListener("resize", this.resizeCanvas);
   },
   methods: {
     // 캔버스 세팅
     initCanvas() {
 
-      const canvas = this.$refs.canvas;
-      this.context = canvas.getContext("2d");
-      this.rect = this.$refs.canvas.getBoundingClientRect();
+      this.canvas = new fabric.Canvas(this.$refs.canvas, {
+        width: 1920,
+        height: 1080,
+        backgroundColor: '#2c4332',
+        isDrawingMode: false,
 
-      canvas.width = this.width;
-      canvas.height = this.height;
+      });
+      this.$refs.canvas.width = 1920;
+      this.$refs.canvas.height = 1080;
+      // 브러시 초기 설정
+      this.canvas.freeDrawingBrush.color = this.color;
+      this.canvas.freeDrawingBrush.width = this.lineWidth;
 
-      this.context.strokeStyle = this.color;
-      this.context.lineWidth = this.lineWidth;
-      this.context.lineCap = this.lineCap;
+      console.log("초기 설정 : ",this.canvas);
+      // 이벤트 리스너 추가
 
-      console.log("initCanvas", this.rect);
+        this.canvas.on('mouse:down', (e) => {
+          if (this.mode == 'brush'){
+            const pointer = this.canvas.getPointer(e);
+            this.x = pointer.x
+            this.y = pointer.y
+            this.drawing = true;
+            this.handleMouseDown(e)
+          }
+        })
+      this.canvas.on('mouse:move', (e) => {
+        if (this.mode == 'brush' && this.drawing == true){
+          // prevXY 정의
+          this.prevX = this.x;
+          this.prevY = this.y;
+          this.handleMouseMove(e)
+        }
+
+      })
+      this.canvas.on('mouse:up', (e) => {
+        this.handleMouseUp(e)
+        this.canvas.off('mouse:off')
+      })
+
+      // 여기는 이벤트에 반응을 해버리기 때문에 함부로 쓰면 안된다. 재귀처럼 동작함.
+      // this.canvas.on('object:added', (e) => {
+      //   this.sendMessage("rect",this.rect);
+      // })
+
+      // 이 행위 자체로는 선생님 쪽에서 움직이는 객체에 대해 전송한다.
+      // 지금은 웹소켓의 설정으로 인해 다시 학생에게 추가된 객체에 대해서는 받고있는 상황.
+      // 학생쪽에서 해당 객체를 컨트롤하면 보내진 않음.
+      this.canvas.on('object:modified', (e) => {
+        if (this.mode == 'rect'){
+          let modRect = this.rect;
+          this.sendMessage('rect',modRect);
+        } else if (this.mode == 'circle'){
+          let modCircle = this.circle;
+          this.sendMessage('circle', modCircle);
+        } else if (this.mode == 'triangle'){
+          let modTriangle = this.triangle;
+          this.sendMessage('triangle', modTriangle);
+        }
+      })
+
+      console.log("initCanvas");
+
     },
-    // 모드에 따라 변하는 event속성
     handleMouseDown(e) {
-      // 사각형 모드시
-      if (this.rectMode) {
-        this.rectStartX = e.clientX - this.rect.left;
-        this.rectStartY = e.clientY - this.rect.top;
-        this.drawing = true;
-        // 드로잉 모드시
-      } else if (this.drawMode) {
-        this.drawing = true;
-        this.lastX = e.clientX - this.rect.left;
-        this.lastY = e.clientY - this.rect.top;
+      const pointer = this.canvas.getPointer(e);
+
+      this.brush = this.canvas.freeDrawingBrush;
+
+      let drawData = {
+        x: pointer.x,
+        y: pointer.y,
+        color: this.color,
+        width: this.lineWidth,
+      };
+
+      if (this.drawing == true) {
+        this.canvas.isDrawingMode = true;
+
+        this.canvas.freeDrawingBrush.color = this.color;
+        this.canvas.freeDrawingBrush.trans = this.color;
+        this.canvas.freeDrawingBrush.width = parseInt(this.lineWidth);
+
+        console.log("마우스 다운")
       }
-      console.log("현재 모드 : ",this.drawing);
+      this.sendMessage('DRAW',drawData)
+
+    },
+    handleMouseMove(e) {
+
+      const pointer = this.canvas.getPointer(e);
+      // 현재 좌표
+      this.x = pointer.x;
+      this.y = pointer.y;
+
+      let drawData = {
+        x: this.x,
+        y: this.y,
+        prevX: this.prevX,
+        prevY: this.prevY,
+        color: this.color,
+        width: this.lineWidth,
+      };
+
+      console.log("[this.prevXY] : ",this.prevX, this.prevY);
+      console.log("[this.xY] : ",this.x, this.y);
+      console.log("마우스 무브")
+      this.sendMessage('DRAW',drawData)
+    },
+    handleMouseUp(e) {
+
+      this.drawing = false;
+
+      console.log("마우스 업")
     },
 
-    // 선 굵기 변경
-    changLineWidth(e) {
-      this.lineWidth = e.target.value;
+    test(){
+      // rect에 집어넣은 변수값으로 생성된다. 이게 되네...
+      const newRect = new fabric.Rect(this.rect);
+      this.canvas.add(newRect);
+      console.log(newRect)
+    },
 
-      console.log("선 굵기 : ",this.lineWidth);
+
+    eraser(){
+      this.drawing = false;
+      this.mode = 'eraser';
+      const eraserBrush = fabric.util.createClass(new fabric.PencilBrush)
+      eraserBrush.prototype.erasable = true;
+      console.log("지우개 모드 맞음? : ",eraserBrush);
+    },
+    // 선 굵기 변경
+    changeLineWidth(e) {
+      this.lineWidth = e.target.value;
+      this.canvas.freeDrawingBrush.width = this.lineWidth;
+      console.log("선 굵기 : ",this.canvas.freeDrawingBrush.width);
 
     },
     // 선 색상 변경
     changeColor(e){
       this.color = e.target.value;
+      this.canvas.freeDrawingBrush.color = this.color;
+      console.log('색깔 : ', this.canvas.freeDrawingBrush.color);
     },
-    resizeCanvas() {
-      const canvas = this.$refs.canvas;
-      const rect = canvas.getBoundingClientRect();
-      const dpr = window.devicePixelRatio || 1;
-
-      canvas.width = rect.width * dpr;
-      canvas.height = rect.height * dpr;
-
-      this.scaleFactorX = canvas.width / rect.width;
-      this.scaleFactorY = canvas.height / rect.height;
-
-      this.context = canvas.getContext("2d");
-      this.context.scale(dpr, dpr);
-
-      console.log("resizeCanvas", this.scaleFactorX, this.scaleFactorY);
-    },
-    startDrawing(e) {
-      this.drawing = true;
-      this.lastX = e.offsetX * this.scaleFactorX;
-      this.lastY = e.offsetY * this.scaleFactorY;
-      console.log("startDrawing");
+    changeFillColor(e){
+      this.fillColor = e.target.value;
     },
 
-    handleMouseMove(e){
-      if (!this.drawing) return;
 
-      // 사각형 모드일 때
-      if (this.rectMode) {
-        // this.clearRect();
+    // 기존 이벤트 핸들러 제거 => initial 함수에서 조건에 맞는 함수로 event 보내기
 
-        const x = e.clientX - this.rect.left;
-        const y = e.clientY - this.rect.top;
-        this.context.strokeRect(this.rectStartX, this.rectStartY, x - this.rectStartX, y - this.rectStartY);
-
-        // 드로잉 모드일 때
-      } else if (this.drawMode) {
-
-        const newX = e.clientX - this.rect.left;
-        const newY = e.clientY - this.rect.top;
-        //   // 좌표 업데이트
-        const prevX = this.lastX;
-        const prevY = this.lastY;
-        this.context.beginPath();
-        this.context.moveTo(this.lastX, this.lastY);
-        this.context.lineTo(newX, newY);
-
-        this.context.lineWidth = this.lineWidth;
-        this.context.strokeStyle = this.color;
-        this.context.stroke();
-
-        this.lastX = newX;
-        this.lastY = newY;
-
-        // 메시지 전송
-        const message = JSON.stringify({
-          type: "DRAW",
+    sendMessage(type, event){
+      console.log("sendMessage : ",event)
+      // Drawing 메시지 전송
+      if (type == 'DRAW') {
+        this.message = JSON.stringify({
+          type: type,
           sender: this.sender,
-          data: {
-            x: this.lastX,
-            y: this.lastY,
-            prevX,
-            prevY,
-            color: this.color,
-            lineWidth: this.lineWidth,
-          },
+          data: event,
         });
-        if (this.socket && this.socket.connected) {
-          this.socket.publish({
-            destination: `/pub/update/${this.classCode}`,
-            body: message,
-          });
+      } else if (type == 'rect') {
+        this.message = JSON.stringify({
+          type: type,
+          sender: this.sender,
+          data: event,
+        });
+      } else if (type == 'circle') {
+        this.message = JSON.stringify({
+          type: type,
+          sender: this.sender,
+          data: event,
+        });
+      } else if (type == 'triangle') {
+        this.message = JSON.stringify({
+          type: type,
+          sender: this.sender,
+          data: event,
+        });
+      } else if (type == 'erase') {
+        this.message = JSON.stringify({
+          type: type,
+          sender: this.sender,
+          data: event,
+        });
+      }
+      if (this.socket && this.socket.connected) {
+        this.socket.publish({
+          destination: `/pub/update/${this.classCode}`,
+          body: this.message,
+        });
+      }
+      console.log("메세지 전송 : ", this.message)
+    },
+
+    // 사각형 도형 추가 버튼
+    addRect(){
+      const rect = new fabric.Rect({
+        // top: Math.random() * this.canvas.height,
+        // left: Math.random() * this.canvas.width,
+        top: 100,
+        left: 100,
+        width: 300,
+        height: 300,
+        fill: this.fillColor,
+        borderColor: "#98bed8",
+        cornerColor: "#98bed8",
+        cornerSize: 15,
+        transparentCorners: false,
+        hasControls: true,
+        selectable: true,
+        evented: true,
         }
+      )
+      this.rect = rect;
+      this.canvas.add(rect);
+      this.canvas.setActiveObject(rect);
+      this.canvas.renderAll();
+
+      this.sendMessage("rect",rect);
+      console.log("rect", rect);
+      console.log("도형 추가")
+    },
+
+    addCircle(){
+      const circle = new fabric.Circle({
+        top: 300,
+        left: 300,
+        radius: 100,
+        fill: this.fillColor,
+        borderColor: "#98bed8",
+        cornerColor: "#98bed8",
+        cornerSize: 15,
+        transparentCorners: false,
+        hasControls: true,
+        selectable: true,
+        evented: true,
+        objectCaching: true,
+
+      })
+      this.circle = circle;
+      this.canvas.add(circle);
+      this.canvas.setActiveObject(circle);
+      // this.canvas.renderAll();
+      this.sendMessage("circle",circle);
+      console.log("circle", circle);
+      console.log("도형 추가")
+    },
+
+    addTriangle(){
+      const triangle = new fabric.Triangle({
+        top: 100,
+        left: 100,
+        width: 300,
+        height: 300,
+        fill: this.fillColor,
+        borderColor: "#98bed8",
+        cornerColor: "#98bed8",
+        cornerSize: 15,
+        transparentCorners: false,
+        hasControls: true,
+        selectable: true,
+        evented: true,
+      })
+      this.triangle = triangle;
+      this.canvas.add(triangle);
+      this.canvas.setActiveObject(triangle);
+      // this.canvas.renderAll();
+      this.sendMessage("triangle",triangle);
+      console.log("triangle", triangle);
+      console.log("도형 추가")
+    },
+    // 객체 선택
+    selectObject(e){
+
+      const selectObject = this.canvas.getActiveObject();
+
+      console.log("selectObject : ",selectObject);
+      this.canvas.renderAll();
+      this.sendMessage(selectObject);
+    },
+    // 전체삭제 버튼
+    buttonErase() {
+      this.canvas.clear();
+      this.canvas.renderAll();
+      this.sendMessage('erase');
+    },
+    // 그리기 버튼
+    toggleDrawMode() {
+      this.mode = 'brush';
+
+      this.canvas.isDrawingMode = true;
+      this.canvas.freeDrawingBrush.color = this.color;
+      this.canvas.freeDrawingBrush.lineWidth = this.lineWidth;
+
+    },
+    // 도형 추가 버튼
+    toggleMode(mode) {
+
+      if (mode == 'rect'){
+        this.canvas.isDrawingMode = false;
+        this.drawing = false;
+        this.mode = 'rect'
+        console.log(this.mode)
+        this.addRect()
+
+      } else if(mode == 'circle') {
+        this.canvas.isDrawingMode = false;
+        this.drawing = false;
+        this.mode = 'circle'
+        console.log(this.mode)
+        this.addCircle()
+
+      } else if(mode == 'triangle'){
+        this.canvas.isDrawingMode = false;
+        this.drawing = false;
+        this.mode = 'triangle'
+        console.log(this.mode)
+        this.addTriangle()
       }
     },
-
-    // 그리기 스탑
-    handleMouseUp() {
+    clickObject(){
+      this.mode = '';
+      this.canvas.isDrawingMode = false;
       this.drawing = false;
-    },
-    // 지우개 버튼
-    buttonErase() {
-      this.context.clearRect(0, 0, this.$refs.canvas.width, this.$refs.canvas.height);
-    },
-    toggleDrawMode() {
-      this.drawMode = true;
-      this.rectMode = false;
-    },
-    toggleRectMode() {
-      this.rectMode = true;
-      this.drawMode = false;
     },
 
     // 메시지 수신 처리 함수
     handleIncomingDrawing(message) {
-      const { type, data } = message;
-      if (type === "DRAW") {
-        const { x, y, prevX, prevY, color, lineWidth } = data;
-        console.log(`보낸 메세지 (${prevX}, ${prevY}) to (${x}, ${y}) & (${color}) & (${lineWidth})`);
+      const {type, data} = message;
+      console.log("받은 message : ", message);
+
+      if (type == 'DRAW') {
+        const { x, y, prevX, prevY, color, width } = data;
+
+        const context = this.canvas.getContext('2d');
+        context.strokeStyle = color;
+        context.lineWidth = width;
+        context.lineCap = this.lineCap;
+        context.beginPath();
+        context.moveTo(prevX, prevY);
+        context.lineTo(x, y);
+        context.stroke();
+
       }
-    },
+      // if (type == 'DRAW'){
+      //   const { x, y, prevX, prevY, color, width } = data;
+      //   const brush = this.canvas.freeDrawingBrush;
+      //   console.log("brush : " ,brush)
+      //   brush.color = color;
+      //   brush.width = width;
+      //   brush._render(brush);
+      //   // console.log("brush : " ,brush)
+      // }
+      if (type == 'rect'){
+        const newRect = new fabric.Rect(data);
+        this.canvas.add(newRect);
+        // this.canvas.renderAll();
+      }
+      if (type == 'circle'){
+        const newCircle = new fabric.Circle(data);
+        this.canvas.add(newCircle);
+      }
+      if (type == 'triangle'){
+        const triangle = new fabric.Triangle(data);
+        this.canvas.add(triangle);
+      }
+      if (type == 'erase'){
+        this.canvas.clear();
+      }
+    }
   },
 };
 </script>
 
 <style scoped>
-#whiteboard {
-  position: relative;
-  background: #043e1a;
+.whiteboard {
+  width: 100%;
+  height: 100%;
 }
-canvas {
-  display: block;
+.fabric {
+  background: #2c4332;
+  width: 100%;
+  height: 100%;
 }
+
 #designTool {
+  color: black;
+  background: rgba(255, 255, 255, 0.74);
+  border: 1px solid black;
   position: absolute;
-  top: 10px;
-  left: 10px;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  top: 20%;
+  left: 85%;
 }
 </style>

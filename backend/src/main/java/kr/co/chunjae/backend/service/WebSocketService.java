@@ -15,8 +15,11 @@ public class WebSocketService {
     private final SimpMessagingTemplate template;
 
 
-    public void sendUpdate(String classCode, Message message) {
+    public void sendUpdate(String classCode, Message message,
+                           SimpMessageHeaderAccessor headerAccessor) {
+        message.setSessionId(headerAccessor.getSessionId());
         template.convertAndSend("/sub/class/" + classCode, message);
+        log.info("들어온 메세지 : " + message);
     }
 
 
