@@ -62,11 +62,18 @@
 
   <DimModal :modalData="modalData"/>
   <WidgetModal1 :isWidgetModalOpen="this.isWidgetModalOpen1" @close="toggleWidgetModal1"/>
-  <WidgetModal2 :isWidgetModalOpen="this.isWidgetModalOpen2" @toggleWidgetModal="toggleWidgetModal2" :classCode="classCode" :sender="sender"/>
+  <WidgetModal2 :isWidgetModalOpen="this.isWidgetModalOpen2" @toggleWidgetModal="toggleWidgetModal2" :classCode="classCode" :sender="sender" :pickerType="pickerType"/>
 
   <button @click="toggleWidgetModal1">위젯</button>
-  <button @click="toggleWidgetModal2">위젯</button>
-
+  <div class="btn-group dropup">
+    <button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+      고르기
+    </button>
+    <ul class="dropdown-menu">
+      <li><button @click="toggleWidgetModal2('',0)">OX</button></li>
+      <li><button @click="toggleWidgetModal2('',1)">선다형</button></li>
+    </ul>
+  </div>
 
 </template>
 
@@ -102,6 +109,7 @@ export default {
       sender: this.$route.query.currentUser,
       userType: this.$route.query.userType, // Added to get user type
 
+      pickerType: 0,
       isStudentListOpen: false,
       canLeaveSite: false,
       isWidgetModalOpen1:false,
@@ -174,7 +182,9 @@ export default {
     toggleWidgetModal1() {
       this.isWidgetModalOpen1 = !this.isWidgetModalOpen1;
     },
-    toggleWidgetModal2(forceToggle) {
+    toggleWidgetModal2(forceToggle, pickerType) {
+        this.pickerType = pickerType;
+
         if(typeof forceToggle === "boolean"){
           this.isWidgetModalOpen2 = forceToggle;
         }else {

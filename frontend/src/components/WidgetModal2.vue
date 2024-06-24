@@ -8,7 +8,7 @@
       <div class="modal-body">
         <component :is="currentComponent"
                    @switchComponent="switchComponent" @startPicker="startPicker" @endPicker="endPicker" @toggleWidgetModal="toggleWidgetModal"
-                   :classCode="classCode" :sender="sender" :message="this.message" :question="question"/>
+                   :classCode="classCode" :sender="sender" :message="this.message" :question="question" :choices="choices" :pickerType="pickerType"/>
       </div>
     </div>
   </div>
@@ -50,12 +50,17 @@ export default {
       type: String,
       required: true,
     },
+    pickerType: {
+      type: Number,
+      required: true,
+    },
   },
   data() {
     return {
       currentComponent: 'OXPicker',
       message:{},
       question: '',
+      choices:[],
     };
   },
   computed: {
@@ -87,13 +92,14 @@ export default {
       this.endPicker();
       this.switchComponent('OXPicker');
     },
-    toggleWidgetModal(forceToggle) {
+    toggleWidgetModal(forceToggle, pickerType) {
       console.log('forceToggle', forceToggle);
-      this.$emit('toggleWidgetModal', forceToggle);
+      this.$emit('toggleWidgetModal', forceToggle, pickerType);
     },
-    switchComponent(componentName, question='') {
+    switchComponent(componentName, question='', choices) {
       this.currentComponent = componentName;
       this.question = question;
+      this.choices = choices;
     },
     handlePickerStart(message) {
       // Handle picker start event for students
@@ -101,11 +107,11 @@ export default {
       this.switchComponent('OXPickerSelect');
       this.toggleWidgetModal(true);
     },
-    handlePickerEnd(){
+    handlePickerEnd(message){
       // Handle picker end event for students
       this.toggleWidgetModal(false);
     },
-    startPicker(question) {
+    startPicker(question, choices) {
       // Implement the logic for starting selection for teacher
       alert('Selection started!');
       // 메시지 전송
@@ -114,6 +120,8 @@ export default {
         sender: this.sender,
         data: {
           question: question,
+          choices: choices,
+          pickerType: this.pickerType,
         },
       });
       if (this.socket && this.socket.connected) {
@@ -123,9 +131,9 @@ export default {
         });
       }
       if(question===''){
-        question = 'OX를 골라주세요'
+        question = (this.pickerType===0) ? 'OX를 골라주세요':'보기를 선택해 주세요';
       }
-      this.switchComponent('OXPickerResult', question);
+      this.switchComponent('OXPickerResult', question, choices);
     },
     endPicker() {
       // Implement the logic for starting selection for teacher
@@ -167,6 +175,8 @@ export default {
   height: 700px;
   pointer-events: all;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
 }
 
 .modal-header {
@@ -193,6 +203,7 @@ export default {
 
 .modal-body {
   padding: 20px;
+  overflow-y: auto;
   height: 80%;
 }
 </style>
