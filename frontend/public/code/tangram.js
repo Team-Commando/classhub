@@ -157,6 +157,7 @@ var upred;
                 this.canvasTag = ui.HTML.newNode('canvas');
                 this.canvasTag.width = ui.ScreenUtil.GetScreenWidth();
                 this.canvasTag.height = ui.ScreenUtil.GetScreenHeight();
+                this.canvasTag.id = 'widgetCanvas';     // widget 내부 canvas id 추가
                 this.canvasTag.style.position = 'absolute';
                 this.canvasTag.style.left = '0px';
                 this.canvasTag.style.top = '0px';
