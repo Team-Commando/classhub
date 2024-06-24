@@ -8,7 +8,7 @@
           <button @click="deleteQuestion(question.id)" class="small-button">삭제</button>
         </div>
         <div class="action-container">
-          <button @click="this.$emit('switchComponent', 'OXPicker')" class="action-button">질문 생성으로 돌아가기</button>
+          <button @click="this.$emit('switchComponent', 'Picker')" class="action-button">질문 생성으로 돌아가기</button>
           <button @click="startSelection" class="action-button start-button">시작하기</button>
         </div>
       </div>

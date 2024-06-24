@@ -27,7 +27,7 @@
     </div>
 
     <div v-if="pickerType===1">
-      <canvas id="resultChart"></canvas>
+      <canvas id="result-chart"></canvas>
     </div>
 
     <div class="status-container">
@@ -38,7 +38,7 @@
     </div>
 
     <div class="action-container">
-      <button @click="backToOXPicker" class="action-button">질문 생성으로 돌아가기</button>
+      <button @click="backToPicker" class="action-button">질문 생성으로 돌아가기</button>
       <button @click="endResult" class="action-button end-button">종료</button>
     </div>
 
@@ -128,50 +128,86 @@ export default {
         }
       } else if (data.pickerType === 1) { //선다형
           this.choicesCount[data.choice]++;
+          this.updateChart();
       }
       this.responseCount++;
       this.respondedSessionIds.add(sessionId); // 응답한 세션 추가
-      this.updateChart();
+
 
     },
-    backToOXPicker(){
+    backToPicker(){
       this.$emit('endPicker');
-      this.$emit('switchComponent', 'OXPicker');
+      this.$emit('switchComponent', 'Picker');
     },
 
     endResult() {
       this.$emit('toggleWidgetModal')
       this.$emit('endPicker');
-      this.$emit('switchComponent', 'OXPicker');
+      this.$emit('switchComponent', 'Picker');
+    },
+    getRandomColor() {
+      const letters = '0123456789ABCDEF';
+      let color = '#';
+      for (let i = 0; i < 6; i++) {
+        color += letters[Math.floor(Math.random() * 16)];
+      }
+      return color;
     },
     renderChart() {
       // choices 배열의 각 요소를 순회하며 choicesCount 객체에 키와 값을 초기화
       this.choices.forEach(choice => {
-        this.choicesCount[choice] = 1;
+        this.choicesCount[choice] = 0;
       });
 
-      const ctx = document.getElementById('resultChart').getContext('2d');
+      const ctx = document.getElementById('result-chart').getContext('2d');
       if (this.chart) {
         this.chart.destroy();
       }
+
+      const backgroundColors = this.choices.map(() => this.getRandomColor());
+
       this.chart = new Chart(ctx, {
         type: 'bar',
         data: {
-          labels: this.choices,
           datasets: [{
-            label: '학생응답',
-            data: Object.values(this.choicesCount),
-            backgroundColor: ['#f5b7b1', '#f7b983', '#82e0aa', '#5dade2']
+            data: this.choicesCount,
+            backgroundColor: backgroundColors
           }]
         },
         options: {
           responsive: true,
+          scales: {
+            x: {
+              ticks: {
+                callback: function(value) {
+                  // value를 일정 길이 이상이면 생략
+                  const maxLineLength = 10; // 한 줄에 표시할 최대 길이
+                  const label = this.getLabelForValue(value);
+                  if (label.length > maxLineLength) {
+                    return label.slice(0, maxLineLength) + '...';
+                  } else {
+                    return label;
+                  }
+                }
+              }
+            },  
+            y: {
+              ticks: {
+                stepSize: 1 // Y축 눈금을 1단위로 설정합니다.
+              }
+            }
+          },
+          plugins: {
+            legend: {
+              display: false // legend display 옵션을 false로 설정하여 숨깁니다.
+            }
+          }
         }
       });
     },
     updateChart() {
-      // console.log(Object.values(this.choicesCount));
-      this.chart.data.datasets[0].data[0] = Object.values(this.choicesCount);
+      this.chart.data.datasets[0].data = this.choicesCount;
+
       this.chart.update();
     },
   }
@@ -182,5 +218,9 @@ export default {
 @import "../../assets/css/Picker.module.css";
 .action-container{
   justify-content: space-between;
+}
+#result-chart{
+  width: 800px;
+  height: 600px;
 }
 </style>
