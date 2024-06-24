@@ -30,4 +30,11 @@ public class PickerController {
         List<Map<String, Object>> questions = pickerService.getQuestionsByClassroomIdAndType(classroomId, type);
         return questions;
     }
+
+    @GetMapping("/get-saved-question")
+    @ResponseStatus(HttpStatus.OK)
+    public Question getQuestionById(@RequestParam("id") int questionId) {
+        return pickerService.getQuestionById(questionId);
+    }
+
 }
