@@ -1,6 +1,7 @@
 <template>
   <div class="modal-container" v-if="isWidgetModalOpen">
-    <div class="modal-window">
+    <div class="modal-window" ref="modalWindow" @mousedown="handleMouseDown">
+      <!-- @mousedown="handleMouseDown"-->
       <!-- modal-header start -->
       <div class="modal-header">
         <span class="modal-title">{{ title }}</span>
@@ -10,11 +11,15 @@
 
       <!-- modal body start -->
       <div class="modal-body">
+<!--        <component :is="widgetComponent(widgetType)"  />-->
         <div id="WORKAREA"></div>
         <div id="UI_PALETTE"></div>
         <div id="UI_TOOLBAR"></div>
       </div>
       <!-- modal body end -->
+
+      <!-- 모달창 우측 하단 크기 조정 핸들 -->
+      <div class="resizable-handle" @mousedown="startResizeModal"></div>
     </div>
   </div>
 </template>
@@ -29,7 +34,16 @@ export default {
   data() {
     return {
       upred: upred,
-      isWidgetModalOpen: this.isWidgetModalOpen
+      isWidgetModalOpen: this.isWidgetModalOpen,
+      dragStartX: 0,
+      dragStartY: 0,
+      initialX: 0,
+      initialY: 0,
+      isResizing: false,
+      resizeStartX: 0,
+      resizeStartY: 0,
+      initialWidth: 0,
+      initialHeight: 0
     }
   },
   props: {
@@ -40,15 +54,103 @@ export default {
     title: {
       type: String,
       default: 'Modal Title1'
-    }
+    },
   },
   methods: {
+    // 모달창 닫기 메서드
     closeModal() {
       this.$emit('close');
     },
+
+    // 칠교판 도형 및 모형 출력 메서드
     drawingCanvas() {
       console.log("start drawing Canvas");
       new upred.ui.CommonUI().Start(new upred.math.Tangrams());
+    },
+
+    handleMouseDown(event) {
+      console.log(event.target.classList);
+      if (event.target.classList.contains('resizable-handle')) {
+        console.log("resizable-handle");
+        this.startResizeModal(event);
+      } else {
+        this.startDragModal(event);
+      }
+    },
+
+    // 모달 드래그 시작 처리 메서드
+    startDragModal(event) {
+      if (this.isResizing) return;
+
+      console.log("start Drag Modal");
+      event.preventDefault();
+
+      this.dragStartX = event.clientX;
+      this.dragStartY = event.clientY;
+
+      // getBoundingClientRect(): DOM 제공 함수, 요소 크기와 뷰포트를 기준으로 한 요소의 위치를 반환한다.
+      // => DOMRect 객체 제공 (left, top, right, bottom, x, y, width, height 등의 속성을 포함)
+      // 변수 rect = modalWindow의 DOMRect 객체 정보가 저장된다.
+      const rect = this.$refs.modalWindow.getBoundingClientRect();
+
+      this.initialX = rect.left;
+      this.initialY = rect.top;
+
+      document.addEventListener('mousemove', this.moveModal);
+      document.addEventListener('mouseup', this.stopDragModal);
+    },
+
+    // 모달 드래그 동작 처리 메서드
+    moveModal(event) {
+      if (this.isResizing) return;
+
+      if (event.clientX === 0 && event.clientY === 0) return; // Modal에 대한 좌표 이동이 없을 시, return
+
+      // 상대적으로 이동한 X, Y 좌표(거리)
+      const deltaX = event.clientX - this.dragStartX;
+      const deltaY = event.clientY - this.dragStartY;
+
+      this.$refs.modalWindow.style.left = `${this.initialX + deltaX}px`;
+      this.$refs.modalWindow.style.top = `${this.initialY + deltaY}px`;
+    },
+
+    // 모달 드래그 종료 처리 메서드
+    stopDragModal() {
+      // mousemove, mouseup에 대한 이벤트 리스너를 제거한다.
+      document.removeEventListener('mousemove', this.moveModal);
+      document.removeEventListener('mouseup', this.stopDragModal);
+    },
+
+    // 모달 크기 조정 시작 처리 메서드
+    startResizeModal(event) {
+      this.isResizing = true;
+
+      this.resizeStartX = event.clientX;
+      this.resizeStartY = event.clientY;
+
+      const rect = this.$refs.modalWindow.getBoundingClientRect();
+      this.initialWidth = rect.width;
+      this.initialHeight = rect.height;
+
+      document.addEventListener('mousemove', this.resizeModal);
+      document.addEventListener('mouseup', this.stopResizeModal);
+    },
+
+    // 모달 크기 조정 처리 메서드
+    resizeModal(event) {
+      const deltaX = event.clientX - this.resizeStartX;
+      const deltaY = event.clientY - this.resizeStartY;
+
+      this.$refs.modalWindow.style.width = `${this.initialWidth + deltaX}px`;
+      this.$refs.modalWindow.style.height = `${this.initialHeight + deltaY}px`;
+    },
+
+    // 모달 크기 조정 종료 처리 메서드
+    stopResizeModal() {
+      this.isResizing = false;
+
+      document.removeEventListener('mousemove', this.resizeModal);
+      document.removeEventListener('mouseup', this.stopResizeModal);
     }
   },
   watch: {
@@ -57,7 +159,7 @@ export default {
         this.$nextTick(() => {
           // DOM이 완전히 업데이트된 이후 drawingCanvas() 호출
           this.drawingCanvas();
-        })
+        });
       }
     },
   }
@@ -81,10 +183,15 @@ export default {
   border-radius: 8px;
   width: 1200px;
   height: 800px;
+  min-width: 50%;
+  min-height: 50%;
   pointer-events: all;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
+  resize: both;   /* 모달창에 대한 크기 조정 허용 */
+  overflow: hidden; /* 오버플로우 처리 (스크롤 숨김 처리) */
+  position: absolute; /* 드래그 허용을 위해 절대값으로 위치 지정 */
 }
 
 .modal-header {
@@ -137,7 +244,7 @@ div {
   left: 0;
   top: 0;
   bottom: 80px;
-  width: 200px;
+  width: 220px;
   height: auto;
   border-right: #CCD1D1 1px solid;
   padding: 8px 4px;
@@ -169,5 +276,16 @@ div {
   height: 80px;
   background: #f2f6f8;
   background: linear-gradient(to bottom, #f2f6f8 0%, #d8e1e7 50%, #b5c6d0 51%, #e0eff9 100%);
+}
+
+/* 모달창 우측 하단 크기 조정 핸들 스타일 적용 */
+.resizable-handle {
+  width: 20px;
+  height: 20px;
+  background: #ccc;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  cursor: se-resize;
 }
 </style>

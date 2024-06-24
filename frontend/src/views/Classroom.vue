@@ -64,7 +64,7 @@
   <WidgetModal1 :isWidgetModalOpen="this.isWidgetModalOpen1" @close="toggleWidgetModal1"/>
   <WidgetModal2 :isWidgetModalOpen="this.isWidgetModalOpen2" @toggleWidgetModal="toggleWidgetModal2" :classCode="classCode" :sender="sender" :pickerType="pickerType"/>
 
-  <button @click="toggleWidgetModal1">위젯</button>
+  <button @click="toggleWidgetModal1">칠교판</button>
   <div class="btn-group dropup">
     <button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
       고르기
