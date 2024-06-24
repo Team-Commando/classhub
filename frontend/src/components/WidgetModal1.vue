@@ -165,10 +165,10 @@ export default {
 .modal-window {
   background: white;
   border-radius: 8px;
-  width: 1200px;
-  height: 800px;
-  min-width: 50%;
-  min-height: 50%;
+  width: 70%;
+  height: 80%;
+  min-width: 1000px;
+  min-height: 700px;
   pointer-events: all;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   display: flex;
@@ -204,6 +204,7 @@ export default {
   flex: 1;
   display: flex;
   position: relative;
+  overflow: hidden;
 }
 
 div {
@@ -213,6 +214,7 @@ div {
 #WORKAREA {
   flex: 1;
   position: relative;
+  overflow: auto;
 }
 
 #WORKAREA canvas, #WORKAREA div, #WORKAREA svg {
