@@ -2,28 +2,32 @@
   <div class="container">
     <div class="question-container">
       <label for="question"><h2>Q.</h2></label>
-      <input type="text" id="question" v-model="question" readonly/>
+      <p id="question">{{ question }}</p>
     </div>
 
-    <div class="choice-container">
-      <div class="choice-button-container">
-        <button class="choice-button">
+    <div class="ox-choice-container" v-if="pickerType===0">
+      <div class="ox-choice-button-container">
+        <button class="ox-choice-button">
           <div class="circle"></div>
         </button>
-        <div class="choice-stats">
+        <div class="ox-choice-stats">
           <div>{{ circleCount }}명</div>
           <div>{{ circlePercentage }}%</div>
         </div>
       </div>
-      <div class="choice-button-container">
-        <button class="choice-button">
+      <div class="ox-choice-button-container">
+        <button class="ox-choice-button">
           <div class="cross"></div>
         </button>
-        <div class="choice-stats">
+        <div class="ox-choice-stats">
           <div>{{ crossCount }}명</div>
           <div>{{ crossPercentage }}%</div>
         </div>
       </div>
+    </div>
+
+    <div v-if="pickerType===1">
+      <canvas id="resultChart"></canvas>
     </div>
 
     <div class="status-container">
@@ -34,7 +38,7 @@
     </div>
 
     <div class="action-container">
-      <button @click="this.$emit('switchComponent', 'OXPicker')" class="action-button">질문 생성으로 돌아가기</button>
+      <button @click="backToOXPicker" class="action-button">질문 생성으로 돌아가기</button>
       <button @click="endResult" class="action-button end-button">종료</button>
     </div>
 
@@ -42,8 +46,10 @@
 </template>
 
 <script>
-import axios from 'axios';
 import { mapState } from "vuex";
+// import {Chart, registerable} from 'chart.js'
+import styles from '../../assets/css/Picker.module.css';
+// Chart.register(...registerable)
 
 export default {
   name: 'OXPickerResult',
@@ -56,24 +62,39 @@ export default {
       type: String,
       required: true,
     },
+    question: {
+      type: String,
+    },
+    choices: {
+      type: Array,
+    },
+    pickerType: {
+      type: Number,
+      required: true,
+    },
   },
   data() {
     return {
-      question: '',
       circleCount: 0,
       crossCount: 0,
       responseCount: 0,
       totalStudents: 21,
+      choicesCount: {}, // 초기 선택 수
+      respondedSessionIds: new Set(), // 응답한 세션 ID 저장
+
     };
   },
   computed: {
     ...mapState(["socket", "pickerSelects"]),
+    $style() {
+      return styles;
+    },
     circlePercentage() {
       return ((this.circleCount / this.totalStudents) * 100).toFixed(2);
     },
     crossPercentage() {
       return ((this.crossCount / this.totalStudents) * 100).toFixed(2);
-    }
+    },
   },
   mounted() {
     this.$store.watch(
@@ -85,164 +106,81 @@ export default {
           }
         }
     );
+    if(this.pickerType === 1){
+      this.renderChart();
+    }
+
   },
   methods: {
     handleIncomingSelect(message){
-
       const { sessionId, data } = message;
-      if(data.choice === "O"){
-        this.circleCount++
-        this.responseCount++
-      }else if(data.choice === "X"){
-        this.crossCount++
-        this.responseCount++
+
+      // 응답한 세션인지 확인
+      if (this.respondedSessionIds.has(sessionId)) {
+        return;
       }
 
+      if (data.pickerType === 0) { //OX
+        if (data.choice === "O") {
+          this.circleCount++;
+        } else if (data.choice === "X") {
+          this.crossCount++;
+        }
+      } else if (data.pickerType === 1) { //선다형
+          this.choicesCount[data.choice]++;
+      }
+      this.responseCount++;
+      this.respondedSessionIds.add(sessionId); // 응답한 세션 추가
+      this.updateChart();
+
     },
+    backToOXPicker(){
+      this.$emit('endPicker');
+      this.$emit('switchComponent', 'OXPicker');
+    },
+
     endResult() {
       this.$emit('toggleWidgetModal')
       this.$emit('endPicker');
-      this.$emit('switchComponent', 'OXPicker')
-    }
+      this.$emit('switchComponent', 'OXPicker');
+    },
+    renderChart() {
+      // choices 배열의 각 요소를 순회하며 choicesCount 객체에 키와 값을 초기화
+      this.choices.forEach(choice => {
+        this.choicesCount[choice] = 1;
+      });
+
+      const ctx = document.getElementById('resultChart').getContext('2d');
+      if (this.chart) {
+        this.chart.destroy();
+      }
+      this.chart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: this.choices,
+          datasets: [{
+            label: '학생응답',
+            data: Object.values(this.choicesCount),
+            backgroundColor: ['#f5b7b1', '#f7b983', '#82e0aa', '#5dade2']
+          }]
+        },
+        options: {
+          responsive: true,
+        }
+      });
+    },
+    updateChart() {
+      // console.log(Object.values(this.choicesCount));
+      this.chart.data.datasets[0].data[0] = Object.values(this.choicesCount);
+      this.chart.update();
+    },
   }
 };
 </script>
 
 <style scoped>
-.container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-top: 20px;
-  position: relative;
-}
-
-.question-container {
-  display: flex;
-  align-items: center;
-  margin-bottom: 30px;
-}
-
-#question {
-  margin-left: 10px;
-  padding: 15px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  width: 700px;
-  font-size: 1.5em;
-}
-
-.choice-container {
-  display: flex;
+@import "../../assets/css/Picker.module.css";
+.action-container{
   justify-content: space-between;
-  width: 600px;
-  margin-top: 50px;
-  margin-bottom: 30px;
 }
-
-.choice-button-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.choice-button {
-  width: 200px;
-  height: 200px;
-  border: none;
-  background: none;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.circle {
-  width: 200px;
-  height: 200px;
-  background-color: blue;
-  border-radius: 50%;
-}
-
-.cross {
-  width: 200px;
-  height: 200px;
-  position: relative;
-}
-
-.cross:before, .cross:after {
-  content: '';
-  position: absolute;
-  width: 200px;
-  height: 40px;
-  background-color: red;
-  top: 80px;
-  left: 0;
-}
-
-.cross:before {
-  transform: rotate(45deg);
-}
-
-.cross:after {
-  transform: rotate(-45deg);
-}
-
-.choice-stats {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-top: 10px;
-  font-size: 1.2em;
-}
-
-.status-container {
-  position: absolute;
-  top: 0px;
-  right: 20px;
-  display: flex;
-  justify-content: center;
-  margin-bottom: 30px;
-}
-
-.status-box {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  border: 1px solid #ccc;
-  padding: 10px;
-  border-radius: 4px;
-}
-
-.status-label {
-  font-weight: bold;
-  margin-bottom: 5px;
-}
-
-.status-value {
-  font-size: 1.5em;
-}
-
-.action-container {
-  display: flex;
-  justify-content: center;
-  width: 600px;
-  margin-top: 60px;
-  margin-bottom: 30px;
-}
-
-.action-button {
-  padding: 20px 40px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 1.1em;
-  font-weight: bold;
-}
-
-
-.end-button {
-  background-color: lightcoral;
-}
-
 </style>
