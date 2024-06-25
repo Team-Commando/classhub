@@ -14,4 +14,8 @@ public interface PickerMapper {
     void insertChoice(int questionId, String choiceText);
 
     List<Map<String, Object>> selectQuestionsByClassroomIdAndType(int classroomId, int type);
+
+    Question selectQuestionById(int questionId);
+
+
 }

@@ -33,6 +33,8 @@ const store = createStore({
             pickerEnds: [],
             pickerSelects: [],
             socket: null,
+            students: {}, // 학생 리스트를 추가합니다.
+
         };
     },
     mutations: { //상태를 변경하는 메서드
@@ -41,9 +43,12 @@ const store = createStore({
         },
         addJoin(state, join) {
             state.joins.push(join);
+            state.students[join.sessionId] = join.sender; // 학생 리스트에 추가
         },
         addLeave(state, leave) {
             state.leaves.push(leave);
+            delete state.students[leave.sessionId]; // 학생 리스트에서 삭제
+
         },
         addPickerStart(state, pickerStart) {
             state.pickerStarts.push(pickerStart);

@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="container" v-if="!isSubmit">
     <div class="question-container">
       <label for="question"><h2>Q.</h2></label>
       <p id="question">{{ question }}</p>
@@ -23,7 +23,11 @@
     <div class="action-container">
       <button @click="pickerSelect" class="action-button start-button">제출하기</button>
     </div>
-
+  </div>
+  <div class="container" v-if="isSubmit">
+    <div class="box">
+      <p>결과 기다리는중 ...</p>
+    </div>
   </div>
 </template>
 
@@ -52,6 +56,7 @@ export default {
       studentChoice:'',
       choices: [],
       pickerType: 0,
+      isSubmit: false,
     };
   },
   computed: {
@@ -95,6 +100,7 @@ export default {
           body: message,
         });
       }
+      this.isSubmit = true;
     },
   }
 };
@@ -104,5 +110,19 @@ export default {
   @import "../../assets/css/Picker.module.css";
   .action-container{
     justify-content: center;
+  }
+  .box {
+    width: 800px;
+    height: 550px;
+    background-color: #ededed;
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+  .box p {
+    font-size: 1.5em;
+    color: #333;
   }
 </style>

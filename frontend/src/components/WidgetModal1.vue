@@ -10,9 +10,7 @@
 
       <!-- modal body start -->
       <div class="modal-body">
-        <div id="WORKAREA"></div>
-        <div id="UI_PALETTE"></div>
-        <div id="UI_TOOLBAR"></div>
+          <component :is="activeWidget"/>
       </div>
       <!-- modal body end -->
 
@@ -23,16 +21,16 @@
 </template>
 
 <script>
-import {upred} from "../../public/code/tangram.js";
+import Tangram from "./widget/Tangram.vue";
+import Dice from "./widget/Dice.vue";
 
 export default {
   name: 'WidgetModal',
-  mounted() {
-  },
   data() {
     return {
-      upred: upred,
-      isWidgetModalOpen: this.isWidgetModalOpen,
+      // isWidgetModalOpen: this.isWidgetModalOpen,
+      activeWidget: null,
+      selected: this.selected,
       dragStartX: 0,
       dragStartY: 0,
       initialX: 0,
@@ -43,6 +41,12 @@ export default {
       initialHeight: 0
     }
   },
+
+  components: {
+    Tangram: Tangram,
+    Dice: Dice
+  },
+
   props: {
     isWidgetModalOpen: {
       type: Boolean,
@@ -52,16 +56,44 @@ export default {
       type: String,
       default: 'Modal Title1'
     },
+    choice: {
+      type: Number,
+    }
   },
+
+  watch: {
+    isWidgetModalOpen: {  // isWidgetModalOpen의 상태를 감시
+      handler(state) {
+        if (state) {  // isWidgetModalOpen == true (모달창이 활성화 되면)
+          this.$nextTick(() => {
+            // DOM이 완전히 업데이트된 이후 drawingCanvas() 호출
+            this.drawingCanvas();
+          });
+        }
+      },
+      immediate: true
+    }
+  },
+
   methods: {
+    // 위젯 내부 콘텐츠 출력 메서드
+    drawingCanvas() {
+      console.log("start drawingCanvas");
+      this.activeWidget = (this.choice === 0) ? Tangram.name : Dice.name;
+
+      console.log(this.activeWidget);
+
+      if (this.activeWidget === 'Dice') {
+        // 주사위임
+        return;
+      } else {
+        return this.activeWidget.methods.drawingTangram();
+      }
+    },
+
     // 모달창 종료 메서드
     closeModal() {
       this.$emit('close');
-    },
-
-    // 모달창 내 칠교판 도형 및 모형 세팅 메서드
-    drawingCanvas() {
-      new upred.ui.CommonUI().Start(new upred.math.Tangrams());
     },
 
     // mousedown 이벤트 발생 시, 모달창의 위치 or 크기 조정을 결정하는 handler 메서드
@@ -135,18 +167,8 @@ export default {
     stopResizeModal() {
       document.removeEventListener('mousemove', this.resizeModal);
       document.removeEventListener('mouseup', this.stopResizeModal);
-    }
-  },
-  watch: {
-    isWidgetModalOpen(state) {  // isWidgetModalOpen의 상태를 감시
-      if (state) {  // isWidgetModalOpen == true (모달창이 활성화 되면)
-        this.$nextTick(() => {
-          // DOM이 완전히 업데이트된 이후 drawingCanvas() 호출
-          this.drawingCanvas();
-        });
-      }
     },
-  }
+  },
 }
 </script>
 
@@ -165,10 +187,10 @@ export default {
 .modal-window {
   background: white;
   border-radius: 8px;
-  width: 70%;
-  height: 80%;
-  min-width: 1000px;
-  min-height: 700px;
+  width: 1200px;
+  height: 800px;
+  min-width: 50%;
+  min-height: 50%;
   pointer-events: all;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   display: flex;
@@ -204,64 +226,10 @@ export default {
   flex: 1;
   display: flex;
   position: relative;
-  overflow: hidden;
 }
 
 div {
   font-family: sans-serif;
-}
-
-#WORKAREA {
-  flex: 1;
-  position: relative;
-  overflow: auto;
-}
-
-#WORKAREA canvas, #WORKAREA div, #WORKAREA svg {
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-}
-
-#UI_PALETTE {
-  position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 80px;
-  width: 220px;
-  height: auto;
-  border-right: #CCD1D1 1px solid;
-  padding: 8px 4px;
-  z-index: 800;
-  background: #ffffff;
-  background: linear-gradient(to right, #e1e1e1 0%, #f6f6f6 100%);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-}
-
-#UI_PALETTE svg {
-  margin: 8px;
-}
-
-#UI_TOOLBAR {
-  user-select: none;
-  position: absolute;
-  display: flex;
-  flex-direction: row;
-  flex-wrap: nowrap;
-  justify-content: center;
-  align-items: center;
-  z-index: 50000;
-  left: 0;
-  width: 100%;
-  bottom: 0;
-  height: 80px;
-  background: #f2f6f8;
-  background: linear-gradient(to bottom, #f2f6f8 0%, #d8e1e7 50%, #b5c6d0 51%, #e0eff9 100%);
 }
 
 /* 모달창 우측 하단 크기 조정 핸들 스타일 적용 */
