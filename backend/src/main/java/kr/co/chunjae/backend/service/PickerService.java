@@ -30,4 +30,8 @@ public class PickerService {
     public List<Map<String, Object>> getQuestionsByClassroomIdAndType(int classroomId, int type) {
         return pickerMapper.selectQuestionsByClassroomIdAndType(classroomId, type);
     }
+
+    public Question getQuestionById(int questionId) {
+        return pickerMapper.selectQuestionById(questionId);
+    }
 }

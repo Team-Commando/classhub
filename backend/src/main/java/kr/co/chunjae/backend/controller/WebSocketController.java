@@ -19,9 +19,8 @@ public class WebSocketController {
 
 
     @MessageMapping("/update/{classCode}")
-    public void sendUpdate(@DestinationVariable(value = "classCode") String classCode, Message message,
-                           SimpMessageHeaderAccessor headerAccessor) {
-        webSocketService.sendUpdate(classCode, message, headerAccessor);
+    public void sendUpdate(@DestinationVariable(value = "classCode") String classCode, Message message) {
+        webSocketService.sendUpdate(classCode, message);
     }
 
     @MessageMapping("/join/{classCode}")
