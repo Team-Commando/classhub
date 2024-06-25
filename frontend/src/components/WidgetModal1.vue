@@ -11,7 +11,7 @@
       <!-- modal body start -->
       <div class="modal-body">
           <component :is="activeWidget" />
-<!--        <Tangram />-->
+        <div> {{ this.choice }}</div>
       </div>
       <!-- modal body end -->
 
@@ -141,9 +141,9 @@ export default {
     drawingCanvas(activeWidget) {
       console.log("start drawingCanvas", activeWidget);
       if (activeWidget === 'Dice') {
+        // 주사위임
         return;
       } else {
-        // 주사위임
         return activeWidget.methods.drawingTangram();
       }
     }
@@ -154,8 +154,7 @@ export default {
       if (state) {  // isWidgetModalOpen == true (모달창이 활성화 되면)
         this.$nextTick(() => {
           // DOM이 완전히 업데이트된 이후 drawingCanvas() 호출
-
-          this.activeWidget = this.choice === 0 ? Tangram : Dice;
+          this.activeWidget = (this.choice === 0) ? Tangram : Dice;
           this.drawingCanvas(this.activeWidget);
         });
       }
