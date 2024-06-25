@@ -3,7 +3,7 @@
     <div class="modal-window">
       <div class="modal-header">
         <span class="modal-title">{{ title }}</span>
-        <button class="close-button" @click="thisModalOFF">X</button>
+        <button class="close-button" @click="thisModalOFF" v-if="userType === 'teacher'">X</button>
       </div>
       <div class="modal-body">
         <component :is="currentComponent"
@@ -15,23 +15,21 @@
 </template>
 
 <script>
-import OXPicker from './OXPicker/OXPicker.vue';
-import PickerBox from './OXPicker/PickerBox.vue';
-import ComponentB from './ComponentB.vue';
+import Picker from './Picker/Picker.vue';
+import PickerBox from './Picker/PickerBox.vue';
 import Whiteboard from "./Whiteboard.vue";
-import OXPickerSelect from "./OXPicker/OXPickerSelect.vue";
-import OXPickerResult from "./OXPicker/OXPickerResult.vue";
+import PickerSelect from "./Picker/PickerSelect.vue";
+import PickerResult from "./Picker/PickerResult.vue";
 import {mapState} from "vuex";
 
 export default {
   name: 'WidgetModal2',
   components: {
     Whiteboard,
-    OXPicker,
+    Picker,
     PickerBox,
-    OXPickerSelect,
-    OXPickerResult,
-    ComponentB
+    PickerSelect,
+    PickerResult,
   },
   props: {
     isWidgetModalOpen: {
@@ -52,12 +50,16 @@ export default {
     },
     pickerType: {
       type: Number,
+      required: false,
+    },
+    userType: {
+      type: String,
       required: true,
     },
   },
   data() {
     return {
-      currentComponent: 'OXPicker',
+      currentComponent: 'Picker',
       message:{},
       question: '',
       choices:[],
@@ -90,10 +92,9 @@ export default {
     thisModalOFF(){
       this.$emit('toggleWidgetModal');
       this.endPicker();
-      this.switchComponent('OXPicker');
+      this.switchComponent('Picker');
     },
     toggleWidgetModal(forceToggle, pickerType) {
-      console.log('forceToggle', forceToggle);
       this.$emit('toggleWidgetModal', forceToggle, pickerType);
     },
     switchComponent(componentName, question='', choices) {
@@ -104,7 +105,7 @@ export default {
     handlePickerStart(message) {
       // Handle picker start event for students
       this.message = message;
-      this.switchComponent('OXPickerSelect');
+      this.switchComponent('PickerSelect');
       this.toggleWidgetModal(true);
     },
     handlePickerEnd(message){
@@ -133,7 +134,7 @@ export default {
       if(question===''){
         question = (this.pickerType===0) ? 'OX를 골라주세요':'보기를 선택해 주세요';
       }
-      this.switchComponent('OXPickerResult', question, choices);
+      this.switchComponent('PickerResult', question, choices);
     },
     endPicker() {
       // Implement the logic for starting selection for teacher

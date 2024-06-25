@@ -41,7 +41,7 @@ import {mapState} from "vuex";
 import styles from '../../assets/css/Picker.module.css';
 
 export default {
-  name: 'OXPicker',
+  name: 'Picker',
   props: {
     classCode: {
       type: String,
@@ -77,12 +77,25 @@ export default {
     },
     savePicker() {
       // Implement the logic for saving the selection
-      const payload = {
-        question: this.question,
-        choices: [],
-        type: 0,
-        classroomId: 1
-      };
+      let payload = {};
+
+      if(this.pickerType === 0){
+        payload = {
+          question: this.question,
+          choices: [],
+          type: 0,
+          classroomId: 1
+        };
+      }else if(this.pickerType === 1) {
+        payload = {
+          question: this.question,
+          choices: this.choices,
+          type: 1,
+          classroomId: 1
+        };
+      }
+
+
 
       axios.post('http://localhost:8080/api/picker/save', payload)
         .then(response => {
