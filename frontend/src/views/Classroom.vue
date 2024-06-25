@@ -63,11 +63,11 @@
   <DimModal :modalData="modalData"/>
 <!--  <WidgetModal1 :isWidgetModalOpen="this.isWidgetModalOpen1" :choice="choice" @close="toggleWidgetModal1"/>-->
   <WidgetModal1
-      v-for="(choiceWidget, id) in widget"
-      :key="id"
+      v-for="(choiceWidget, i) in widget"
+      :key="i"
       :isWidgetModalOpen="choiceWidget.isOpen"
       :choice="choiceWidget.choice"
-      @close="closeWidgetModal1(id)"
+      @close="closeWidgetModal1(choiceWidget.choice)"
   />
   <WidgetModal2 :isWidgetModalOpen="this.isWidgetModalOpen2" @toggleWidgetModal="toggleWidgetModal2" :classCode="classCode" :sender="sender" :pickerType="pickerType" :userType="userType"/>
 

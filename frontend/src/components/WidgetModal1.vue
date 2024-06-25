@@ -10,8 +10,7 @@
 
       <!-- modal body start -->
       <div class="modal-body">
-          <component :is="activeWidget" />
-        <div> {{ this.choice }}</div>
+          <component :is="activeWidget"/>
       </div>
       <!-- modal body end -->
 
@@ -29,7 +28,7 @@ export default {
   name: 'WidgetModal',
   data() {
     return {
-      isWidgetModalOpen: this.isWidgetModalOpen,
+      // isWidgetModalOpen: this.isWidgetModalOpen,
       activeWidget: null,
       selected: this.selected,
       dragStartX: 0,
@@ -42,10 +41,12 @@ export default {
       initialHeight: 0
     }
   },
+
   components: {
     Tangram: Tangram,
     Dice: Dice
   },
+
   props: {
     isWidgetModalOpen: {
       type: Boolean,
@@ -59,7 +60,37 @@ export default {
       type: Number,
     }
   },
+
+  watch: {
+    isWidgetModalOpen: {  // isWidgetModalOpen의 상태를 감시
+      handler(state) {
+        if (state) {  // isWidgetModalOpen == true (모달창이 활성화 되면)
+          this.$nextTick(() => {
+            // DOM이 완전히 업데이트된 이후 drawingCanvas() 호출
+            this.drawingCanvas();
+          });
+        }
+      },
+      immediate: true
+    }
+  },
+
   methods: {
+    // 위젯 내부 콘텐츠 출력 메서드
+    drawingCanvas() {
+      console.log("start drawingCanvas");
+      this.activeWidget = (this.choice === 0) ? Tangram : Dice;
+
+      console.log(this.activeWidget);
+
+      if (this.activeWidget === Dice) {
+        // 주사위임
+        return;
+      } else {
+        return this.activeWidget.methods.drawingTangram();
+      }
+    },
+
     // 모달창 종료 메서드
     closeModal() {
       this.$emit('close');
@@ -137,29 +168,7 @@ export default {
       document.removeEventListener('mousemove', this.resizeModal);
       document.removeEventListener('mouseup', this.stopResizeModal);
     },
-
-    drawingCanvas(activeWidget) {
-      console.log("start drawingCanvas", activeWidget);
-      if (activeWidget === 'Dice') {
-        // 주사위임
-        return;
-      } else {
-        return activeWidget.methods.drawingTangram();
-      }
-    }
   },
-
-  watch: {
-    isWidgetModalOpen(state) {  // isWidgetModalOpen의 상태를 감시
-      if (state) {  // isWidgetModalOpen == true (모달창이 활성화 되면)
-        this.$nextTick(() => {
-          // DOM이 완전히 업데이트된 이후 drawingCanvas() 호출
-          this.activeWidget = (this.choice === 0) ? Tangram : Dice;
-          this.drawingCanvas(this.activeWidget);
-        });
-      }
-    }
-  }
 }
 </script>
 
