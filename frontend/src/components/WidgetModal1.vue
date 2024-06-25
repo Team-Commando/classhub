@@ -79,11 +79,11 @@ export default {
     // 위젯 내부 콘텐츠 출력 메서드
     drawingCanvas() {
       console.log("start drawingCanvas");
-      this.activeWidget = (this.choice === 0) ? Tangram : Dice;
+      this.activeWidget = (this.choice === 0) ? Tangram.name : Dice.name;
 
       console.log(this.activeWidget);
 
-      if (this.activeWidget === Dice) {
+      if (this.activeWidget === 'Dice') {
         // 주사위임
         return;
       } else {
