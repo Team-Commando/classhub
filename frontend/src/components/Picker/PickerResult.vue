@@ -50,7 +50,7 @@ import { mapState } from "vuex";
 import styles from '../../assets/css/Picker.module.css';
 
 export default {
-  name: 'OXPickerResult',
+  name: 'PickerResult',
   props: {
     classCode: {
       type: String,

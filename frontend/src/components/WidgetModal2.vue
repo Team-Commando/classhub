@@ -8,7 +8,7 @@
       <div class="modal-body">
         <component :is="currentComponent"
                    @switchComponent="switchComponent" @startPicker="startPicker" @endPicker="endPicker" @toggleWidgetModal="toggleWidgetModal"
-                   :classCode="classCode" :sender="sender" :message="this.message" :question="question" :choices="choices" :pickerType="pickerType"/>
+                   :classCode="classCode" :sender="sender" :message="this.message" :question="question" :choices="choices" :pickerType="pickerType" :questionId="questionId"/>
       </div>
     </div>
   </div>
@@ -20,6 +20,7 @@ import PickerBox from './Picker/PickerBox.vue';
 import Whiteboard from "./Whiteboard.vue";
 import PickerSelect from "./Picker/PickerSelect.vue";
 import PickerResult from "./Picker/PickerResult.vue";
+import PickerEdit from "./Picker/PickerEdit.vue";
 import {mapState} from "vuex";
 
 export default {
@@ -30,6 +31,7 @@ export default {
     PickerBox,
     PickerSelect,
     PickerResult,
+    PickerEdit,
   },
   props: {
     isWidgetModalOpen: {
@@ -63,6 +65,7 @@ export default {
       message:{},
       question: '',
       choices:[],
+      questionId: 0,
     };
   },
   computed: {
@@ -97,10 +100,11 @@ export default {
     toggleWidgetModal(forceToggle, pickerType) {
       this.$emit('toggleWidgetModal', forceToggle, pickerType);
     },
-    switchComponent(componentName, question='', choices) {
+    switchComponent(componentName, question='', choices, questionId) {
       this.currentComponent = componentName;
       this.question = question;
       this.choices = choices;
+      this.questionId = questionId;
     },
     handlePickerStart(message) {
       // Handle picker start event for students

@@ -36,7 +36,7 @@ import {mapState} from "vuex";
 import styles from '../../assets/css/Picker.module.css';
 
 export default {
-  name: 'OXPickerSelect',
+  name: 'PickerSelect',
   props: {
     classCode: {
       type: String,

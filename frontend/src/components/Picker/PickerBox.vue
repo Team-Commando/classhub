@@ -4,7 +4,7 @@
         <div v-for="(question, index) in questions" :key="question.id" class="question-item">
           <input type="radio" :value="question.id" v-model="selectedQuestion" />
           <span>{{ question.question }}</span>
-          <button @click="editQuestion(question.id)" class="small-button">수정</button>
+          <button @click="switchToPickerEdit(question.id)" class="small-button">수정</button>
           <button @click="deleteQuestion(question.id)" class="small-button">삭제</button>
         </div>
         <div class="action-container">
@@ -32,7 +32,7 @@
         selectedQuestion: null
       };
     },
-    created() {
+    mounted() {
       this.fetchQuestions();
     },
     methods: {
@@ -50,17 +50,36 @@
           console.error('Error fetching questions:', error);
         });
       },
-      editQuestion(id) {
-        // Edit question logic with id
-        const url = `http://localhost:8080/api/picker/edit-question?id=${id}`;
-        // Implement edit logic here
-        console.log(url);
+      switchToPickerEdit(id) {
+        let question = ""
+        let choices = [];
+
+        //기존 정보 불러오기
+        axios.get(`http://localhost:8080/api/picker/get-saved-question?id=${id}`, {
+        })
+        .then(response => {
+          question = response.data.question;
+          choices = response.data.choices;
+          this.$emit('switchComponent', 'PickerEdit', question, choices, id)
+        })
+        .catch(error => {
+          console.error('Error fetching questions:', error);
+        });
+
       },
       deleteQuestion(id) {
-        // Delete question logic with id
-        const url = `http://localhost:8080/api/picker/delete-question?id=${id}`;
-        // Implement delete logic here
-        console.log(url);
+        const result = confirm('삭제하시겠습니까?');
+        if(result){
+          axios.get(`http://localhost:8080/api/picker/delete-question?id=${id}`, {
+          })
+          .then(response => {
+            alert('삭제 완료');
+            this.fetchQuestions();
+          })
+          .catch(error => {
+            console.error('Error fetching questions:', error);
+          });
+        }
       },
       startPickerFromBox() {
         let question = ""

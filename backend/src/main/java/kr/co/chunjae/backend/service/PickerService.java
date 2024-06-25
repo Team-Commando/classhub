@@ -34,4 +34,25 @@ public class PickerService {
     public Question getQuestionById(int questionId) {
         return pickerMapper.selectQuestionById(questionId);
     }
+
+    @Transactional
+    public void editQuestionWithChoices(Question question) {
+        pickerMapper.updateQuestion(question);
+        int questionId = question.getId();
+
+        // 기존 선택지 삭제
+        pickerMapper.deleteChoicesByQuestionId(questionId);
+
+        // 새로운 선택지 삽입
+        for (String choiceText : question.getChoices()) {
+            pickerMapper.insertChoice(questionId, choiceText);
+        }
+    }
+    @Transactional
+    public void deleteQuestionWithChoices(int questionId) {
+        // 질문삭제
+        pickerMapper.deleteQuestionByQuestionId(questionId);
+        // 선택지 삭제
+        pickerMapper.deleteChoicesByQuestionId(questionId);
+    }
 }
