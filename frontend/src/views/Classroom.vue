@@ -61,10 +61,11 @@
   </div>
 
   <DimModal :modalData="modalData"/>
-  <WidgetModal1 :isWidgetModalOpen="this.isWidgetModalOpen1" @close="toggleWidgetModal1"/>
+  <WidgetModal1 :isWidgetModalOpen="this.isWidgetModalOpen1" :choiceWidget="this.choiceWidget" @close="toggleWidgetModal1"/>
   <WidgetModal2 :isWidgetModalOpen="this.isWidgetModalOpen2" @toggleWidgetModal="toggleWidgetModal2" :classCode="classCode" :sender="sender" :pickerType="pickerType"/>
 
-  <button @click="toggleWidgetModal1">칠교판</button>
+  <button @click="toggleWidgetModal1('Tangram')">칠교판</button>
+  <button @click="toggleWidgetModal1('Dice')">주사위</button>
   <div class="btn-group dropup">
     <button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
       고르기
@@ -114,6 +115,8 @@ export default {
       canLeaveSite: false,
       isWidgetModalOpen1:false,
       isWidgetModalOpen2:false,
+
+      choiceWidget: '',
 
     };
   },
@@ -179,7 +182,8 @@ export default {
       this.modalData.modalTitle = title;
       this.modalData.modalBody = this.classCode;
     },
-    toggleWidgetModal1() {
+    toggleWidgetModal1(param) {
+      this.selected = param;
       this.isWidgetModalOpen1 = !this.isWidgetModalOpen1;
     },
     toggleWidgetModal2(forceToggle, pickerType) {
