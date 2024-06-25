@@ -2,14 +2,14 @@
     <div class="container">
       <div class="question-container">
         <div v-for="(question, index) in questions" :key="question.id" class="question-item">
-          <input type="radio" :value="index" v-model="selectedQuestion" />
+          <input type="radio" :value="question.id" v-model="selectedQuestion" />
           <span>{{ question.question }}</span>
           <button @click="editQuestion(question.id)" class="small-button">수정</button>
           <button @click="deleteQuestion(question.id)" class="small-button">삭제</button>
         </div>
         <div class="action-container">
-          <button @click="this.$emit('switchComponent', 'OXPicker')" class="action-button">질문 생성으로 돌아가기</button>
-          <button @click="startSelection" class="action-button start-button">시작하기</button>
+          <button @click="this.$emit('switchComponent', 'Picker')" class="action-button">질문 생성으로 돌아가기</button>
+          <button @click="startPickerFromBox" class="action-button start-button">시작하기</button>
         </div>
       </div>
     </div>
@@ -19,6 +19,13 @@
   import axios from 'axios';
   
   export default {
+    name: 'PickerBox',
+    props: {
+      pickerType: {
+        type: Number,
+        required: true,
+      },
+    },
     data() {
       return {
         questions: [],
@@ -32,8 +39,8 @@
       fetchQuestions() {
         axios.get('http://localhost:8080/api/picker/get-questions', {
           params: {
-            classroomid: 1,
-            type: 0
+            classroomId: 1,
+            type: this.pickerType
           }
         })
         .then(response => {
@@ -55,8 +62,20 @@
         // Implement delete logic here
         console.log(url);
       },
-      startSelection() {
-        // Start selection logic
+      startPickerFromBox() {
+        let question = ""
+        let choices = [];
+
+        axios.get(`http://localhost:8080/api/picker/get-saved-question?id=${this.selectedQuestion}`, {
+        })
+        .then(response => {
+          question = response.data.question;
+          choices = response.data.choices;
+          this.$emit('startPicker', question, choices)
+        })
+        .catch(error => {
+          console.error('Error fetching questions:', error);
+        });
       }
     }
   };
