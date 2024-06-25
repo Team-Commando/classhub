@@ -1,9 +1,14 @@
 <template>
-  주사위 Component
+  <div>주사위!</div>
 </template>
 
-<script setup>
+<script>
+export default {
+  name: 'Dice',
+  methods: {
 
+  }
+}
 </script>
 
 <style scoped>

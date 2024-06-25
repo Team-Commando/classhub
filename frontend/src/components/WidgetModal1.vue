@@ -10,7 +10,7 @@
 
       <!-- modal body start -->
       <div class="modal-body">
-          <component v-if="widgetComponent" :is="widgetComponent" :arg="arg" />
+          <component :is="activeWidget" />
 <!--        <Tangram />-->
       </div>
       <!-- modal body end -->
@@ -22,16 +22,15 @@
 </template>
 
 <script>
-// import Tangram from "./widget/Tangram.vue";
+import Tangram from "./widget/Tangram.vue";
+import Dice from "./widget/Dice.vue";
 
 export default {
   name: 'WidgetModal',
   data() {
     return {
       isWidgetModalOpen: this.isWidgetModalOpen,
-      arg: null,
-      dialog: false,
-      widgetComponent: null,
+      activeWidget: null,
       selected: this.selected,
       dragStartX: 0,
       dragStartY: 0,
@@ -44,7 +43,8 @@ export default {
     }
   },
   components: {
-    // Tangram: Tangram
+    Tangram: Tangram,
+    Dice: Dice
   },
   props: {
     isWidgetModalOpen: {
@@ -55,8 +55,8 @@ export default {
       type: String,
       default: 'Modal Title1'
     },
-    selected: {
-      type: String,
+    choice: {
+      type: Number,
     }
   },
   methods: {
@@ -138,8 +138,14 @@ export default {
       document.removeEventListener('mouseup', this.stopResizeModal);
     },
 
-    drawingCanvas() {
-        return .methods.drawingTangram();
+    drawingCanvas(activeWidget) {
+      console.log("start drawingCanvas", activeWidget);
+      if (activeWidget === 'Dice') {
+        return;
+      } else {
+        // 주사위임
+        return activeWidget.methods.drawingTangram();
+      }
     }
   },
 
@@ -148,7 +154,9 @@ export default {
       if (state) {  // isWidgetModalOpen == true (모달창이 활성화 되면)
         this.$nextTick(() => {
           // DOM이 완전히 업데이트된 이후 drawingCanvas() 호출
-          this.drawingCanvas();
+
+          this.activeWidget = this.choice === 0 ? Tangram : Dice;
+          this.drawingCanvas(this.activeWidget);
         });
       }
     }

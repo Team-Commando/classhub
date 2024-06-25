@@ -61,10 +61,10 @@
   </div>
 
   <DimModal :modalData="modalData"/>
-  <WidgetModal1 :isWidgetModalOpen="this.isWidgetModalOpen1" @close="toggleWidgetModal1"/>
+  <WidgetModal1 :isWidgetModalOpen="this.isWidgetModalOpen1" :choice="choice" @close="toggleWidgetModal1"/>
   <WidgetModal2 :isWidgetModalOpen="this.isWidgetModalOpen2" @toggleWidgetModal="toggleWidgetModal2" :classCode="classCode" :sender="sender" :pickerType="pickerType" :userType="userType"/>
 
-  <button @click="toggleWidgetModal1">위젯</button>
+  <button v-for="choice in widget" @click="toggleWidgetModal1(choice.id)">{{ choice.name }}</button>
   <div class="btn-group dropup">
     <button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
       고르기
@@ -115,6 +115,12 @@ export default {
       isWidgetModalOpen1:false,
       isWidgetModalOpen2:false,
 
+      widget: [
+        {id: 0, name: '칠교판'},
+        {id: 1, name: '주사위'},
+      ],
+
+      choice: 0,
     };
   },
   computed: {
@@ -153,7 +159,11 @@ export default {
       this.modalData.modalTitle = title;
       this.modalData.modalBody = this.classCode;
     },
-    toggleWidgetModal1() {
+    toggleWidgetModal1(id) {
+      this.choice = id;
+      if (this.choice == 1 && this.isWidgetModalOpen1){
+
+      }
       this.isWidgetModalOpen1 = !this.isWidgetModalOpen1;
     },
     toggleWidgetModal2(forceToggle, pickerType) {
