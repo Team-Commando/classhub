@@ -14,11 +14,11 @@ export default {
       upred: upred,
     }
   },
+  mounted() {
+    // 칠교판 및 모형 출력
+    new upred.ui.CommonUI().Start(new upred.math.Tangrams());
+  },
   methods: {
-    // 모달창 내 칠교판 도형 및 모형 세팅 메서드
-    drawingTangram() {
-      new upred.ui.CommonUI().Start(new upred.math.Tangrams());
-    },
   }
 }
 </script>

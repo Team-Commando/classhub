@@ -28,9 +28,7 @@ export default {
   name: 'WidgetModal',
   data() {
     return {
-      // isWidgetModalOpen: this.isWidgetModalOpen,
       activeWidget: null,
-      selected: this.selected,
       dragStartX: 0,
       dragStartY: 0,
       initialX: 0,
@@ -38,7 +36,7 @@ export default {
       resizeStartX: 0,
       resizeStartY: 0,
       initialWidth: 0,
-      initialHeight: 0
+      initialHeight: 0,
     }
   },
 
@@ -66,8 +64,8 @@ export default {
       handler(state) {
         if (state) {  // isWidgetModalOpen == true (모달창이 활성화 되면)
           this.$nextTick(() => {
-            // DOM이 완전히 업데이트된 이후 drawingCanvas() 호출
-            this.drawingCanvas();
+            // 활성화할 위젯 컴포넌트를 지정한다.
+            this.activeWidget = (this.choice === 0) ? Tangram.name : Dice.name;
           });
         }
       },
@@ -76,21 +74,6 @@ export default {
   },
 
   methods: {
-    // 위젯 내부 콘텐츠 출력 메서드
-    drawingCanvas() {
-      console.log("start drawingCanvas");
-      this.activeWidget = (this.choice === 0) ? Tangram.name : Dice.name;
-
-      console.log(this.activeWidget);
-
-      if (this.activeWidget === 'Dice') {
-        // 주사위임
-        return;
-      } else {
-        return this.activeWidget.methods.drawingTangram();
-      }
-    },
-
     // 모달창 종료 메서드
     closeModal() {
       this.$emit('close');
