@@ -61,26 +61,26 @@
   </div>
 
   <DimModal :modalData="modalData"/>
-  <!-- Widget Modal: 버튼 클릭 시, 모달창 내부에 선택한 위젯 콘텐츠 출력 -->
+  <!-- Widget Modal: 버튼 클릭 시, 선택한 위젯에 대한 모달창 출력 -->
   <WidgetModal1
       v-for="(w, i) in wArr"
       :key="i"
       :isWidgetModalOpen="w.isOpen"
-      :choice="w.cId"
-      :title="widget[w.cId].title"
-      @close="closeWidgetModal1(w.cId)"
+      :wId="w.wId"
+      :title="w.title"
+      @close="closeWidgetModal(w.wId)"
   />
-  <WidgetModal2 :isWidgetModalOpen="this.isWidgetModalOpen2" @toggleWidgetModal="toggleWidgetModal2" :classCode="classCode" :sender="sender" :pickerType="pickerType" :userType="userType"/>
+  <WidgetModal2 :isWidgetModalOpen="this.isWidgetModalOpen2" @toggleWidgetModal="toggleWidgetModal2" :pickerType="pickerType"/>
 
   <!-- 하단 위젯 선택 버튼 생성 -->
-  <button v-for="(wButton, i) in widget" :key="i" @click="toggleWidgetModal1(wButton.wId)">{{ wButton.title }}</button>
+  <button v-for="(wButton, i) in widget" :key="i" @click="toggleWidgetModal(wButton.wId)">{{ wButton.title }}</button>
   <div class="btn-group dropup">
     <button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
       고르기
     </button>
     <ul class="dropdown-menu">
-      <li><a @click="toggleWidgetModal2('true',0)" class="dropdown-item">OX</a></li>
-      <li><a @click="toggleWidgetModal2('true',1)" class="dropdown-item">선다형</a></li>
+      <li><a @click="toggleWidgetModal2(true,0)" class="dropdown-item">OX</a></li>
+      <li><a @click="toggleWidgetModal2(true,1)" class="dropdown-item">선다형</a></li>
     </ul>
   </div>
 
@@ -123,14 +123,13 @@ export default {
       canLeaveSite: false,
       isWidgetModalOpen2:false,
 
-      // widget 정의: 위젯별 고유 ID, 위젯명 설정
+      // widget 정의: 위젯별 고유 ID, 위젯명, 위젯(모달창) 활성화 유무 설정
       widget: [
-        { wId: 0, title: '칠교놀이' },
-        { wId: 1, title: '주사위' },
+        { wId: 0, title: '칠교놀이', isOpen: false },
+        { wId: 1, title: '주사위', isOpen: false },
       ],
-
-      createWidget: null,       // 생성할 WidgetModal Component
-      wArr: [],
+      wArr: {},   // 활성화된 위젯을 관리하는 Object
+      wArrId: 0,  // wArr(Object)의 key를 동적으로 생성하기 위해 선언
     };
   },
   computed: {
@@ -169,27 +168,22 @@ export default {
       this.modalData.modalTitle = title;
       this.modalData.modalBody = this.classCode;
     },
-    toggleWidgetModal1(wId) {
-      console.log("wId", wId);
-      this.createWidget = {  // 화면에 출력할 모달창에 대한 속성 지정
-        cId: wId,            // 위젯 고유 ID 지정 (초기 wId = 0, 이후 모달창 추가 시, 1씩 증가)
-        isOpen: true,        // 선택 위젯의 활성화 상태 지정
-      };
-      this.wArr.push(this.createWidget); // 생성한 WidgetModal Component를 widget(Array)에 push
-    },
-    closeWidgetModal1(id) {
-      console.log("close Widget Modal", id);
-      // this.wArr.splice(cId, 1);  // widget 배열에서 종료하고자 하는 위젯을 삭제
-      // this.wArr = this.wArr.filter((e) => e !== this.wArr.id);
 
-      if (id == 0) {
-        this.wArr.splice(id, 1);
-      } else {
-        this.wArr.splice(id - 1, 1);
-      }
-      this.wArr[id].isOpen = false;
-      console.log(this.wArr);
+    // 선택한 위젯을 활성화
+    toggleWidgetModal(wId) {
+      this.widget[wId].isOpen = true;             // 선택한 위젯의 isOpen 속성을 true로 변경
+
+      // wArr(object) 데이터 추가: key 값을 동적으로 생성
+      this.wArrId = wId;                          // wArr key: wArr(Object)의 key 값을 선택한 위젯의 고유 ID와 동일하게 설정
+      this.wArr[this.wArrId] = this.widget[wId];  // wArr value: key에 해당하는 위젯 정보(wId, title, isOpen)를 설정
     },
+
+    // 선택한 위젯을 비활성화
+    closeWidgetModal(wId) {
+      this.widget[wId].isOpen = false;            // 선택한 위젯의 isOpen 속성을 false로 변경
+      delete this.wArr[wId];                      // wArr(Object)에서 선택한 위젯에 해당하는 데이터를 삭제
+    },
+
     toggleWidgetModal2(forceToggle, pickerType) {
         this.pickerType = pickerType;
 

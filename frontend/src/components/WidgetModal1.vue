@@ -53,18 +53,27 @@ export default {
     title: {
       type: String,
     },
-    choice: {
+    wId: {
       type: Number,
     }
   },
 
   watch: {
-    isWidgetModalOpen: {  // isWidgetModalOpen의 상태를 감시
+    isWidgetModalOpen: {    // isWidgetModalOpen의 상태를 감시
       handler(state) {
-        if (state) {  // isWidgetModalOpen == true (모달창이 활성화 되면)
+        if (state) {        // isWidgetModalOpen === true (모달창이 활성화 되면)
           this.$nextTick(() => {
-            // 활성화할 위젯 컴포넌트를 지정한다.
-            this.activeWidget = (this.choice === 0) ? Tangram.name : Dice.name;
+            // 모달창 내부를 구성할 위젯 컴포넌트를 지정
+            switch (this.wId) {
+              case 0:
+                this.activeWidget = Tangram.name;
+                break;
+              case 1:
+                this.activeWidget = Dice.name;
+                break;
+              default:
+                console.log("지정할 컴포넌트가 존재하지 않습니다.");
+            }
           });
         }
       },
@@ -177,8 +186,8 @@ export default {
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
-  resize: both;   /* 모달창에 대한 크기 조정 허용 */
-  overflow: hidden; /* 오버플로우 처리 (스크롤 숨김 처리) */
+  resize: both;       /* 모달창에 대한 크기 조정 허용 */
+  overflow: hidden;   /* 오버플로우 처리 (스크롤 숨김 처리) */
   position: absolute; /* 드래그 허용을 위해 절대값으로 위치 지정 */
 }
 
