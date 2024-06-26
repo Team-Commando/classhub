@@ -27,8 +27,8 @@ const store = createStore({
     state() { //애플리케이션의 상태를 정의
         return {
             events: [],
-            joins: [],
-            leaves: [],
+            join: null,
+            leave: null,
             pickerStart: null,
             pickerEnd: null,
             pickerSelect: null,
@@ -43,12 +43,12 @@ const store = createStore({
         addEvent(state, event) {
             state.events.push(event);
         },
-        addJoin(state, join) {
-            state.joins.push(join);
+        setJoin(state, join) {
+            state.join = join;
             state.students[join.sessionId] = join.sender; // 학생 리스트에 추가
         },
-        addLeave(state, leave) {
-            state.leaves.push(leave);
+        setLeave(state, leave) {
+            state.leave = leave;
             delete state.students[leave.sessionId]; // 학생 리스트에서 삭제
 
         },
@@ -83,10 +83,10 @@ const store = createStore({
             commit('addEvent', event); 
         },
         triggerJoin({ commit }, join) {
-            commit('addJoin', join);
+            commit('setJoin', join);
         },
         triggerLeave({ commit }, leave) {
-            commit('addLeave', leave);
+            commit('setLeave', leave);
         },
         triggerPickerStart({ commit }, pickerStart) {
             commit('setPickerStart', pickerStart);
