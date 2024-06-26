@@ -41,14 +41,6 @@ import axios from "axios";
 export default {
   name: 'PickerEdit',
   props: {
-    classCode: {
-      type: String,
-      required: true,
-    },
-    sender: {
-      type: String,
-      required: true,
-    },
     question: {
       type: String,
     },
@@ -57,17 +49,15 @@ export default {
     },
     pickerType: {
       type: Number,
-      required: false,
     },
     questionId: {
       type: Number,
-      required: true,
     },
   },
   data() {
     return {
       internalQuestion: this.question,
-      internalChoices: this.choices
+      internalChoices: this.choices,
     };
   },
   computed: {

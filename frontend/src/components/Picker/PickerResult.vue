@@ -41,7 +41,6 @@
       <button @click="backToPicker" class="action-button">질문 생성으로 돌아가기</button>
       <button @click="endResult" class="action-button end-button">종료</button>
     </div>
-
   </div>
 </template>
 
@@ -52,14 +51,6 @@ import styles from '../../assets/css/Picker.module.css';
 export default {
   name: 'PickerResult',
   props: {
-    classCode: {
-      type: String,
-      required: true,
-    },
-    sender: {
-      type: String,
-      required: true,
-    },
     question: {
       type: String,
     },
@@ -68,7 +59,6 @@ export default {
     },
     pickerType: {
       type: Number,
-      required: true,
     },
   },
   data() {

@@ -6,9 +6,10 @@
         <button class="close-button" @click="thisModalOFF" v-if="userType === 'teacher'">X</button>
       </div>
       <div class="modal-body">
+        <!--  componentProps를 spread 문법으로 풀어놓고, pickerType을 넣어 Object로 병합  -->
         <component :is="currentComponent"
-                   @switchComponent="switchComponent" @startPicker="startPicker" @endPicker="endPicker" @toggleWidgetModal="toggleWidgetModal"
-                   :classCode="classCode" :sender="sender" :message="this.message" :question="question" :choices="choices" :pickerType="pickerType" :questionId="questionId"/>
+                   v-bind="{...componentProps, pickerType}"
+                   @switchComponent="switchComponent" @startPicker="startPicker" @endPicker="endPicker" @toggleWidgetModal="toggleWidgetModal"/>
       </div>
     </div>
   </div>
@@ -38,38 +39,25 @@ export default {
       type: Boolean,
       required: true
     },
-    title: {
-      type: String,
-      default: 'Modal Title2'
-    },
-    classCode: {
-      type: String,
-      required: true,
-    },
-    sender: {
-      type: String,
-      required: true,
-    },
     pickerType: {
       type: Number,
       required: false,
-    },
-    userType: {
-      type: String,
-      required: true,
     },
   },
   data() {
     return {
       currentComponent: 'Picker',
+      componentProps: {},
       message:{},
       question: '',
       choices:[],
       questionId: 0,
+      title: 'Modal Title2',
+
     };
   },
   computed: {
-    ...mapState(["socket", "pickerStarts", "pickerEnds"]),
+    ...mapState(["socket", "pickerStarts", "pickerEnds", "classCode", "sender", "userType"]),
   },
   mounted() {
     this.$store.watch(
@@ -100,16 +88,17 @@ export default {
     toggleWidgetModal(forceToggle, pickerType) {
       this.$emit('toggleWidgetModal', forceToggle, pickerType);
     },
-    switchComponent(componentName, question='', choices, questionId) {
+    switchComponent(componentName, props={}) {
       this.currentComponent = componentName;
-      this.question = question;
-      this.choices = choices;
-      this.questionId = questionId;
+      this.componentProps = props;
+      // this.question = question;
+      // this.choices = choices;
+      // this.questionId = questionId;
     },
     handlePickerStart(message) {
       // Handle picker start event for students
       this.message = message;
-      this.switchComponent('PickerSelect');
+      this.switchComponent('PickerSelect', { message });
       this.toggleWidgetModal(true);
     },
     handlePickerEnd(message){
@@ -138,7 +127,7 @@ export default {
       if(question===''){
         question = (this.pickerType===0) ? 'OX를 골라주세요':'보기를 선택해 주세요';
       }
-      this.switchComponent('PickerResult', question, choices);
+      this.switchComponent('PickerResult', {question, choices});
     },
     endPicker() {
       // Implement the logic for starting selection for teacher

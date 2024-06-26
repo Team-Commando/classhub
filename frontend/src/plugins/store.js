@@ -34,7 +34,9 @@ const store = createStore({
             pickerSelects: [],
             socket: null,
             students: {}, // 학생 리스트를 추가합니다.
-
+            classCode: "",
+            sender: "",
+            userType: "",
         };
     },
     mutations: { //상태를 변경하는 메서드
@@ -61,7 +63,16 @@ const store = createStore({
         },
         setSocket(state, socket) {
             state.socket = socket;
-        }
+        },
+        addClassCode(state, classCode) {
+            state.classCode = classCode;
+        },
+        addSender(state, sender) {
+            state.sender = sender;
+        },
+        addUserType(state, userType) {
+            state.userType = userType;
+        },
     },
     actions: { //비동기 작업을 수행하며, mutations를 커밋합니다.
         triggerEvent({ commit }, event) {
@@ -140,7 +151,16 @@ const store = createStore({
             } else {
                 console.error('StompClient is not connected.');
             }
-        }
+        },
+        setClassCode({ commit }, classCode) {
+            commit("addClassCode", classCode);
+        },
+        setSender({ commit }, sender) {
+            commit("addSender", sender);
+        },
+        setUserType({ commit }, userType) {
+            commit("addUserType", userType);
+        },
     },
 });
 

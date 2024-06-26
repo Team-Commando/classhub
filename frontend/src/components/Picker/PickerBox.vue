@@ -60,7 +60,7 @@
         .then(response => {
           question = response.data.question;
           choices = response.data.choices;
-          this.$emit('switchComponent', 'PickerEdit', question, choices, id)
+          this.$emit('switchComponent', 'PickerEdit', { question: question, choices: choices, questionId: id } )
         })
         .catch(error => {
           console.error('Error fetching questions:', error);

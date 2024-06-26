@@ -50,9 +50,9 @@ public class PickerService {
     }
     @Transactional
     public void deleteQuestionWithChoices(int questionId) {
-        // 질문삭제
-        pickerMapper.deleteQuestionByQuestionId(questionId);
         // 선택지 삭제
         pickerMapper.deleteChoicesByQuestionId(questionId);
+        // 질문삭제
+        pickerMapper.deleteQuestionByQuestionId(questionId);
     }
 }

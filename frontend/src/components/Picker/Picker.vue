@@ -43,17 +43,8 @@ import styles from '../../assets/css/Picker.module.css';
 export default {
   name: 'Picker',
   props: {
-    classCode: {
-      type: String,
-      required: true,
-    },
-    sender: {
-      type: String,
-      required: true,
-    },
     pickerType: {
       type: Number,
-      required: true,
     },
   },
   data() {
@@ -94,7 +85,6 @@ export default {
           classroomId: 1
         };
       }
-
       axios.post('http://localhost:8080/api/picker/save', payload)
         .then(response => {
           if (response.status === 201) {
