@@ -37,4 +37,16 @@ public class PickerController {
         return pickerService.getQuestionById(questionId);
     }
 
+    @PostMapping("/edit-question")
+    @ResponseStatus(HttpStatus.OK)
+    public void editQuestionWithChoices(@RequestBody Question question) {
+        pickerService.editQuestionWithChoices(question);
+    }
+
+    @GetMapping("/delete-question")
+    @ResponseStatus(HttpStatus.OK)
+    public void deleteQuestionWithChoices(@RequestParam("id") int questionId) {
+        pickerService.deleteQuestionWithChoices(questionId);
+    }
+
 }

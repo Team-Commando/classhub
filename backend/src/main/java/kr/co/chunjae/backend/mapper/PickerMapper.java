@@ -18,4 +18,9 @@ public interface PickerMapper {
     Question selectQuestionById(int questionId);
 
 
+    void updateQuestion(Question question);
+
+    void deleteChoicesByQuestionId(int questionId);
+
+    void deleteQuestionByQuestionId(int questionId);
 }

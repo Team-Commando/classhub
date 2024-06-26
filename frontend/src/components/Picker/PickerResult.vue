@@ -41,7 +41,6 @@
       <button @click="backToPicker" class="action-button">질문 생성으로 돌아가기</button>
       <button @click="endResult" class="action-button end-button">종료</button>
     </div>
-
   </div>
 </template>
 
@@ -50,16 +49,8 @@ import { mapState } from "vuex";
 import styles from '../../assets/css/Picker.module.css';
 
 export default {
-  name: 'OXPickerResult',
+  name: 'PickerResult',
   props: {
-    classCode: {
-      type: String,
-      required: true,
-    },
-    sender: {
-      type: String,
-      required: true,
-    },
     question: {
       type: String,
     },
@@ -68,7 +59,6 @@ export default {
     },
     pickerType: {
       type: Number,
-      required: true,
     },
   },
   data() {
@@ -83,7 +73,7 @@ export default {
     };
   },
   computed: {
-    ...mapState(["socket", "pickerSelects", "students"]),
+    ...mapState(["socket", "pickerSelect", "students"]),
     $style() {
       return styles;
     },
@@ -94,16 +84,14 @@ export default {
       return ((this.crossCount / this.totalStudents) * 100).toFixed(2);
     },
   },
+  watch: {
+    pickerSelect(newVal, oldVal) {
+      if (newVal) {
+        this.handleIncomingSelect(newVal);
+      }
+    }
+  },
   mounted() {
-    this.$store.watch(
-        (state) => state.pickerSelects.length,
-        (newLength) => {
-          const event = this.pickerSelects[newLength - 1];
-          if (event) {
-            this.handleIncomingSelect(event);
-          }
-        }
-    );
     if(this.pickerType === 1){
       this.renderChart();
     }

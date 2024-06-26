@@ -1,34 +1,37 @@
 <template>
-  <div class="container" v-if="!isSubmit">
-    <div class="question-container">
-      <label for="question"><h2>Q.</h2></label>
-      <p id="question">{{ question }}</p>
-    </div>
+  <div>
+    <div class="container" v-if="!isSubmit">
+      <div class="question-container">
+        <label for="question"><h2>Q.</h2></label>
+        <p id="question">{{ question }}</p>
+      </div>
 
-    <div class="ox-choice-container" v-if="pickerType===0">
-      <button class="ox-choice-button" :class="{ selected: studentChoice === 'O' }" @click="selectChoice('O')">
-        <div class="circle"></div>
-      </button>
-      <button class="ox-choice-button" :class="{ selected: studentChoice === 'X' }" @click="selectChoice('X')">
-        <div class="cross"></div>
-      </button>
-    </div>
+      <div class="ox-choice-container" v-if="pickerType===0">
+        <button class="ox-choice-button" :class="{ selected: studentChoice === 'O' }" @click="selectChoice('O')">
+          <div class="circle"></div>
+        </button>
+        <button class="ox-choice-button" :class="{ selected: studentChoice === 'X' }" @click="selectChoice('X')">
+          <div class="cross"></div>
+        </button>
+      </div>
 
-    <div class="multi-choice-container" v-if="pickerType===1">
-      <div v-for="(choice, index) in choices" :key="index" class="multi-choice">
-        <input type="text" v-model="choices[index]" @click="selectChoice(choice)" :class="{ selected: studentChoice === choice }" readonly/>
+      <div class="multi-choice-container" v-if="pickerType===1">
+        <div v-for="(choice, index) in choices" :key="index" class="multi-choice">
+          <input type="text" v-model="choices[index]" @click="selectChoice(choice)" :class="{ selected: studentChoice === choice }" readonly/>
+        </div>
+      </div>
+
+      <div class="action-container">
+        <button @click="pickerSelect" class="action-button start-button">제출하기</button>
       </div>
     </div>
+    <div class="container" v-if="isSubmit">
+      <div class="box">
+        <p>결과 기다리는중 ...</p>
+      </div>
+    </div>
+  </div>
 
-    <div class="action-container">
-      <button @click="pickerSelect" class="action-button start-button">제출하기</button>
-    </div>
-  </div>
-  <div class="container" v-if="isSubmit">
-    <div class="box">
-      <p>결과 기다리는중 ...</p>
-    </div>
-  </div>
 </template>
 
 <script>
@@ -36,16 +39,8 @@ import {mapState} from "vuex";
 import styles from '../../assets/css/Picker.module.css';
 
 export default {
-  name: 'OXPickerSelect',
+  name: 'PickerSelect',
   props: {
-    classCode: {
-      type: String,
-      required: true,
-    },
-    sender: {
-      type: String,
-      required: true,
-    },
     message: {
       type: Object,
     },
@@ -60,7 +55,7 @@ export default {
     };
   },
   computed: {
-    ...mapState(["socket"]),
+    ...mapState(["socket", "classCode", "sender"]),
     $style() {
       return styles;
     },
@@ -84,7 +79,6 @@ export default {
     pickerSelect() {
       // Implement the logic for starting selection
       alert('Selection submit!');
-      // this.switchToComponentB();
       // 메시지 전송
       const message = JSON.stringify({
         type: "PICKER/SELECT",

@@ -23,7 +23,7 @@ export default {
     };
   },
   computed: {
-    ...mapState(["socket"]),
+    ...mapState(["socket", "classCode"]),
   },
   methods: {
     login() {
@@ -42,14 +42,19 @@ export default {
           }
         })
         .then((classCodeResponse) => {
-          const classCode = classCodeResponse.data.code;
+          const internalClassCode = classCodeResponse.data.code;
+          // Vuex 상태 업데이트
+          this.$store.dispatch("triggerClassCode", internalClassCode);
+          this.$store.dispatch("triggerSender", this.username);
+          this.$store.dispatch("triggerUserType", 'teacher');
+
           // WebSocket 연결 초기화
-          const connect = this.$store.dispatch("initializeWebSocket", this.classCode);
+          const connect = this.$store.dispatch("initializeWebSocket", internalClassCode);
           connect.then(() => {
             // Redirect to the classroom page
             this.$router.push({
               name: "Classroom",
-              params: { classCode },
+              params: { classCode: internalClassCode },
               query: { currentUser: this.username, userType: 'teacher' },
             });
           });

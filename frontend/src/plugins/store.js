@@ -27,41 +27,52 @@ const store = createStore({
     state() { //애플리케이션의 상태를 정의
         return {
             events: [],
-            joins: [],
-            leaves: [],
-            pickerStarts: [],
-            pickerEnds: [],
-            pickerSelects: [],
+            join: null,
+            leave: null,
+            pickerStart: null,
+            pickerEnd: null,
+            pickerSelect: null,
             socket: null,
             students: {}, // 학생 리스트를 추가합니다.
-
+            classCode: "",
+            sender: "",
+            userType: "",
         };
     },
     mutations: { //상태를 변경하는 메서드
         addEvent(state, event) {
             state.events.push(event);
         },
-        addJoin(state, join) {
-            state.joins.push(join);
+        setJoin(state, join) {
+            state.join = join;
             state.students[join.sessionId] = join.sender; // 학생 리스트에 추가
         },
-        addLeave(state, leave) {
-            state.leaves.push(leave);
+        setLeave(state, leave) {
+            state.leave = leave;
             delete state.students[leave.sessionId]; // 학생 리스트에서 삭제
 
         },
-        addPickerStart(state, pickerStart) {
-            state.pickerStarts.push(pickerStart);
+        setPickerStart(state, pickerStart) {
+            state.pickerStart = pickerStart;
         },
-        addPickerEnd(state, pickerEnd) {
-            state.pickerEnds.push(pickerEnd);
+        setPickerEnd(state, pickerEnd) {
+            state.pickerEnd = pickerEnd;
         },
-        addPickerSelect(state, pickerSelect) {
-            state.pickerSelects.push(pickerSelect);
+        setPickerSelect(state, pickerSelect) {
+            state.pickerSelect = pickerSelect;
         },
         setSocket(state, socket) {
             state.socket = socket;
-        }
+        },
+        setClassCode(state, classCode) {
+            state.classCode = classCode;
+        },
+        setSender(state, sender) {
+            state.sender = sender;
+        },
+        setUserType(state, userType) {
+            state.userType = userType;
+        },
     },
     actions: { //비동기 작업을 수행하며, mutations를 커밋합니다.
         triggerEvent({ commit }, event) {
@@ -72,19 +83,19 @@ const store = createStore({
             commit('addEvent', event); 
         },
         triggerJoin({ commit }, join) {
-            commit('addJoin', join);
+            commit('setJoin', join);
         },
         triggerLeave({ commit }, leave) {
-            commit('addLeave', leave);
+            commit('setLeave', leave);
         },
         triggerPickerStart({ commit }, pickerStart) {
-            commit('addPickerStart', pickerStart);
+            commit('setPickerStart', pickerStart);
         },
         triggerPickerEnd({ commit }, pickerEnd) {
-            commit('addPickerEnd', pickerEnd);
+            commit('setPickerEnd', pickerEnd);
         },
         triggerPickerSelect({ commit }, pickerSelect) {
-            commit('addPickerSelect', pickerSelect);
+            commit('setPickerSelect', pickerSelect);
         },
         initializeWebSocket({ commit }) {
             return new Promise((resolve, reject) => {
@@ -140,7 +151,16 @@ const store = createStore({
             } else {
                 console.error('StompClient is not connected.');
             }
-        }
+        },
+        triggerClassCode({ commit }, classCode) {
+            commit("setClassCode", classCode);
+        },
+        triggerSender({ commit }, sender) {
+            commit("setSender", sender);
+        },
+        triggerUserType({ commit }, userType) {
+            commit("setUserType", userType);
+        },
     },
 });
 
