@@ -2,7 +2,7 @@
   <div class="container">
     <div class="question-container">
       <label for="question"><h2>Q.</h2></label>
-      <input type="text" id="question" v-model="question" placeholder="원하시는 경우, 질문을 입력하세요(선택)" required/>
+      <input type="text" id="question" v-model="internalQuestion" required/>
     </div>
 
     <div class="ox-choice-container" v-if="pickerType===0">
@@ -19,38 +19,45 @@
     </div>
 
     <div class="multi-choice-container" v-if="pickerType===1">
-      <div v-for="(choice, index) in choices" :key="index" class="multi-choice">
-        <input type="text" v-model="choices[index]" />
-        <button v-if="choices.length > 4" @click="removeChoice(index)" class="remove-button">-</button>
+      <div v-for="(choice, index) in internalChoices" :key="index" class="multi-choice">
+        <input type="text" v-model="internalChoices[index]" />
+        <button v-if="internalChoices.length > 2" @click="removeChoice(index)" class="remove-button">-</button>
       </div>
-      <button v-if="choices.length < 10" @click="addChoice" class="add-button">+</button>
+      <button v-if="internalChoices.length < 10" @click="addChoice" class="add-button">+</button>
     </div>
 
     <div class="action-container">
-      <button @click="savePicker" class="action-button">저장하기</button>
-      <button @click="this.$emit('startPicker', this.question, this.choices)" class="action-button start-button">시작하기</button>
+      <button @click="this.$emit('switchComponent', 'PickerBox')" class="action-button">취소하기</button>
+      <button @click="editQuestion" class="action-button start-button">수정하기</button>
     </div>
-
-    <button class="store-button" @click="this.$emit('switchComponent', 'PickerBox')">보관함</button>
   </div>
 </template>
 
 <script>
-import axios from 'axios';
 import {mapState} from "vuex";
 import styles from '../../assets/css/Picker.module.css';
+import axios from "axios";
 
 export default {
-  name: 'Picker',
+  name: 'PickerEdit',
   props: {
+    question: {
+      type: String,
+    },
+    choices: {
+      type: Array,
+    },
     pickerType: {
+      type: Number,
+    },
+    questionId: {
       type: Number,
     },
   },
   data() {
     return {
-      question: '',
-      choices: ['A', 'B', 'C', 'D'],
+      internalQuestion: this.question,
+      internalChoices: this.choices,
     };
   },
   computed: {
@@ -59,36 +66,38 @@ export default {
       return styles;
     },
   },
+  mounted() {
+
+  },
   methods: {
     addChoice() {
-      this.choices.push('');
+      this.internalChoices.push('');
     },
     removeChoice(index) {
-      this.choices.splice(index, 1);
+      this.internalChoices.splice(index, 1);
     },
-    savePicker() {
-      // Implement the logic for saving the selection
+    editQuestion(){
       let payload = {};
 
       if(this.pickerType === 0){
         payload = {
-          question: this.question,
+          question: this.internalQuestion,
           choices: [],
           type: 0,
-          classroomId: 1
+          id: this.questionId
         };
       }else if(this.pickerType === 1) {
         payload = {
-          question: this.question,
-          choices: this.choices,
+          question: this.internalQuestion,
+          choices: this.internalChoices,
           type: 1,
-          classroomId: 1
+          id: this.questionId
         };
       }
-      axios.post('http://localhost:8080/api/picker/save', payload)
+
+      axios.post('http://localhost:8080/api/picker/edit-question', payload)
         .then(response => {
-          if (response.status === 201) {
-            alert(`Saved: Question: ${this.question}`);
+          if (response.status === 200) {
             this.$emit('switchComponent', 'PickerBox')
           } else {
             alert('Failed to save the question');
@@ -98,7 +107,7 @@ export default {
           alert('Error saving the question');
         });
 
-    }
+    },
   }
 };
 </script>
