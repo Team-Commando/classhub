@@ -44,9 +44,9 @@ export default {
         .then((classCodeResponse) => {
           const internalClassCode = classCodeResponse.data.code;
           // Vuex 상태 업데이트
-          this.$store.dispatch("setClassCode", internalClassCode);
-          this.$store.dispatch("setSender", this.username);
-          this.$store.dispatch("setUserType", 'teacher');
+          this.$store.dispatch("triggerClassCode", internalClassCode);
+          this.$store.dispatch("triggerSender", this.username);
+          this.$store.dispatch("triggerUserType", 'teacher');
 
           // WebSocket 연결 초기화
           const connect = this.$store.dispatch("initializeWebSocket", internalClassCode);

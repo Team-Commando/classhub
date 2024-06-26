@@ -29,9 +29,9 @@ const store = createStore({
             events: [],
             joins: [],
             leaves: [],
-            pickerStarts: [],
-            pickerEnds: [],
-            pickerSelects: [],
+            pickerStart: null,
+            pickerEnd: null,
+            pickerSelect: null,
             socket: null,
             students: {}, // 학생 리스트를 추가합니다.
             classCode: "",
@@ -52,25 +52,25 @@ const store = createStore({
             delete state.students[leave.sessionId]; // 학생 리스트에서 삭제
 
         },
-        addPickerStart(state, pickerStart) {
-            state.pickerStarts.push(pickerStart);
+        setPickerStart(state, pickerStart) {
+            state.pickerStart = pickerStart;
         },
-        addPickerEnd(state, pickerEnd) {
-            state.pickerEnds.push(pickerEnd);
+        setPickerEnd(state, pickerEnd) {
+            state.pickerEnd = pickerEnd;
         },
-        addPickerSelect(state, pickerSelect) {
-            state.pickerSelects.push(pickerSelect);
+        setPickerSelect(state, pickerSelect) {
+            state.pickerSelect = pickerSelect;
         },
         setSocket(state, socket) {
             state.socket = socket;
         },
-        addClassCode(state, classCode) {
+        setClassCode(state, classCode) {
             state.classCode = classCode;
         },
-        addSender(state, sender) {
+        setSender(state, sender) {
             state.sender = sender;
         },
-        addUserType(state, userType) {
+        setUserType(state, userType) {
             state.userType = userType;
         },
     },
@@ -89,13 +89,13 @@ const store = createStore({
             commit('addLeave', leave);
         },
         triggerPickerStart({ commit }, pickerStart) {
-            commit('addPickerStart', pickerStart);
+            commit('setPickerStart', pickerStart);
         },
         triggerPickerEnd({ commit }, pickerEnd) {
-            commit('addPickerEnd', pickerEnd);
+            commit('setPickerEnd', pickerEnd);
         },
         triggerPickerSelect({ commit }, pickerSelect) {
-            commit('addPickerSelect', pickerSelect);
+            commit('setPickerSelect', pickerSelect);
         },
         initializeWebSocket({ commit }) {
             return new Promise((resolve, reject) => {
@@ -152,14 +152,14 @@ const store = createStore({
                 console.error('StompClient is not connected.');
             }
         },
-        setClassCode({ commit }, classCode) {
-            commit("addClassCode", classCode);
+        triggerClassCode({ commit }, classCode) {
+            commit("setClassCode", classCode);
         },
-        setSender({ commit }, sender) {
-            commit("addSender", sender);
+        triggerSender({ commit }, sender) {
+            commit("setSender", sender);
         },
-        setUserType({ commit }, userType) {
-            commit("addUserType", userType);
+        triggerUserType({ commit }, userType) {
+            commit("setUserType", userType);
         },
     },
 });

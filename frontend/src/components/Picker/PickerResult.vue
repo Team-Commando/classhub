@@ -73,7 +73,7 @@ export default {
     };
   },
   computed: {
-    ...mapState(["socket", "pickerSelects", "students"]),
+    ...mapState(["socket", "pickerSelect", "students"]),
     $style() {
       return styles;
     },
@@ -84,16 +84,14 @@ export default {
       return ((this.crossCount / this.totalStudents) * 100).toFixed(2);
     },
   },
+  watch: {
+    pickerSelect(newVal, oldVal) {
+      if (newVal) {
+        this.handleIncomingSelect(newVal);
+      }
+    }
+  },
   mounted() {
-    this.$store.watch(
-        (state) => state.pickerSelects.length,
-        (newLength) => {
-          const event = this.pickerSelects[newLength - 1];
-          if (event) {
-            this.handleIncomingSelect(event);
-          }
-        }
-    );
     if(this.pickerType === 1){
       this.renderChart();
     }

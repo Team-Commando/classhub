@@ -57,27 +57,21 @@ export default {
     };
   },
   computed: {
-    ...mapState(["socket", "pickerStarts", "pickerEnds", "classCode", "sender", "userType"]),
+    ...mapState(["socket", "pickerStart", "pickerEnd", "classCode", "sender", "userType"]),
   },
   mounted() {
-    this.$store.watch(
-        (state) => state.pickerStarts.length,
-        (newLength) => {
-          const startEvent = this.pickerStarts[newLength - 1];
-          if (startEvent) {
-            this.handlePickerStart(startEvent);
-          }
-        }
-    );
-    this.$store.watch(
-        (state) => state.pickerEnds.length,
-        (newLength) => {
-          const endEvent = this.pickerEnds[newLength - 1];
-          if (endEvent) {
-            this.handlePickerEnd(endEvent);
-          }
-        }
-    );
+  },
+  watch: {
+    pickerStart(newVal, oldVal) {
+      if (newVal) {
+        this.handlePickerStart(newVal);
+      }
+    },
+    pickerEnd(newVal, oldVal) {
+      if (newVal) {
+        this.handlePickerEnd(newVal);
+      }
+    }
   },
   methods: {
     thisModalOFF(){

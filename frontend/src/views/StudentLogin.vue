@@ -30,9 +30,9 @@ export default {
 
         try {
           // Vuex 상태 업데이트
-          this.$store.dispatch("setClassCode", this.internalClassCode);
-          this.$store.dispatch("setSender", this.studentName);
-          this.$store.dispatch("setUserType", 'student');
+          this.$store.dispatch("triggerClassCode", this.internalClassCode);
+          this.$store.dispatch("triggerSender", this.studentName);
+          this.$store.dispatch("triggerUserType", 'student');
 
           // WebSocket 연결 초기화
           const connect = this.$store.dispatch("initializeWebSocket", this.internalClassCode);
