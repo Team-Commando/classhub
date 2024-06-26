@@ -61,12 +61,28 @@
   </div>
 
   <DimModal :modalData="modalData"/>
-  <WidgetModal1 :isWidgetModalOpen="this.isWidgetModalOpen1" @close="toggleWidgetModal1"/>
-  <WidgetModal2 :isWidgetModalOpen="this.isWidgetModalOpen2" @close="toggleWidgetModal2"/>
+  <!-- Widget Modal: 버튼 클릭 시, 선택한 위젯에 대한 모달창 출력 -->
+  <WidgetModal
+      v-for="(w, i) in wArr"
+      :key="i"
+      :isWidgetModalOpen="w.isOpen"
+      :wId="w.wId"
+      :title="w.title"
+      @close="closeWidgetModal(w.wId)"
+  />
+  <WidgetModal2 :isWidgetModalOpen="this.isWidgetModalOpen2" @toggleWidgetModal="toggleWidgetModal2" :pickerType="pickerType"/>
 
-  <button @click="toggleWidgetModal1">위젯</button>
-  <button @click="toggleWidgetModal2">위젯</button>
-
+  <!-- 하단 위젯 선택 버튼 생성 -->
+  <button v-for="(wButton, i) in widget" :key="i" @click="toggleWidgetModal(wButton.wId)">{{ wButton.title }}</button>
+  <div class="btn-group dropup">
+    <button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+      고르기
+    </button>
+    <ul class="dropdown-menu">
+      <li><a @click="toggleWidgetModal2(true,0)" class="dropdown-item">OX</a></li>
+      <li><a @click="toggleWidgetModal2(true,1)" class="dropdown-item">선다형</a></li>
+    </ul>
+  </div>
 
 </template>
 
@@ -75,7 +91,7 @@ import Whiteboard from "../components/Whiteboard.vue";
 import { mapState } from "vuex";
 import { reactive } from "vue";
 import DimModal from "../components/DimModal.vue";
-import WidgetModal1 from "../components/WidgetModal1.vue";
+import WidgetModal from "../components/WidgetModal.vue";
 import WidgetModal2 from "../components/WidgetModal2.vue";
 
 export default {
@@ -83,7 +99,7 @@ export default {
   components: {
     Whiteboard,
     DimModal,
-    WidgetModal1,
+    WidgetModal,
     WidgetModal2,
   },
   props: {
@@ -93,33 +109,35 @@ export default {
     },
   },
   setup() {
-    const students = reactive({});
+    // const students = reactive({});
     const modalData = reactive({ modalTitle: '', modalBody: '' });
-    return { students, modalData };
+    return { modalData };
   },
   data() {
     return {
       sender: this.$route.query.currentUser,
+      userType: this.$route.query.userType, // Added to get user type
+
+      pickerType: 0,
       isStudentListOpen: false,
       canLeaveSite: false,
-      isWidgetModalOpen1:false,
       isWidgetModalOpen2:false,
 
+      // widget 정의: 위젯별 고유 ID, 위젯명, 위젯(모달창) 활성화 유무 설정
+      widget: [
+        { wId: 0, title: '칠교놀이', isOpen: false },
+        { wId: 1, title: '주사위', isOpen: false },
+      ],
+      wArr: {},   // 활성화된 위젯을 관리하는 Object
+      wArrId: 0,  // wArr(Object)의 key를 동적으로 생성하기 위해 선언
     };
   },
   computed: {
-    ...mapState(["socket"]),
+    ...mapState(["socket", "students"]),
   },
   mounted() {
-    this.$store.dispatch("subscribeToClass", this.classCode);
+    this.$store.dispatch("subscribeToClass", { classCode: this.classCode, userType: this.userType });
 
-    this.$store.subscribe((mutation, state) => {
-      if (mutation.type === "addJoin") {
-        this.handleStudentListJoin(mutation.payload);
-      } else if (mutation.type === "addLeave") {
-        this.handleStudentListLeave(mutation.payload);
-      }
-    });
     window.addEventListener("beforeunload", this.unLoadEvent);
   },
   methods: {
@@ -143,24 +161,6 @@ export default {
         });
       }
     },
-    handleStudentListJoin(message) {
-      try {
-        console.log("handleStudentListJoin", message);
-        const { sender, sessionId } = message;
-        this.students[sessionId] = sender;
-      } catch (error) {
-        console.error(error);
-      }
-    },
-    handleStudentListLeave(message) {
-      try {
-        console.log("handleStudentListLeave", message);
-        const { sessionId } = message;
-        delete this.students[sessionId];
-      } catch (error) {
-        console.error(error);
-      }
-    },
     toggleStudentList() {
       this.isStudentListOpen = !this.isStudentListOpen;
     },
@@ -168,11 +168,30 @@ export default {
       this.modalData.modalTitle = title;
       this.modalData.modalBody = this.classCode;
     },
-    toggleWidgetModal1() {
-      this.isWidgetModalOpen1 = !this.isWidgetModalOpen1;
+
+    // 선택한 위젯을 활성화
+    toggleWidgetModal(wId) {
+      this.widget[wId].isOpen = true;             // 선택한 위젯의 isOpen 속성을 true로 변경
+
+      // wArr(object) 데이터 추가: key 값을 동적으로 생성
+      this.wArrId = wId;                          // wArr key: wArr(Object)의 key 값을 선택한 위젯의 고유 ID와 동일하게 설정
+      this.wArr[this.wArrId] = this.widget[wId];  // wArr value: key에 해당하는 위젯 정보(wId, title, isOpen)를 설정
     },
-    toggleWidgetModal2() {
-      this.isWidgetModalOpen2 = !this.isWidgetModalOpen2;
+
+    // 선택한 위젯을 비활성화
+    closeWidgetModal(wId) {
+      this.widget[wId].isOpen = false;            // 선택한 위젯의 isOpen 속성을 false로 변경
+      delete this.wArr[wId];                      // wArr(Object)에서 선택한 위젯에 해당하는 데이터를 삭제
+    },
+
+    toggleWidgetModal2(forceToggle, pickerType) {
+        this.pickerType = pickerType;
+
+        if(typeof forceToggle === "boolean"){
+          this.isWidgetModalOpen2 = forceToggle;
+        }else {
+          this.isWidgetModalOpen2 = !this.isWidgetModalOpen2;
+        }
     },
 
   },

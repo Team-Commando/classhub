@@ -2,7 +2,7 @@
   <div id="student-login">
     <form @submit.prevent="joinClassroom">
       <label for="classCode">Class Code:</label>
-      <input v-model="classCode" type="text" id="classCode" required />
+      <input v-model="internalClassCode" type="text" id="classCode" required />
       <label for="studentName">Student Name:</label>
       <input v-model="studentName" type="text" id="studentName" required />
       <button type="submit">Join Classroom</button>
@@ -16,7 +16,7 @@ import { mapState } from "vuex";
 export default {
   data() {
     return {
-      classCode: "",
+      internalClassCode: "",
       studentName: "",
     };
   },
@@ -25,16 +25,21 @@ export default {
   },
   methods: {
     async joinClassroom() {
-      if (this.classCode && this.studentName) {
-        console.log("Joining classroom:", this.classCode, "with name:", this.studentName);
+      if (this.internalClassCode && this.studentName) {
+        console.log("Joining classroom:", this.internalClassCode, "with name:", this.studentName);
 
         try {
+          // Vuex 상태 업데이트
+          this.$store.dispatch("triggerClassCode", this.internalClassCode);
+          this.$store.dispatch("triggerSender", this.studentName);
+          this.$store.dispatch("triggerUserType", 'student');
+
           // WebSocket 연결 초기화
-          const connect = this.$store.dispatch("initializeWebSocket", this.classCode);
+          const connect = this.$store.dispatch("initializeWebSocket", this.internalClassCode);
 
           connect.then(() => {
             this.socket.publish({
-              destination: `/pub/join/${this.classCode}`,
+              destination: `/pub/join/${this.internalClassCode}`,
               body: JSON.stringify({
                 type: "JOIN",
                 sender: this.studentName,
@@ -43,8 +48,8 @@ export default {
             // Classroom 페이지로 이동
             this.$router.push({
               name: "Classroom",
-              params: { classCode: this.classCode },
-              query: { currentUser: this.studentName },
+              params: { classCode: this.internalClassCode },
+              query: { currentUser: this.studentName, userType: 'student' },
             });
           });
         } catch (error) {
