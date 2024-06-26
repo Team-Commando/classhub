@@ -62,7 +62,7 @@
 
   <DimModal :modalData="modalData"/>
   <!-- Widget Modal: 버튼 클릭 시, 선택한 위젯에 대한 모달창 출력 -->
-  <WidgetModal1
+  <WidgetModal
       v-for="(w, i) in wArr"
       :key="i"
       :isWidgetModalOpen="w.isOpen"
@@ -91,7 +91,7 @@ import Whiteboard from "../components/Whiteboard.vue";
 import { mapState } from "vuex";
 import { reactive } from "vue";
 import DimModal from "../components/DimModal.vue";
-import WidgetModal1 from "../components/WidgetModal1.vue";
+import WidgetModal from "../components/WidgetModal.vue";
 import WidgetModal2 from "../components/WidgetModal2.vue";
 
 export default {
@@ -99,7 +99,7 @@ export default {
   components: {
     Whiteboard,
     DimModal,
-    WidgetModal1,
+    WidgetModal,
     WidgetModal2,
   },
   props: {
