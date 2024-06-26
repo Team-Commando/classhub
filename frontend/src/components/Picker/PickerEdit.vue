@@ -5,7 +5,7 @@
       <input type="text" id="question" v-model="internalQuestion" required/>
     </div>
 
-    <div class="ox-choice-container" v-if="pickerType===0">
+    <div class="ox-choice-container" v-if="pickerType===1">
       <div class="ox-choice-button-container">
         <button class="ox-choice-button">
           <div class="circle"></div>
@@ -18,7 +18,7 @@
       </div>
     </div>
 
-    <div class="multi-choice-container" v-if="pickerType===1">
+    <div class="multi-choice-container" v-if="pickerType===2">
       <div v-for="(choice, index) in internalChoices" :key="index" class="multi-choice">
         <input type="text" v-model="internalChoices[index]" />
         <button v-if="internalChoices.length > 2" @click="removeChoice(index)" class="remove-button">-</button>
@@ -27,7 +27,7 @@
     </div>
 
     <div class="action-container">
-      <button @click="this.$emit('switchComponent', 'PickerBox')" class="action-button">취소하기</button>
+      <button @click="this.$emit('switchComponent', 'PickerBox', { pickerType })" class="action-button">취소하기</button>
       <button @click="editQuestion" class="action-button start-button">수정하기</button>
     </div>
   </div>
@@ -79,18 +79,18 @@ export default {
     editQuestion(){
       let payload = {};
 
-      if(this.pickerType === 0){
+      if(this.pickerType === 1){
         payload = {
           question: this.internalQuestion,
           choices: [],
-          type: 0,
+          type: this.pickerType,
           id: this.questionId
         };
-      }else if(this.pickerType === 1) {
+      }else if(this.pickerType === 2) {
         payload = {
           question: this.internalQuestion,
           choices: this.internalChoices,
-          type: 1,
+          type: this.pickerType,
           id: this.questionId
         };
       }
@@ -98,7 +98,7 @@ export default {
       axios.post('http://localhost:8080/api/picker/edit-question', payload)
         .then(response => {
           if (response.status === 200) {
-            this.$emit('switchComponent', 'PickerBox')
+            this.$emit('switchComponent', 'PickerBox', {pickerType: this.pickerType})
           } else {
             alert('Failed to save the question');
           }

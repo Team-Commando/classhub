@@ -5,7 +5,7 @@
       <input type="text" id="question" v-model="question" placeholder="원하시는 경우, 질문을 입력하세요(선택)" required/>
     </div>
 
-    <div class="ox-choice-container" v-if="pickerType===0">
+    <div class="ox-choice-container" v-if="pickerType===1">
       <div class="ox-choice-button-container">
         <button class="ox-choice-button">
           <div class="circle"></div>
@@ -18,7 +18,7 @@
       </div>
     </div>
 
-    <div class="multi-choice-container" v-if="pickerType===1">
+    <div class="multi-choice-container" v-if="pickerType===2">
       <div v-for="(choice, index) in choices" :key="index" class="multi-choice">
         <input type="text" v-model="choices[index]" />
         <button v-if="choices.length > 4" @click="removeChoice(index)" class="remove-button">-</button>
@@ -31,7 +31,7 @@
       <button @click="this.$emit('startPicker', this.question, this.choices)" class="action-button start-button">시작하기</button>
     </div>
 
-    <button class="store-button" @click="this.$emit('switchComponent', 'PickerBox')">보관함</button>
+    <button class="store-button" @click="this.$emit('switchComponent', 'PickerBox', {pickerType})">보관함</button>
   </div>
 </template>
 
@@ -70,18 +70,18 @@ export default {
       // Implement the logic for saving the selection
       let payload = {};
 
-      if(this.pickerType === 0){
+      if(this.pickerType === 1){
         payload = {
           question: this.question,
           choices: [],
-          type: 0,
+          type: this.pickerType ,
           classroomId: 1
         };
-      }else if(this.pickerType === 1) {
+      }else if(this.pickerType === 2) {
         payload = {
           question: this.question,
           choices: this.choices,
-          type: 1,
+          type: this.pickerType ,
           classroomId: 1
         };
       }
@@ -89,7 +89,7 @@ export default {
         .then(response => {
           if (response.status === 201) {
             alert(`Saved: Question: ${this.question}`);
-            this.$emit('switchComponent', 'PickerBox')
+            this.$emit('switchComponent', 'PickerBox', {pickerType: this.pickerType})
           } else {
             alert('Failed to save the question');
           }

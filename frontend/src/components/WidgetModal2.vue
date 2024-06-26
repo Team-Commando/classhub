@@ -8,7 +8,7 @@
       <div class="modal-body">
         <!--  componentProps를 spread 문법으로 풀어놓고, pickerType을 넣어 Object로 병합. start시 컴포넌트를 switch 하는 로직이 들아가면 componentProps 만 남길예정  -->
         <component :is="currentComponent"
-                   v-bind="{...componentProps, pickerType}"
+                   v-bind="componentProps"
                    v-on="eventListeners"/>
       </div>
     </div>
@@ -72,7 +72,13 @@ export default {
       if (newVal) {
         this.handlePickerEnd(newVal);
       }
-    }
+    },
+    pickerType(newVal, oldVal){
+      if (newVal) {
+        console.log("뉴발란스냐",newVal);
+       this.switchComponent('Picker', { pickerType: newVal });
+      }
+    },
   },
   methods: {
     thisModalOFF(){
@@ -152,7 +158,7 @@ export default {
       if(question===''){
         question = (this.pickerType===0) ? 'OX를 골라주세요':'보기를 선택해 주세요';
       }
-      this.switchComponent('PickerResult', {question, choices});
+      this.switchComponent('PickerResult', {pickerType: this.pickerType, question, choices});
     },
     endPicker() {
       // Implement the logic for starting selection for teacher

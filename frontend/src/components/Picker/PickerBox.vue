@@ -8,7 +8,7 @@
           <button @click="deleteQuestion(question.id)" class="small-button">삭제</button>
         </div>
         <div class="action-container">
-          <button @click="this.$emit('switchComponent', 'Picker')" class="action-button">질문 생성으로 돌아가기</button>
+          <button @click="this.$emit('switchComponent', 'Picker', { pickerType })" class="action-button">질문 생성으로 돌아가기</button>
           <button @click="startPickerFromBox" class="action-button start-button">시작하기</button>
         </div>
       </div>
@@ -60,7 +60,7 @@
         .then(response => {
           question = response.data.question;
           choices = response.data.choices;
-          this.$emit('switchComponent', 'PickerEdit', { question: question, choices: choices, questionId: id } )
+          this.$emit('switchComponent', 'PickerEdit', { pickerType: this.pickerType, question: question, choices: choices, questionId: id } )
         })
         .catch(error => {
           console.error('Error fetching questions:', error);
