@@ -36,4 +36,20 @@
             choices c ON q.id = c.question_id
         WHERE q.id = #{questionId}
     </select>
+
+    <update id="updateQuestion">
+        UPDATE questions
+        SET question = #{question}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteQuestionByQuestionId">
+        DELETE FROM questions
+        WHERE id = #{questionId}
+    </delete>
+
+    <delete id="deleteChoicesByQuestionId">
+        DELETE FROM choices
+        WHERE question_id = #{questionId}
+    </delete>
 </mapper>
