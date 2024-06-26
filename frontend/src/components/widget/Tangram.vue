@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import {upred} from "../../../public/code/tangram.js";
+import {upred} from "../../code/tangram.js";
 
 export default {
   name: 'Tangram',
