@@ -61,17 +61,19 @@
   </div>
 
   <DimModal :modalData="modalData"/>
-<!--  <WidgetModal1 :isWidgetModalOpen="this.isWidgetModalOpen1" :choice="choice" @close="toggleWidgetModal1"/>-->
+  <!-- Widget Modal: 버튼 클릭 시, 모달창 내부에 선택한 위젯 콘텐츠 출력 -->
   <WidgetModal1
-      v-for="(choiceWidget, i) in widget"
+      v-for="(w, i) in wArr"
       :key="i"
-      :isWidgetModalOpen="choiceWidget.isOpen"
-      :choice="choiceWidget.choice"
-      @close="closeWidgetModal1(choiceWidget.choice)"
+      :isWidgetModalOpen="w.isOpen"
+      :choice="w.cId"
+      :title="widget[w.cId].title"
+      @close="closeWidgetModal1(w.cId)"
   />
   <WidgetModal2 :isWidgetModalOpen="this.isWidgetModalOpen2" @toggleWidgetModal="toggleWidgetModal2" :classCode="classCode" :sender="sender" :pickerType="pickerType" :userType="userType"/>
 
-  <button v-for="(n, i) in name" :key="i" @click="toggleWidgetModal1(i)">{{ n }}</button>
+  <!-- 하단 위젯 선택 버튼 생성 -->
+  <button v-for="(wButton, i) in widget" :key="i" @click="toggleWidgetModal1(wButton.wId)">{{ wButton.title }}</button>
   <div class="btn-group dropup">
     <button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
       고르기
@@ -119,14 +121,16 @@ export default {
       pickerType: 0,
       isStudentListOpen: false,
       canLeaveSite: false,
-      isWidgetModalOpen1:false,
       isWidgetModalOpen2:false,
 
-      name: ['칠교판', '주사위'],
-      choice: 0,
+      // widget 정의: 위젯별 고유 ID, 위젯명 설정
+      widget: [
+        { wId: 0, title: '칠교놀이' },
+        { wId: 1, title: '주사위' },
+      ],
 
-      widget: [],
-      choiceWidget: null
+      createWidget: null,       // 생성할 WidgetModal Component
+      wArr: [],
     };
   },
   computed: {
@@ -165,17 +169,26 @@ export default {
       this.modalData.modalTitle = title;
       this.modalData.modalBody = this.classCode;
     },
-    toggleWidgetModal1(id) {
-      console.log(id);
-      this.choiceWidget = {  // 화면에 출력할 모달창(위젯)
-        choice: id,   // 위젯별 고유 ID
-        isOpen: true,  // 위젯 활성화 여부
+    toggleWidgetModal1(wId) {
+      console.log("wId", wId);
+      this.createWidget = {  // 화면에 출력할 모달창에 대한 속성 지정
+        cId: wId,            // 위젯 고유 ID 지정 (초기 wId = 0, 이후 모달창 추가 시, 1씩 증가)
+        isOpen: true,        // 선택 위젯의 활성화 상태 지정
       };
-      this.widget.push(this.choiceWidget); // widget 배열에 push
-      console.log(this.widget);
+      this.wArr.push(this.createWidget); // 생성한 WidgetModal Component를 widget(Array)에 push
     },
     closeWidgetModal1(id) {
-      this.widget.splice(id, 1);  // widget 배열에서 종료하고자 하는 위젯을 삭제
+      console.log("close Widget Modal", id);
+      // this.wArr.splice(cId, 1);  // widget 배열에서 종료하고자 하는 위젯을 삭제
+      // this.wArr = this.wArr.filter((e) => e !== this.wArr.id);
+
+      if (id == 0) {
+        this.wArr.splice(id, 1);
+      } else {
+        this.wArr.splice(id - 1, 1);
+      }
+      this.wArr[id].isOpen = false;
+      console.log(this.wArr);
     },
     toggleWidgetModal2(forceToggle, pickerType) {
         this.pickerType = pickerType;

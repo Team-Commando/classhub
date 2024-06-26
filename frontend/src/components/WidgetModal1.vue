@@ -52,7 +52,6 @@ export default {
     },
     title: {
       type: String,
-      default: 'Modal Title1'
     },
     choice: {
       type: Number,
