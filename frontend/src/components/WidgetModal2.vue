@@ -6,10 +6,10 @@
         <button class="close-button" @click="thisModalOFF" v-if="userType === 'teacher'">X</button>
       </div>
       <div class="modal-body">
-        <!--  componentProps를 spread 문법으로 풀어놓고, pickerType을 넣어 Object로 병합  -->
+        <!--  componentProps를 spread 문법으로 풀어놓고, pickerType을 넣어 Object로 병합. start시 컴포넌트를 switch 하는 로직이 들아가면 componentProps 만 남길예정  -->
         <component :is="currentComponent"
                    v-bind="{...componentProps, pickerType}"
-                   @switchComponent="switchComponent" @startPicker="startPicker" @endPicker="endPicker" @toggleWidgetModal="toggleWidgetModal"/>
+                   v-on="eventListeners"/>
       </div>
     </div>
   </div>
@@ -48,6 +48,7 @@ export default {
     return {
       currentComponent: 'Picker',
       componentProps: {},
+      eventListeners: {},
       message:{},
       question: '',
       choices:[],
@@ -79,25 +80,55 @@ export default {
       this.endPicker();
       this.switchComponent('Picker');
     },
-    toggleWidgetModal(forceToggle, pickerType) {
-      this.$emit('toggleWidgetModal', forceToggle, pickerType);
-    },
-    switchComponent(componentName, props={}) {
-      this.currentComponent = componentName;
-      this.componentProps = props;
-      // this.question = question;
-      // this.choices = choices;
-      // this.questionId = questionId;
-    },
     handlePickerStart(message) {
       // Handle picker start event for students
       this.message = message;
       this.switchComponent('PickerSelect', { message });
       this.toggleWidgetModal(true);
     },
-    handlePickerEnd(message){
+    handlePickerEnd(){
       // Handle picker end event for students
       this.toggleWidgetModal(false);
+    },
+    switchComponent(componentName, props={}) {
+      this.currentComponent = componentName;
+      this.componentProps = props;
+
+      switch (componentName) {
+        case 'Picker':
+          this.eventListeners = {
+            switchComponent: this.switchComponent,
+            startPicker: this.startPicker,
+          };
+          break;
+        case 'PickerBox':
+          this.eventListeners = {
+            switchComponent: this.switchComponent,
+            startPicker: this.startPicker,
+          };
+          break;
+        case 'PickerEdit':
+          this.eventListeners = {
+            switchComponent: this.switchComponent,
+          };
+          break;
+        case 'PickerResult':
+          this.eventListeners = {
+            endPicker: this.endPicker,
+            switchComponent: this.switchComponent,
+            toggleWidgetModal: this.toggleWidgetModal
+          };
+          break;
+        case 'PickerSelect':
+          this.eventListeners = {
+          };
+          break;
+        default:
+          this.eventListeners = {};
+      }
+    },
+    toggleWidgetModal(forceToggle, pickerType) {
+      this.$emit('toggleWidgetModal', forceToggle, pickerType);
     },
     startPicker(question, choices) {
       // Implement the logic for starting selection for teacher

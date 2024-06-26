@@ -95,7 +95,6 @@ export default {
     if(this.pickerType === 1){
       this.renderChart();
     }
-    console.log("this.students", Object.keys(this.students).length );
     this.totalStudents =  Object.keys(this.students).length;
 
   },
