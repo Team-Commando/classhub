@@ -2,7 +2,7 @@
   <div class="container">
     <div class="question-container">
       <label for="question"><h2>Q.</h2></label>
-      <input type="text" id="question" v-model="internalQuestion" required/>
+      <input type="text" id="question" v-model="question" placeholder="원하시는 경우, 질문을 입력하세요(선택)" required/>
     </div>
 
     <div class="ox-choice-container" v-if="pickerType===1">
@@ -19,45 +19,38 @@
     </div>
 
     <div class="multi-choice-container" v-if="pickerType===2">
-      <div v-for="(choice, index) in internalChoices" :key="index" class="multi-choice">
-        <input type="text" v-model="internalChoices[index]" />
-        <button v-if="internalChoices.length > 2" @click="removeChoice(index)" class="remove-button">-</button>
+      <div v-for="(choice, index) in choices" :key="index" class="multi-choice">
+        <input type="text" v-model="choices[index]" />
+        <button v-if="choices.length > 4" @click="removeChoice(index)" class="remove-button">-</button>
       </div>
-      <button v-if="internalChoices.length < 10" @click="addChoice" class="add-button">+</button>
+      <button v-if="choices.length < 10" @click="addChoice" class="add-button">+</button>
     </div>
 
     <div class="action-container">
-      <button @click="this.$emit('switchComponent', 'PickerBox', { pickerType })" class="action-button">취소하기</button>
-      <button @click="editQuestion" class="action-button start-button">수정하기</button>
+      <button @click="savePicker" class="action-button">저장하기</button>
+      <button @click="this.$emit('startPicker', this.question, this.choices)" class="action-button start-button">시작하기</button>
     </div>
+
+    <button class="store-button" @click="this.$emit('switchComponent', 'PickerBox', {pickerType})">보관함</button>
   </div>
 </template>
 
 <script>
+import axios from 'axios';
 import {mapState} from "vuex";
 import styles from '../../assets/css/Picker.module.css';
-import axios from "axios";
 
 export default {
-  name: 'PickerEdit',
+  name: 'PickerInit',
   props: {
-    question: {
-      type: String,
-    },
-    choices: {
-      type: Array,
-    },
     pickerType: {
-      type: Number,
-    },
-    questionId: {
       type: Number,
     },
   },
   data() {
     return {
-      internalQuestion: this.question,
-      internalChoices: this.choices,
+      question: '',
+      choices: ['A', 'B', 'C', 'D'],
     };
   },
   computed: {
@@ -66,38 +59,36 @@ export default {
       return styles;
     },
   },
-  mounted() {
-
-  },
   methods: {
     addChoice() {
-      this.internalChoices.push('');
+      this.choices.push('');
     },
     removeChoice(index) {
-      this.internalChoices.splice(index, 1);
+      this.choices.splice(index, 1);
     },
-    editQuestion(){
+    savePicker() {
+      // Implement the logic for saving the selection
       let payload = {};
 
       if(this.pickerType === 1){
         payload = {
-          question: this.internalQuestion,
+          question: this.question,
           choices: [],
-          type: this.pickerType,
-          id: this.questionId
+          type: this.pickerType ,
+          classroomId: 1
         };
       }else if(this.pickerType === 2) {
         payload = {
-          question: this.internalQuestion,
-          choices: this.internalChoices,
-          type: this.pickerType,
-          id: this.questionId
+          question: this.question,
+          choices: this.choices,
+          type: this.pickerType ,
+          classroomId: 1
         };
       }
-
-      axios.post('http://localhost:8080/api/picker/edit-question', payload)
+      axios.post('http://localhost:8080/api/picker/save', payload)
         .then(response => {
-          if (response.status === 200) {
+          if (response.status === 201) {
+            alert(`Saved: Question: ${this.question}`);
             this.$emit('switchComponent', 'PickerBox', {pickerType: this.pickerType})
           } else {
             alert('Failed to save the question');
@@ -107,7 +98,7 @@ export default {
           alert('Error saving the question');
         });
 
-    },
+    }
   }
 };
 </script>
