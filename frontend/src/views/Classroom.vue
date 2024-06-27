@@ -69,18 +69,24 @@
       :wId="w.wId"
       :title="w.title"
       @close="closeWidgetModal(w.wId)"
+      @open="toggleWidgetModal(w.wId)"
+      :pickerType="pickerType"
+      :ref="'widgetModal'+ i"
   />
-  <WidgetModal2 :isWidgetModalOpen="this.isWidgetModalOpen2" @toggleWidgetModal="toggleWidgetModal2" :pickerType="pickerType"/>
+<!--  <WidgetModal2 :isWidgetModalOpen="this.isWidgetModalOpen2" @toggleWidgetModal="toggleWidgetModal2" :pickerType="pickerType"/>-->
 
   <!-- 하단 위젯 선택 버튼 생성 -->
-  <button v-for="(wButton, i) in widget" :key="i" @click="toggleWidgetModal(wButton.wId)">{{ wButton.title }}</button>
+  <div class="btn-group dropup">
+    <button v-for="(wButton, i) in widget" :key="i" @click="toggleWidgetModal(wButton.wId)" >{{ wButton.title }}</button>
+  </div>
+
   <div class="btn-group dropup">
     <button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
       고르기
     </button>
     <ul class="dropdown-menu">
-      <li><a @click="toggleWidgetModal2(true,0)" class="dropdown-item">OX</a></li>
-      <li><a @click="toggleWidgetModal2(true,1)" class="dropdown-item">선다형</a></li>
+      <li><a @click="toggleWidgetModal(2, 1)" class="dropdown-item">OX</a></li>
+      <li><a @click="toggleWidgetModal(2, 2)" class="dropdown-item">선다형</a></li>
     </ul>
   </div>
 
@@ -92,7 +98,7 @@ import { mapState } from "vuex";
 import { reactive } from "vue";
 import DimModal from "../components/DimModal.vue";
 import WidgetModal from "../components/WidgetModal.vue";
-import WidgetModal2 from "../components/WidgetModal2.vue";
+import WidgetModal2 from "../components/Picker/Picker.vue";
 
 export default {
   name: "Classroom",
@@ -118,7 +124,7 @@ export default {
       sender: this.$route.query.currentUser,
       userType: this.$route.query.userType, // Added to get user type
 
-      pickerType: 0,
+      pickerType: null,
       isStudentListOpen: false,
       canLeaveSite: false,
       isWidgetModalOpen2:false,
@@ -127,13 +133,30 @@ export default {
       widget: [
         { wId: 0, title: '칠교놀이', isOpen: false },
         { wId: 1, title: '주사위', isOpen: false },
+        { wId: 2, title: '고르기', isOpen: false },
       ],
       wArr: {},   // 활성화된 위젯을 관리하는 Object
       wArrId: 0,  // wArr(Object)의 key를 동적으로 생성하기 위해 선언
     };
   },
   computed: {
-    ...mapState(["socket", "students"]),
+    ...mapState(["socket", "students", "pickerStart"]),
+  },
+  watch:{
+    pickerStart: { //학생의 경우, watch를 모달창에서 해야 Picker 적용됨
+      handler(newVal) {
+        if (newVal) {
+          this.toggleWidgetModal(2, newVal.data.pickerType);
+          this.$nextTick(() => {
+            const widgetComponent = this.$refs['widgetModal2'][0];
+            if (widgetComponent) {
+              widgetComponent.switchToPickerSelect(newVal);
+            }
+          });
+        }
+      },
+    immediate: true,
+    },
   },
   mounted() {
     this.$store.dispatch("subscribeToClass", { classCode: this.classCode, userType: this.userType });
@@ -170,18 +193,28 @@ export default {
     },
 
     // 선택한 위젯을 활성화
-    toggleWidgetModal(wId) {
+    toggleWidgetModal(wId, pickerType) {
       this.widget[wId].isOpen = true;             // 선택한 위젯의 isOpen 속성을 true로 변경
+      console.log("ㅆㅃ", this.widget[wId].isOpen);
+      console.log("ㅆㅃ 왜?", this.widget);
 
+      this.pickerType = pickerType;
       // wArr(object) 데이터 추가: key 값을 동적으로 생성
       this.wArrId = wId;                          // wArr key: wArr(Object)의 key 값을 선택한 위젯의 고유 ID와 동일하게 설정
       this.wArr[this.wArrId] = this.widget[wId];  // wArr value: key에 해당하는 위젯 정보(wId, title, isOpen)를 설정
+
+      console.log("열었음", this.wArr);
+      console.log("wId", wId);
+      console.log("위젯 설정", this.widget);
     },
 
     // 선택한 위젯을 비활성화
     closeWidgetModal(wId) {
       this.widget[wId].isOpen = false;            // 선택한 위젯의 isOpen 속성을 false로 변경
       delete this.wArr[wId];                      // wArr(Object)에서 선택한 위젯에 해당하는 데이터를 삭제
+      console.log("닫았음", this.wArr);
+      console.log("wId", wId);
+      console.log("위젯 설정", this.widget);
     },
 
     toggleWidgetModal2(forceToggle, pickerType) {
