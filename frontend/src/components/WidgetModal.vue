@@ -22,7 +22,8 @@
 
 <script>
 import Tangram from "./widget/Tangram.vue";
-import Dice from "./widget/Dice.vue";
+// import Dices from "./widget/Dices.vue";
+import Clock from "./widget/Clock.vue";
 
 export default {
   name: 'WidgetModal',
@@ -42,7 +43,8 @@ export default {
 
   components: {
     Tangram: Tangram,
-    Dice: Dice
+    // Dices: Dices
+    Clock: Clock
   },
 
   props: {
@@ -69,7 +71,7 @@ export default {
                 this.activeWidget = Tangram.name;
                 break;
               case 1:
-                this.activeWidget = Dice.name;
+                this.activeWidget = Clock.name;
                 break;
               default:
                 console.log("지정할 컴포넌트가 존재하지 않습니다.");
