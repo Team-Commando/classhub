@@ -22,7 +22,7 @@
 
 <script>
 import Tangram from "./widget/Tangram.vue";
-import Dice from "./widget/Dice.vue";
+import Dices from "./widget/Dices.vue";
 import Picker from "./Picker/Picker.vue";
 import {mapState} from "vuex";
 
@@ -47,7 +47,7 @@ export default {
 
   components: {
     Tangram: Tangram,
-    Dice: Dice,
+    Dices: Dices,
     Picker: Picker,
   },
 
@@ -81,7 +81,7 @@ export default {
                 this.activeWidget = Tangram.name;
                 break;
               case 1:
-                this.activeWidget = Dice.name;
+                this.activeWidget = Dices.name;
                 break;
               case 2:
                 this.activeWidget = Picker.name;
