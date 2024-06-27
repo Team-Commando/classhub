@@ -10,7 +10,7 @@
 
       <!-- modal body start -->
       <div class="modal-body">
-          <component :is="activeWidget"/>
+          <component :is="activeWidget" v-bind="componentProps" v-on="eventListeners"/>
       </div>
       <!-- modal body end -->
 
@@ -23,6 +23,8 @@
 <script>
 import Tangram from "./widget/Tangram.vue";
 import Dice from "./widget/Dice.vue";
+import Picker from "./Picker/Picker.vue";
+import {mapState} from "vuex";
 
 export default {
   name: 'WidgetModal',
@@ -37,12 +39,16 @@ export default {
       resizeStartY: 0,
       initialWidth: 0,
       initialHeight: 0,
+      componentProps: {},
+      eventListeners: {},
+      pickerSendToStudentMessage: null,
     }
   },
 
   components: {
     Tangram: Tangram,
-    Dice: Dice
+    Dice: Dice,
+    Picker: Picker,
   },
 
   props: {
@@ -55,9 +61,15 @@ export default {
     },
     wId: {
       type: Number,
-    }
+    },
+    pickerType: {
+      type: Number,
+    },
   },
 
+  computed: {
+    ...mapState(["pickerStart", "pickerEnd"]),
+  },
   watch: {
     isWidgetModalOpen: {    // isWidgetModalOpen의 상태를 감시
       handler(state) {
@@ -71,6 +83,14 @@ export default {
               case 1:
                 this.activeWidget = Dice.name;
                 break;
+              case 2:
+                this.activeWidget = Picker.name;
+                this.componentProps = {pickerType: this.pickerType, pickerSendToStudentMessage: this.pickerSendToStudentMessage };
+                this.eventListeners = {
+                  closeModal: this.closeModal,
+                  openModal: this.openModal,
+                };
+                break;
               default:
                 console.log("지정할 컴포넌트가 존재하지 않습니다.");
             }
@@ -78,13 +98,18 @@ export default {
         }
       },
       immediate: true
-    }
+    },
   },
 
   methods: {
     // 모달창 종료 메서드
     closeModal() {
       this.$emit('close');
+    },
+
+    // 모달창 오픈 메서드
+    openModal() {
+      this.$emit('open');
     },
 
     // mousedown 이벤트 발생 시, 모달창의 위치 or 크기 조정을 결정하는 handler 메서드
@@ -159,6 +184,11 @@ export default {
       document.removeEventListener('mousemove', this.resizeModal);
       document.removeEventListener('mouseup', this.stopResizeModal);
     },
+
+    switchToPickerSelect(newVal) {
+      this.pickerSendToStudentMessage = newVal;
+    },
+
   },
 }
 </script>

@@ -1,111 +1,176 @@
 <template>
-  <div class="container">
-    <div class="question-container">
-      <label for="question"><h2>Q.</h2></label>
-      <input type="text" id="question" v-model="question" placeholder="원하시는 경우, 질문을 입력하세요(선택)" required/>
-    </div>
 
-    <div class="ox-choice-container" v-if="pickerType===1">
-      <div class="ox-choice-button-container">
-        <button class="ox-choice-button">
-          <div class="circle"></div>
-        </button>
+      <div>
+        <component :is="currentComponent"
+                   v-bind="componentProps"
+                   v-on="eventListeners"/>
       </div>
-      <div class="ox-choice-button-container">
-        <button class="ox-choice-button">
-          <div class="cross"></div>
-        </button>
-      </div>
-    </div>
 
-    <div class="multi-choice-container" v-if="pickerType===2">
-      <div v-for="(choice, index) in choices" :key="index" class="multi-choice">
-        <input type="text" v-model="choices[index]" />
-        <button v-if="choices.length > 4" @click="removeChoice(index)" class="remove-button">-</button>
-      </div>
-      <button v-if="choices.length < 10" @click="addChoice" class="add-button">+</button>
-    </div>
-
-    <div class="action-container">
-      <button @click="savePicker" class="action-button">저장하기</button>
-      <button @click="this.$emit('startPicker', this.question, this.choices)" class="action-button start-button">시작하기</button>
-    </div>
-
-    <button class="store-button" @click="this.$emit('switchComponent', 'PickerBox', {pickerType})">보관함</button>
-  </div>
 </template>
 
 <script>
-import axios from 'axios';
+import PickerInit from './PickerInit.vue';
+import PickerBox from './PickerBox.vue';
+import PickerSelect from "./PickerSelect.vue";
+import PickerResult from "./PickerResult.vue";
+import PickerEdit from "./PickerEdit.vue";
 import {mapState} from "vuex";
-import styles from '../../assets/css/Picker.module.css';
 
 export default {
   name: 'Picker',
+  components: {
+    PickerInit,
+    PickerBox,
+    PickerSelect,
+    PickerResult,
+    PickerEdit,
+  },
   props: {
     pickerType: {
       type: Number,
+      required: false,
     },
+    pickerSendToStudentMessage: {},
   },
   data() {
     return {
+      currentComponent: null,
+      componentProps: {},
+      eventListeners: {},
+      message:{},
       question: '',
-      choices: ['A', 'B', 'C', 'D'],
+      choices:[],
+      questionId: 0,
+      title: 'Modal Title2',
+
     };
   },
   computed: {
-    ...mapState(["socket"]),
-    $style() {
-      return styles;
+    ...mapState(["socket", "pickerStart", "pickerEnd", "classCode", "sender", "userType"]),
+  },
+  watch: {
+    pickerEnd: {
+      handler(newVal) {
+        if (newVal) {
+          this.handlePickerEnd();
+        }
+      },
+      immediate: true,
+    },
+    pickerType: {
+      handler(newVal) {
+        if (newVal) {
+          const componentName = this.userType === 'teacher' ? 'PickerInit' : 'PickerSelect'
+          this.switchComponent(componentName, { pickerType: newVal, message: this.pickerSendToStudentMessage });
+        }
+      },
+      immediate: true,
     },
   },
   methods: {
-    addChoice() {
-      this.choices.push('');
+    thisModalOFF(){
+      this.$emit('toggleWidgetModal');
+      this.endPicker();
+      this.switchComponent('PickerInit');
     },
-    removeChoice(index) {
-      this.choices.splice(index, 1);
+    // handlePickerStart(message) {
+    //   // Handle picker start event for students
+    //   this.message = message;
+    //   this.switchComponent('PickerSelect', { message });
+    // },
+    handlePickerEnd(){
+      // Handle picker end event for students
+      this.$emit('closeModal');
     },
-    savePicker() {
-      // Implement the logic for saving the selection
-      let payload = {};
+    switchComponent(componentName, props={}) {
+      this.currentComponent = componentName;
+      this.componentProps = props;
 
-      if(this.pickerType === 1){
-        payload = {
-          question: this.question,
-          choices: [],
-          type: this.pickerType ,
-          classroomId: 1
-        };
-      }else if(this.pickerType === 2) {
-        payload = {
-          question: this.question,
-          choices: this.choices,
-          type: this.pickerType ,
-          classroomId: 1
-        };
+      switch (componentName) {
+        case 'PickerInit':
+          this.eventListeners = {
+            switchComponent: this.switchComponent,
+            startPicker: this.startPicker,
+          };
+          break;
+        case 'PickerBox':
+          this.eventListeners = {
+            switchComponent: this.switchComponent,
+            startPicker: this.startPicker,
+          };
+          break;
+        case 'PickerEdit':
+          this.eventListeners = {
+            switchComponent: this.switchComponent,
+          };
+          break;
+        case 'PickerResult':
+          this.eventListeners = {
+            endPicker: this.endPicker,
+            switchComponent: this.switchComponent,
+            openModal: this.openModal,
+            closeModal: this.closeModal,
+          };
+          break;
+        case 'PickerSelect':
+          this.eventListeners = {
+          };
+          break;
+        default:
+          this.eventListeners = {};
       }
-      axios.post('http://localhost:8080/api/picker/save', payload)
-        .then(response => {
-          if (response.status === 201) {
-            alert(`Saved: Question: ${this.question}`);
-            this.$emit('switchComponent', 'PickerBox', {pickerType: this.pickerType})
-          } else {
-            alert('Failed to save the question');
-          }
-        })
-        .catch(error => {
-          alert('Error saving the question');
+    },
+    openModal(pickerType) {
+      this.$emit('openModal', pickerType);
+    },
+    closeModal() {
+      this.$emit('closeModal');
+    },
+    startPicker(question, choices) {
+      // Implement the logic for starting selection for teacher
+      alert('Selection started!');
+      // 메시지 전송
+      const message = JSON.stringify({
+        type: "PICKER/START",
+        sender: this.sender,
+        data: {
+          question: question,
+          choices: choices,
+          pickerType: this.pickerType,
+        },
+      });
+      if (this.socket && this.socket.connected) {
+        this.socket.publish({
+          destination: `/pub/picker/start/${this.classCode}`,
+          body: message,
         });
-
-    }
+      }
+      if(question===''){
+        question = (this.pickerType===0) ? 'OX를 골라주세요':'보기를 선택해 주세요';
+      }
+      this.switchComponent('PickerResult', {pickerType: this.pickerType, question, choices});
+    },
+    endPicker() {
+      // Implement the logic for starting selection for teacher
+      alert('Selection end!');
+      // 메시지 전송
+      const message = JSON.stringify({
+        type: "PICKER/END",
+        sender: this.sender,
+        data: {
+        },
+      });
+      if (this.socket && this.socket.connected) {
+        this.socket.publish({
+          destination: `/pub/picker/end/${this.classCode}`,
+          body: message,
+        });
+      }
+    },
   }
 };
 </script>
 
 <style scoped>
-@import "../../assets/css/Picker.module.css";
-.action-container{
-  justify-content: space-between;
-}
+
 </style>

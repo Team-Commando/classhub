@@ -124,13 +124,13 @@ export default {
     },
     backToPicker(){
       this.$emit('endPicker');
-      this.$emit('switchComponent', 'Picker', {pickerType: this.pickerType});
+      this.$emit('switchComponent', 'PickerInit', {pickerType: this.pickerType});
     },
 
     endResult() {
-      this.$emit('toggleWidgetModal')
+      this.$emit('closeModal')
       this.$emit('endPicker');
-      this.$emit('switchComponent', 'Picker', {pickerType: this.pickerType});
+      this.$emit('switchComponent', 'PickerInit', {pickerType: this.pickerType});
     },
     getRandomColor() {
       const letters = '0123456789ABCDEF';
