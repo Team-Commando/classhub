@@ -23,7 +23,8 @@ const createStompClient = (commit) => { //commit 메서드를 인자로 받아 �
     });
 };
 
-const store = createStore({
+const websocket = {
+    namespaced: true,
     state() { //애플리케이션의 상태를 정의
         return {
             events: [],
@@ -162,6 +163,6 @@ const store = createStore({
             commit("setUserType", userType);
         },
     },
-});
+};
 
-export default store;
+export default websocket;
