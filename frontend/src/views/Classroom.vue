@@ -314,7 +314,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(["socket", "students", "pickerStart"]),
+    ...mapState('websocket',["socket", "students", "pickerStart"]),
   },
   watch: {
     pickerStart: { //학생의 경우, watch를 모달창에서 해야 Picker 적용됨
@@ -333,7 +333,7 @@ export default {
     },
   },
   mounted() {
-    this.$store.dispatch("subscribeToClass", {classCode: this.classCode, userType: this.userType});
+    this.$store.dispatch("websocket/subscribeToClass", {classCode: this.classCode, userType: this.userType});
 
     window.addEventListener("beforeunload", this.unLoadEvent);
   },
