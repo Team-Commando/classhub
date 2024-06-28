@@ -36,7 +36,7 @@
 
 <script>
 import {mapState} from "vuex";
-import styles from '../../assets/css/Picker.module.css';
+import styles from '../../css/Picker.module.css';
 
 export default {
   name: 'PickerSelect',
@@ -101,7 +101,7 @@ export default {
 </script>
 
 <style scoped>
-  @import "../../assets/css/Picker.module.css";
+  @import "../../css/Picker.module.css";
   .action-container{
     justify-content: center;
   }

@@ -21,7 +21,7 @@ export default {
     };
   },
   computed: {
-    ...mapState(["socket"]),
+    ...mapState('websocket', ['socket']),
   },
   methods: {
     async joinClassroom() {
@@ -30,12 +30,12 @@ export default {
 
         try {
           // Vuex 상태 업데이트
-          this.$store.dispatch("triggerClassCode", this.internalClassCode);
-          this.$store.dispatch("triggerSender", this.studentName);
-          this.$store.dispatch("triggerUserType", 'student');
+          this.$store.dispatch("websocket/triggerClassCode", this.internalClassCode);
+          this.$store.dispatch("websocket/triggerSender", this.studentName);
+          this.$store.dispatch("websocket/triggerUserType", 'student');
 
           // WebSocket 연결 초기화
-          const connect = this.$store.dispatch("initializeWebSocket", this.internalClassCode);
+          const connect = this.$store.dispatch("websocket/initializeWebSocket", this.internalClassCode);
 
           connect.then(() => {
             this.socket.publish({
