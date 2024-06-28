@@ -1,6 +1,6 @@
 <template>
 
-      <div>
+      <div id="picker-container">
         <component :is="currentComponent"
                    v-bind="componentProps"
                    v-on="eventListeners"/>
@@ -34,7 +34,7 @@ export default {
   },
   data() {
     return {
-      currentComponent: null,
+      currentComponent: PickerInit,
       componentProps: {},
       eventListeners: {},
       message:{},
@@ -49,6 +49,14 @@ export default {
     ...mapState(["socket", "pickerStart", "pickerEnd", "classCode", "sender", "userType"]),
   },
   watch: {
+    // pickerStart: {
+    //   handler(newVal) {
+    //     if (newVal) {
+    //       this.handlePickerStart();
+    //     }
+    //   },
+    //   immediate: true,
+    // },
     pickerEnd: {
       handler(newVal) {
         if (newVal) {
@@ -60,7 +68,7 @@ export default {
     pickerType: {
       handler(newVal) {
         if (newVal) {
-          const componentName = this.userType === 'teacher' ? 'PickerInit' : 'PickerSelect'
+          const componentName = (this.userType === 'teacher') ? 'PickerInit' : 'PickerSelect'
           this.switchComponent(componentName, { pickerType: newVal, message: this.pickerSendToStudentMessage });
         }
       },
@@ -172,5 +180,8 @@ export default {
 </script>
 
 <style scoped>
-
+  #picker-container{
+    flex: 1;
+    position: relative;
+  }
 </style>

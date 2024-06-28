@@ -23,7 +23,7 @@ export default {
     };
   },
   computed: {
-    ...mapState(["socket", "classCode"]),
+    ...mapState('websocket', ['socket', 'classCode']),
   },
   methods: {
     login() {
@@ -34,6 +34,7 @@ export default {
         })
         .then((response) => {
           if (response.data) {
+            console.log('여긴됨?1')
             return axios.get(
               `http://localhost:8080/api/classrooms/teacher/${response.data}`
             );
@@ -44,12 +45,14 @@ export default {
         .then((classCodeResponse) => {
           const internalClassCode = classCodeResponse.data.code;
           // Vuex 상태 업데이트
-          this.$store.dispatch("triggerClassCode", internalClassCode);
-          this.$store.dispatch("triggerSender", this.username);
-          this.$store.dispatch("triggerUserType", 'teacher');
+
+          this.$store.dispatch("websocket/triggerClassCode", internalClassCode);
+          this.$store.dispatch("websocket/triggerSender", this.username);
+          this.$store.dispatch("websocket/triggerUserType", 'teacher');
+
 
           // WebSocket 연결 초기화
-          const connect = this.$store.dispatch("initializeWebSocket", internalClassCode);
+          const connect = this.$store.dispatch("websocket/initializeWebSocket", internalClassCode);
           connect.then(() => {
             // Redirect to the classroom page
             this.$router.push({

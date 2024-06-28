@@ -35,7 +35,7 @@
 
 <script>
 import {mapState} from "vuex";
-import styles from '../../assets/css/Picker.module.css';
+import styles from '../../css/Picker.module.css';
 import axios from "axios";
 
 export default {
@@ -113,7 +113,7 @@ export default {
 </script>
 
 <style scoped>
-@import "../../assets/css/Picker.module.css";
+@import "../../css/Picker.module.css";
 .action-container{
   justify-content: space-between;
 }
