@@ -3,6 +3,7 @@
     <div class="question-container">
       <label for="question"><h2>Q.</h2></label>
       <input type="text" id="question" v-model="question" placeholder="원하시는 경우, 질문을 입력하세요(선택)" required/>
+      <button class="store-button" @click="this.$emit('switchComponent', 'PickerBox', {pickerType})">보관함</button>
     </div>
 
     <div class="ox-choice-container" v-if="pickerType===1">
@@ -30,15 +31,13 @@
       <button @click="savePicker" class="action-button">저장하기</button>
       <button @click="this.$emit('startPicker', this.question, this.choices)" class="action-button start-button">시작하기</button>
     </div>
-
-    <button class="store-button" @click="this.$emit('switchComponent', 'PickerBox', {pickerType})">보관함</button>
   </div>
 </template>
 
 <script>
 import axios from 'axios';
 import {mapState} from "vuex";
-import styles from '../../assets/css/Picker.module.css';
+import styles from '../../css/Picker.module.css';
 
 export default {
   name: 'PickerInit',
@@ -104,7 +103,7 @@ export default {
 </script>
 
 <style scoped>
-@import "../../assets/css/Picker.module.css";
+@import "../../css/Picker.module.css";
 .action-container{
   justify-content: space-between;
 }
