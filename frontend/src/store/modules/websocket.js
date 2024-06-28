@@ -1,4 +1,3 @@
-import { createStore } from 'vuex';
 import { Client } from "@stomp/stompjs";
 
 let stompClient = null;

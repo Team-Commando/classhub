@@ -1,4 +1,4 @@
-const modalStore = {
+const picker = {
     namespaced: true,
     state: {
         data: [],
@@ -20,5 +20,5 @@ const modalStore = {
     },
 };
 
-export default modalStore
+export default picker
 
