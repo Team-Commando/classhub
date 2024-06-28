@@ -24,7 +24,6 @@ export default {
   },
   computed: {
     ...mapState('websocket', ['socket', 'classCode']),
-    ...mapState('jokes', ['data']),
   },
   methods: {
     login() {
