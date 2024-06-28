@@ -1,6 +1,6 @@
 <template>
 
-      <div>
+      <div id="picker-container">
         <component :is="currentComponent"
                    v-bind="componentProps"
                    v-on="eventListeners"/>
@@ -172,5 +172,8 @@ export default {
 </script>
 
 <style scoped>
-
+  #picker-container{
+    flex: 1;
+    position: relative;
+  }
 </style>
