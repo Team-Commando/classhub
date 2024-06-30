@@ -8,9 +8,9 @@
           <div class="card-body d-flex">
             <h5>http://localhost:5173/student/{{ classCode }}</h5>
             <button @click="changeModalData('반 코드')" class="btn btn-sm btn-outline-secondary" type="button"
-            data-bs-toggle="modal" data-bs-target="#exampleModalCenter">코드</button>
+                    data-bs-toggle="modal" data-bs-target="#exampleModalCenter">코드</button>
             <button @click="changeModalData('QR 코드')" class="btn btn-sm btn-outline-secondary" type="button"
-            data-bs-toggle="modal" data-bs-target="#exampleModalCenter">QR</button>
+                    data-bs-toggle="modal" data-bs-target="#exampleModalCenter">QR</button>
           </div>
         </div>
         <button @click="toggleStudentList" class="btn btn-outline-success me-2" type="button">
@@ -62,17 +62,17 @@
 
   <DimModal :modalData="modalData"/>
   <!-- Widget Modal: 버튼 클릭 시, 선택한 위젯에 대한 모달창 출력 -->
-<!--  <WidgetModal-->
-<!--      v-for="(w, i) in this.state.value.wArr"-->
-<!--      :key="i"-->
-<!--      :isWidgetModalOpen="w.isOpen"-->
-<!--      :wId="w.wId"-->
-<!--      :title="w.title"-->
-<!--      @open="toggleWidgetModal(w.wId)"-->
-<!--      @close="closeWidgetModal(w.wId)"-->
-<!--      :pickerType="pickerType"-->
-<!--      :ref="'widgetModal'+ i"-->
-<!--  />-->
+  <!--  <WidgetModal-->
+  <!--      v-for="(w, i) in this.state.value.wArr"-->
+  <!--      :key="i"-->
+  <!--      :isWidgetModalOpen="w.isOpen"-->
+  <!--      :wId="w.wId"-->
+  <!--      :title="w.title"-->
+  <!--      @open="toggleWidgetModal(w.wId)"-->
+  <!--      @close="closeWidgetModal(w.wId)"-->
+  <!--      :pickerType="pickerType"-->
+  <!--      :ref="'widgetModal'+ i"-->
+  <!--  />-->
   <WidgetModal
       v-for="(w, i) in widget"
       :key="i"
@@ -84,7 +84,7 @@
       :pickerType="state.pickerType"
       :ref="'widgetModal'+ i"
   />
-<!--  <WidgetModal2 :isWidgetModalOpen="this.isWidgetModalOpen2" @toggleWidgetModal="toggleWidgetModal2" :pickerType="pickerType"/>-->
+  <!--  <WidgetModal2 :isWidgetModalOpen="this.isWidgetModalOpen2" @toggleWidgetModal="toggleWidgetModal2" :pickerType="pickerType"/>-->
 
   <!-- 하단 위젯 선택 버튼 생성 -->
   <div class="btn-group dropup">
@@ -225,16 +225,16 @@ export default {
   // },
   setup(props, { root }) {
     const modalData = reactive({ modalTitle: "", modalBody: "" });
-    const widget = ref([
-        { wId: 0, title: "칠교놀이", isOpen: false },
-        { wId: 1, title: "주사위", isOpen: false },
-        { wId: 2, title: "고르기", isOpen: false },
-      ]);
+    let widget = ref([
+      { wId: 0, title: "칠교놀이", isOpen: false },
+      { wId: 1, title: "주사위", isOpen: false },
+      { wId: 2, title: "고르기", isOpen: false },
+    ]);
 
-    const wArr = ref({});
-    const wArrId = ref(0);
+    let wArr = ref({});
+    let wArrId = ref(0);
 
-    const state = reactive({
+    let state = reactive({
       canLeaveSite: false,
       pickerType: null,
     });
@@ -254,6 +254,7 @@ export default {
       console.log("pickerType은?", state.pickerType);
 
       widget.value[wId].isOpen = true;
+      console.log("위젯창 열었음!!");
       console.log("true로 변경한 이후 widget 모든 속성 보기", widget.value);
 
       wArrId.value = wId;
@@ -265,6 +266,10 @@ export default {
     const closeWidgetModal = (wId) => {
       widget.value[wId].isOpen = false;
       delete wArr.value[wId];
+
+      console.log("위젯창 닫았음!!");
+      console.log("false로 변경한 이후 widget 모든 속성 보기", widget.value);
+      console.log("false로 변경한 이후 모든 wArr 보기", wArr.value);
     };
 
     return {
@@ -284,38 +289,38 @@ export default {
     return {
       sender: this.$route.query.currentUser,
       userType: this.$route.query.userType, // Added to get user type
-  //   //
+      //   //
       pickerType: null,
-  //   //   isStudentListOpen: false,
-  //   //   canLeaveSite: false,
-  //   //   isWidgetModalOpen2:false,
-  //   //
-  //   //   // widget 정의: 위젯별 고유 ID, 위젯명, 위젯(모달창) 활성화 유무 설정
-  //   //   widget: [
-  //   //     { wId: 0, title: '칠교놀이', isOpen: false },
-  //   //     { wId: 1, title: '주사위', isOpen: false },
-  //   //     { wId: 2, title: '고르기', isOpen: false },
-  //   //   ],
-  //   //   wArr: {},   // 활성화된 위젯을 관리하는 Object
-  //   //   wArrId: 0,  // wArr(Object)의 key를 동적으로 생성하기 위해 선언
-  //   // };
-  //   return {
-  //     sender: this.$route.query.currentUser,
-  //     userType: this.$route.query.userType, // Added to get user type
-  //     pickerType: null,
-  //     isStudentListOpen: false,
-  //     canLeaveSite: false,
-  //     isWidgetModalOpen2:false,
+      //   //   isStudentListOpen: false,
+      //   //   canLeaveSite: false,
+      //   //   isWidgetModalOpen2:false,
+      //   //
+      //   //   // widget 정의: 위젯별 고유 ID, 위젯명, 위젯(모달창) 활성화 유무 설정
+      //   //   widget: [
+      //   //     { wId: 0, title: '칠교놀이', isOpen: false },
+      //   //     { wId: 1, title: '주사위', isOpen: false },
+      //   //     { wId: 2, title: '고르기', isOpen: false },
+      //   //   ],
+      //   //   wArr: {},   // 활성화된 위젯을 관리하는 Object
+      //   //   wArrId: 0,  // wArr(Object)의 key를 동적으로 생성하기 위해 선언
+      //   // };
+      //   return {
+      //     sender: this.$route.query.currentUser,
+      //     userType: this.$route.query.userType, // Added to get user type
+      //     pickerType: null,
+      //     isStudentListOpen: false,
+      //     canLeaveSite: false,
+      //     isWidgetModalOpen2:false,
     }
   },
   computed: {
-    ...mapState(["socket", "students", "pickerStart"]),
+    ...mapState('websocket',["socket", "students", "pickerStart"]),
   },
   watch: {
     pickerStart: { //학생의 경우, watch를 모달창에서 해야 Picker 적용됨
       handler(newVal) {
         if (newVal) {
-          this.toggleWidgetModal(2, newVal.pickerType);
+          this.toggleWidgetModal(2, newVal.data.pickerType);
           this.$nextTick(() => {
             const widgetComponent = this.$refs['widgetModal2'][0];
             if (widgetComponent) {
@@ -328,7 +333,7 @@ export default {
     },
   },
   mounted() {
-    this.$store.dispatch("subscribeToClass", {classCode: this.classCode, userType: this.userType});
+    this.$store.dispatch("websocket/subscribeToClass", {classCode: this.classCode, userType: this.userType});
 
     window.addEventListener("beforeunload", this.unLoadEvent);
   },
@@ -353,70 +358,6 @@ export default {
         });
       }
     },
-    // toggleStudentList() {
-    //   this.isStudentListOpen = !this.isStudentListOpen;
-    // },
-    // changeModalData(title) {
-    //   this.modalData.modalTitle = title;
-    //   this.modalData.modalBody = this.classCode;
-    // },
-    //
-    // // 선택한 위젯을 활성화
-    // toggleWidgetModal(wId, pickerType) {
-    //   console.log("ref 값은?", this.state.value.widget[wId].value);
-    //   this.state.value.widget[wId].isOpen = true;             // 선택한 위젯의 isOpen 속성을 true로 변경
-    //   console.log("ㅆㅃ 왜?", this.state.value.widget[wId]);
-    //   console.log("ㅆㅃ", this.state.value.widget[wId].isOpen);
-    //   console.log("ㅆㅃ 왜?", this.state.value.widget[wId]);
-    //
-    //   this.pickerType = pickerType;
-    //   // wArr(object) 데이터 추가: key 값을 동적으로 생성
-    //   this.state.value.wArrId = wId;                          // wArr key: wArr(Object)의 key 값을 선택한 위젯의 고유 ID와 동일하게 설정
-    //   this.state.value.wArr[this.state.value.wArrId] = this.state.value.widget[wId];  // wArr value: key에 해당하는 위젯 정보(wId, title, isOpen)를 설정
-    //
-    //   console.log("열었음", this.state.value.wArr);
-    //   console.log("wId", wId);
-    //   console.log("위젯 설정", this.state.value.widget);
-    //
-    //   // console.log("Proxy 뭐임?", this.state.widget[wId]);
-    //   //
-    //   // // Directly update the isOpen property of the widget
-    //   // this.state.widget[wId].isOpen = true;
-    //   //
-    //   // console.log("ㅆㅃ 왜?", this.state.widget[wId]);
-    //   // console.log("ㅆㅃ", this.state.widget[wId].isOpen);
-    //   // console.log("ㅆㅃ 왜?", this.state.widget[wId]);
-    //   //
-    //   // this.state.pickerType = pickerType;
-    //   //
-    //   // // Update wArr reactively
-    //   // this.state.wArr = { ...this.state.wArr, [wId]: this.state.widget[wId] };
-    //   //
-    //   // console.log("열었음", this.state.wArr);
-    //   // console.log("wId", wId);
-    //   // console.log("위젯 설정", this.state.widget);
-    //
-    // },
-    //
-    // // 선택한 위젯을 비활성화
-    // closeWidgetModal(wId) {
-    //   this.widget[wId].isOpen = false;            // 선택한 위젯의 isOpen 속성을 false로 변경
-    //   delete this.wArr[wId];                      // wArr(Object)에서 선택한 위젯에 해당하는 데이터를 삭제
-    //   console.log("닫았음", this.wArr);
-    //   console.log("wId", wId);
-    //   console.log("위젯 설정", this.widget);
-    //
-    //   // this.state.widget[wId].isOpen = false;
-    //   //
-    //   // // Ensure wArr updates reactively
-    //   // const { [wId]: _, ...rest } = this.state.wArr;
-    //   // this.state.wArr = rest;
-    //   //
-    //   // console.log("닫았음", this.state.wArr);
-    //   // console.log("wId", wId);
-    //   // console.log("위젯 설정", this.state.widget);
-    //
-    // }
   },
 
   toggleWidgetModal2(forceToggle, pickerType) {
