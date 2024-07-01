@@ -119,12 +119,22 @@ export default {
       modalData.modalBody = props.classCode;
     };
 
+    const changeZIndexModal = (event, wId) => {
+      console.log(event.target);
+      // const selectModal = event.target.
+
+      // if (selectModal) {
+      //   selectModal.style.zIndex = 1000;
+      // }
+    };
+
     return {
       modalData,
       state,
       isStudentListOpen,
       toggleStudentList,
       changeModalData,
+      changeZIndexModal,
     };
   },
   data() {
@@ -187,9 +197,20 @@ export default {
       this.setPickerType(pickerType);
       this.openWidgetModal(2);
     },
+
+    // getWidgetModalClass(wId) {
+    //   switch (wId) {
+    //     case 0:
+    //       return "tangram-modal";
+    //     case 1:
+    //       return "dice-modal";
+    //     case 2:
+    //       return "picker-modal";
+    //   }
+    // },
+
+
   },
-
-
 }
 </script>
 
