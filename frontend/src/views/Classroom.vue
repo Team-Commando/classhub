@@ -86,7 +86,7 @@
 
 <script>
 import Whiteboard from "../components/Whiteboard.vue";
-import {mapMutations, mapState} from "vuex";
+import {mapActions, mapMutations, mapState} from "vuex";
 import {reactive, ref} from "vue";
 import DimModal from "../components/DimModal.vue";
 import WidgetModal from "../components/WidgetModal.vue";
@@ -171,6 +171,7 @@ export default {
   },
   methods: {
     ...mapMutations('modalStore', ['openWidgetModal', 'closeWidgetModal']),
+    // ...mapActions('modalStore', ['openWidgetModal', 'closeWidgetModal']),
 
     unLoadEvent(event) {
       if (this.state.canLeaveSite) return;
