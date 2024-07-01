@@ -3,14 +3,14 @@
     <div class="modal-window" ref="modalWindow" @mousedown="handleMouseDown">
       <!-- modal header start -->
       <div class="modal-header">
-        <span class="modal-title">{{ this.title }}</span>
-        <button class="close-button" @click='closeWidgetModal(activeWidgetKey)'>X</button>
+        <span class="modal-title">{{ title }}</span>
+        <button class="close-button" @click="closeModal">X</button>
       </div>
       <!-- modal header end -->
 
       <!-- modal body start -->
       <div class="modal-body">
-          <component :is="widgetComponent" v-bind="componentProps" v-on="eventListeners"/>
+        <component :is="widgetComponent" />
       </div>
       <!-- modal body end -->
 
@@ -24,7 +24,7 @@
 import Tangram from "./widget/Tangram.vue";
 import Dices from "./widget/Dices.vue";
 import Picker from "./Picker/Picker.vue";
-import {mapActions, mapMutations, mapState} from "vuex";
+import {mapState} from "vuex";
 
 export default {
   name: 'WidgetModal',
@@ -39,9 +39,6 @@ export default {
       resizeStartY: 0,
       initialWidth: 0,
       initialHeight: 0,
-      componentProps: {},
-      eventListeners: {},
-      pickerSendToStudentMessage: null,
       title: "",
     }
   },
@@ -53,14 +50,11 @@ export default {
   },
 
   props: {
-    pickerType: {
-      type: Number,
-    },
   },
 
   computed: {
-    ...mapState(["pickerStart", "pickerEnd"]),
-    ...mapState('modalStore', ["widget", "activeWidget", "activeWidgetKey"]),
+    ...mapState('websocket', ["pickerStart", "pickerEnd"]),
+    ...mapState('modalStore', ["activeWidget", "activeWidgetKey"])
   },
   watch: {
     activeWidget: {    // isWidgetModalOpen의 상태를 감시
@@ -79,11 +73,7 @@ export default {
                 break;
               case 2:
                 this.widgetComponent = Picker.name;
-                this.componentProps = {pickerType: this.pickerType, pickerSendToStudentMessage: this.pickerSendToStudentMessage };
-                this.eventListeners = {
-                  closeModal: this.closeModal,
-                  openModal: this.openModal,
-                };
+                this.title = this.activeWidget[this.activeWidgetKey].title;
                 break;
               default:
                 console.log("지정할 컴포넌트가 존재하지 않습니다.");
@@ -96,9 +86,6 @@ export default {
   },
 
   methods: {
-    ...mapMutations('modalStore', ['closeWidgetModal']),
-    // ...mapActions('modalStore', ['closeWidgetModal']),
-
     // 모달창 종료 메서드
     closeModal() {
       this.$emit('close');
@@ -111,6 +98,9 @@ export default {
 
     // mousedown 이벤트 발생 시, 모달창의 위치 or 크기 조정을 결정하는 handler 메서드
     handleMouseDown(event) {
+      console.log("현재 클릭하고 있는 곳은?", event.target);
+      console.log("svg", document.getElementById('SVG'));
+      console.log("CANVAS 크기", document.getElementById('WORKAREA'));
       if (event.target.classList.contains('modal-window')) {
         this.startResizeModal(event); // 모달창 크기 조정 처리 메서드 호출
       } else {
@@ -180,10 +170,6 @@ export default {
     stopResizeModal() {
       document.removeEventListener('mousemove', this.resizeModal);
       document.removeEventListener('mouseup', this.stopResizeModal);
-    },
-
-    switchToPickerSelect(newVal) {
-      this.pickerSendToStudentMessage = newVal;
     },
 
   },
@@ -259,5 +245,7 @@ div {
   bottom: 0;
   right: 0;
   cursor: se-resize;
+  z-index: 9999;
+  background: #ff0007;
 }
 </style>
