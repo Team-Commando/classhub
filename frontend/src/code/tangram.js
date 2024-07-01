@@ -127,10 +127,12 @@ var upred;
             }
 
             ScreenUtil.GetScreenWidth = function () {
-                return window.innerWidth;
+                // return window.innerWidth;
+                return 1200;
             };
             ScreenUtil.GetScreenHeight = function () {
-                return window.innerHeight;
+                // return window.innerHeight;
+                return 800;
             };
             return ScreenUtil;
         }());
@@ -2084,6 +2086,7 @@ var upred;
             TangramFigure.prototype.MakeTangram = function (typenum, tsize) {
                 this.orgSize = tsize;
                 switch (typenum) {
+                    // baseSize: 20
                     case 0:
                         this.MakeFigure([0, 0, 20, 0, 10, 10], 20, tsize);
                         break;
@@ -2197,8 +2200,8 @@ var upred;
         })(DragMode = math.DragMode || (math.DragMode = {}));
         var Tangrams = (function () {
             function Tangrams() {
-                this.FIGURE_BASESIZE = 50;
-                this.WORKSIZE = 50;
+                this.FIGURE_BASESIZE = 50; //50
+                this.WORKSIZE = 50; //50
                 this.dragMode = DragMode.NONE;
                 this.xyBefore = {x: 0, y: 0};
                 this.xyNow = {x: 0, y: 0};
@@ -2337,7 +2340,7 @@ var upred;
                 tangramBase.GetTag().style.margin = '4px 8px';
                 tangramBase.SetSize(this.FIGURE_BASESIZE, this.FIGURE_BASESIZE);
                 this.paletteTag.appendChild(tangramBase.GetTag());
-                var TEMPLET_SIZE_DIV = 4;
+                var TEMPLET_SIZE_DIV = 3;
                 for (var i = 0; i < templet.length; i++) {
                     var templetBase = new upred.ui.SVGUnit();
                     var tng = new math.TangramFigure(this.svgCanvas);
