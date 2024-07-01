@@ -103,16 +103,16 @@ export default {
   },
   mounted() {
     this.initCanvas();
-    this.$store.watch(
-      (state) => state.events.length,
-      (newLength) => {
-        const event = this.events[newLength - 1];
-        if (event) {
-          this.handleIncomingDrawing(event);
-          console.log("watch 실행 : " ,event)
-        }
-      }
-    );
+    // this.$store.watch(
+    //   (state) => state.events.length,
+    //   (newLength) => {
+    //     const event = this.events[newLength - 1];
+    //     if (event) {
+    //       this.handleIncomingDrawing(event);
+    //       console.log("watch 실행 : " ,event)
+    //     }
+    //   }
+    // );
   },
   methods: {
     // 캔버스 세팅

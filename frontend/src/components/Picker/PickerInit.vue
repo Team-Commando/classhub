@@ -3,7 +3,7 @@
     <div class="question-container">
       <label for="question"><h2>Q.</h2></label>
       <input type="text" id="question" v-model="question" placeholder="원하시는 경우, 질문을 입력하세요(선택)" required/>
-      <button class="store-button" @click="this.$emit('switchComponent', 'PickerBox', {pickerType})">보관함</button>
+      <button class="store-button" @click="setCurrentComponent('PickerBox')">보관함</button>
     </div>
 
     <div class="ox-choice-container" v-if="pickerType===1">
@@ -29,22 +29,19 @@
 
     <div class="action-container">
       <button @click="savePicker" class="action-button">저장하기</button>
-      <button @click="this.$emit('startPicker', this.question, this.choices)" class="action-button start-button">시작하기</button>
+      <button @click="teacherStartPicker({ question, choices })" class="action-button start-button">시작하기</button>
     </div>
   </div>
 </template>
 
 <script>
 import axios from 'axios';
-import {mapState} from "vuex";
-import styles from '../../css/Picker.module.css';
+import {mapActions, mapMutations, mapState} from "vuex";
 
 export default {
   name: 'PickerInit',
   props: {
-    pickerType: {
-      type: Number,
-    },
+
   },
   data() {
     return {
@@ -53,12 +50,13 @@ export default {
     };
   },
   computed: {
-    ...mapState(["socket"]),
-    $style() {
-      return styles;
-    },
+    ...mapState('websocket', ["socket"]),
+    ...mapState('picker', ["pickerType"]),
   },
   methods: {
+    ...mapMutations('picker', ["setCurrentComponent"]),
+    ...mapActions('picker', ["teacherStartPicker"]),
+
     addChoice() {
       this.choices.push('');
     },
@@ -88,7 +86,7 @@ export default {
         .then(response => {
           if (response.status === 201) {
             alert(`Saved: Question: ${this.question}`);
-            this.$emit('switchComponent', 'PickerBox', {pickerType: this.pickerType})
+            this.setCurrentComponent('PickerBox');
           } else {
             alert('Failed to save the question');
           }
