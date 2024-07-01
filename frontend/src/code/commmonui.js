@@ -572,9 +572,32 @@ var upred;
             CommonUI.prototype.MakeButton = function (binfo) {
                 var bt = ui.HTML.newNode('button');
                 bt.className = 'uiButtonDef';
+                Object.assign(bt.style, {
+                    width: '8vh',
+                    height: '7vh',
+                    minWidth: '50px',
+                    minHeight: '50px',
+                    border: 'none',
+                    background: 'transparent',
+                    verticalAlign: 'middle',
+                    borderRadius: '10px',
+                    transition: 'all 0.5s ease-out'
+                });
                 if (binfo.img) {
+                    // var img = new Image();
+                    // img.src = binfo.img;
+                    // bt.appendChild(img);
                     var img = new Image();
                     img.src = binfo.img;
+                    Object.assign(img.style, {
+                        width: '40px',
+                        height: '40px',
+                        minWidth: '20px',
+                        minHeight: '20px',
+                        objectFit: 'contain',
+                        opacity: '0.5',
+                        pointerEvents: 'none'
+                    });
                     bt.appendChild(img);
                 }
                 else if (binfo.bgColor) {
@@ -586,6 +609,10 @@ var upred;
                 var txt = ui.HTML.newNode('div');
                 txt.className = 'uiButtonDefText';
                 txt.innerHTML = binfo.txt;
+                Object.assign(txt.style, {
+                    fontSize: '1.5vh',
+                    color: '#2471A3'
+                });
                 bt.appendChild(txt);
                 if (binfo.handler)
                     bt.onclick = binfo.handler;
