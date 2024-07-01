@@ -10,7 +10,7 @@
 
       <!-- modal body start -->
       <div class="modal-body">
-          <component :is="widgetComponent" v-bind="componentProps" v-on="eventListeners"/>
+        <component :is="widgetComponent" />
       </div>
       <!-- modal body end -->
 
@@ -39,9 +39,6 @@ export default {
       resizeStartY: 0,
       initialWidth: 0,
       initialHeight: 0,
-      componentProps: {},
-      eventListeners: {},
-      pickerSendToStudentMessage: null,
       title: "",
     }
   },
@@ -53,13 +50,10 @@ export default {
   },
 
   props: {
-    pickerType: {
-      type: Number,
-    },
   },
 
   computed: {
-    ...mapState(["pickerStart", "pickerEnd"]),
+    ...mapState('websocket', ["pickerStart", "pickerEnd"]),
     ...mapState('modalStore', ["activeWidget", "activeWidgetKey"])
   },
   watch: {
@@ -79,11 +73,7 @@ export default {
                 break;
               case 2:
                 this.widgetComponent = Picker.name;
-                this.componentProps = {pickerType: this.pickerType, pickerSendToStudentMessage: this.pickerSendToStudentMessage };
-                this.eventListeners = {
-                  closeModal: this.closeModal,
-                  openModal: this.openModal,
-                };
+                this.title = this.activeWidget[this.activeWidgetKey].title;
                 break;
               default:
                 console.log("지정할 컴포넌트가 존재하지 않습니다.");
@@ -180,10 +170,6 @@ export default {
     stopResizeModal() {
       document.removeEventListener('mousemove', this.resizeModal);
       document.removeEventListener('mouseup', this.stopResizeModal);
-    },
-
-    switchToPickerSelect(newVal) {
-      this.pickerSendToStudentMessage = newVal;
     },
 
   },

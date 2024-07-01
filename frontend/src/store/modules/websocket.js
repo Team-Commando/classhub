@@ -162,6 +162,11 @@ const websocket = {
             commit("setUserType", userType);
         },
     },
+    getters: {
+        socket: state => state.socket,
+        classCode: state => state.classCode,
+        sender: state => state.sender
+    },
 };
 
 export default websocket;

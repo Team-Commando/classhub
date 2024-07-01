@@ -78,15 +78,15 @@
       고르기
     </button>
     <ul class="dropdown-menu">
-      <li><a @click="toggleWidgetModal(2, 1)" class="dropdown-item">OX</a></li>
-      <li><a @click="toggleWidgetModal(2, 2)" class="dropdown-item">선다형</a></li>
+      <li><a @click="pickerModalOpen(2, 1)" class="dropdown-item">OX</a></li>
+      <li><a @click="pickerModalOpen(2, 2)" class="dropdown-item">선다형</a></li>
     </ul>
   </div>
 </template>
 
 <script>
 import Whiteboard from "../components/Whiteboard.vue";
-import {mapMutations, mapState} from "vuex";
+import {mapActions, mapMutations, mapState} from "vuex";
 import {reactive, ref} from "vue";
 import DimModal from "../components/DimModal.vue";
 import WidgetModal from "../components/WidgetModal.vue";
@@ -101,17 +101,12 @@ export default {
     WidgetModal2,
   },
   props: {
-    classCode: {
-      type: String,
-      required: true,
-    },
   },
   setup(props, { root }) {
     const modalData = reactive({ modalTitle: "", modalBody: "" });
 
     let state = reactive({
       canLeaveSite: false,
-      pickerType: null,
     });
     const isStudentListOpen = ref(false);
 
@@ -133,11 +128,6 @@ export default {
     };
   },
   data() {
-    return {
-      sender: this.$route.query.currentUser,
-      userType: this.$route.query.userType,
-      pickerType: null,
-    }
   },
   computed: {
     ...mapState('modalStore', {
@@ -146,18 +136,18 @@ export default {
       activeWidgetKey: state => state.activeWidgetKey,
       // pickerType: state => state.pickerType,
     }),
-    ...mapState('websocket',["socket", "students", "pickerStart"]),
+    ...mapState('websocket',["socket", "students", "sender", "userType", "pickerStart", 'classCode']),
   },
   watch: {
     pickerStart: { //학생의 경우, watch를 모달창에서 해야 Picker 적용됨
       handler(newVal) {
         if (newVal) {
-          this.toggleWidgetModal(2, newVal.data.pickerType);
+          const { pickerType, question, choices } = newVal.data
+          this.pickerModalOpen(2, pickerType);
+
           this.$nextTick(() => {
-            const widgetComponent = this.$refs['widgetModal2'][0];
-            if (widgetComponent) {
-              widgetComponent.switchToPickerSelect(newVal);
-            }
+              this.setQuestionAndChoices({ question, choices });
+              this.setCurrentComponent('pickerSelect');
           });
         }
       },
@@ -171,6 +161,7 @@ export default {
   },
   methods: {
     ...mapMutations('modalStore', ['openWidgetModal', 'closeWidgetModal']),
+    ...mapMutations('picker', ["setPickerType", "setCurrentComponent", "setQuestionAndChoices"]),
 
     unLoadEvent(event) {
       if (this.state.canLeaveSite) return;
@@ -192,17 +183,13 @@ export default {
         });
       }
     },
+    pickerModalOpen(wId, pickerType) {
+      this.setPickerType(pickerType);
+      this.openWidgetModal(2);
+    },
   },
 
-  toggleWidgetModal2(forceToggle, pickerType) {
-    this.pickerType = pickerType;
 
-    if (typeof forceToggle === "boolean") {
-      this.isWidgetModalOpen2 = forceToggle;
-    } else {
-      this.isWidgetModalOpen2 = !this.isWidgetModalOpen2;
-    }
-  }
 }
 </script>
 
