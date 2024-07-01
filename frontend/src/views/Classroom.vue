@@ -65,9 +65,6 @@
   <WidgetModal
       v-for="(w, i) in activeWidget"
       :key="i"
-      :isWidgetModalOpen="w.isOpen"
-      :wId="w.wId"
-      :title="w.title"
       @open="openWidgetModal(w.wId)"
       @close="closeWidgetModal(w.wId)"
       :pickerType="state.pickerType"
