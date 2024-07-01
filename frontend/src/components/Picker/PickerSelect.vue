@@ -35,40 +35,33 @@
 </template>
 
 <script>
-import {mapState} from "vuex";
+import {mapMutations, mapState} from "vuex";
 
 export default {
   name: 'PickerSelect',
   props: {
-    message: {
-      type: Object,
-    },
   },
   data() {
     return {
-      question: '',
       studentChoice:'',
-      choices: [],
-      pickerType: 1,
       isSubmit: false,
     };
   },
   computed: {
     ...mapState('websocket', ["socket", "classCode", "sender"]),
+    ...mapState('picker', ["pickerType", "question", "choices"]),
   },
   mounted() {
-    this.pickerType = this.message.data.pickerType
 
-    if(this.message.data.question !== ""){
-      this.question = this.message.data.question
-    }else{
-      this.question = (this.pickerType===1) ? 'OX를 골라주세요':'보기를 선택해 주세요';
+    if(this.question === ""){
+      const question = (this.pickerType===1) ? 'OX를 골라주세요':'보기를 선택해 주세요';
+      this.setQuestionAndChoices({ question });
     }
-
-    this.choices = this.message.data.choices
 
   },
   methods: {
+    ...mapMutations('picker', ["setQuestionAndChoices"]),
+
     selectChoice(studentChoice) {
       this.studentChoice = studentChoice;
     },

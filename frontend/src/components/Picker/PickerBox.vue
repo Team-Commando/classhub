@@ -9,7 +9,7 @@
         </div>
       </div>
       <div class="action-container">
-        <button @click="this.$emit('switchComponent', 'PickerInit', { pickerType })" class="action-button">질문 생성으로 돌아가기</button>
+        <button @click="setCurrentComponent('PickerInit')" class="action-button">질문 생성으로 돌아가기</button>
         <button @click="startPickerFromBox" class="action-button start-button">시작하기</button>
       </div>
     </div>
@@ -17,26 +17,28 @@
   
 <script>
   import axios from 'axios';
+  import {mapActions, mapMutations, mapState} from "vuex";
 
   export default {
     name: 'PickerBox',
     props: {
-      // pickerType: {
-      //   type: Number,
-      //   required: true,
-      // },
     },
     data() {
       return {
-        pickerType: 1,
         questions: [],
         selectedQuestion: null
       };
+    },
+    computed: {
+      ...mapState('picker', ["pickerType"]),
     },
     mounted() {
       this.fetchQuestions();
     },
     methods: {
+      ...mapMutations('picker', ["setCurrentComponent", 'setQuestionAndChoices', 'setQuestionId']),
+      ...mapActions('picker', ["teacherStartPicker"]),
+
       fetchQuestions() {
         axios.get('http://localhost:8080/api/picker/get-questions', {
           params: {
@@ -52,16 +54,16 @@
         });
       },
       switchToPickerEdit(id) {
-        let question = ""
-        let choices = [];
 
         //기존 정보 불러오기
         axios.get(`http://localhost:8080/api/picker/get-saved-question?id=${id}`, {
         })
         .then(response => {
-          question = response.data.question;
-          choices = response.data.choices;
-          this.$emit('switchComponent', 'PickerEdit', { pickerType: this.pickerType, question: question, choices: choices, questionId: id } )
+          const { question, choices } = response.data
+
+          this.setQuestionAndChoices({ question, choices });
+          this.setQuestionId(id);
+          this.setCurrentComponent('PickerEdit');
         })
         .catch(error => {
           console.error('Error fetching questions:', error);
@@ -83,15 +85,11 @@
         }
       },
       startPickerFromBox() {
-        let question = ""
-        let choices = [];
-
         axios.get(`http://localhost:8080/api/picker/get-saved-question?id=${this.selectedQuestion}`, {
         })
         .then(response => {
-          question = response.data.question;
-          choices = response.data.choices;
-          this.$emit('startPicker', question, choices)
+          const { question, choices } = response.data
+          this.teacherStartPicker({ question, choices });
         })
         .catch(error => {
           console.error('Error fetching questions:', error);

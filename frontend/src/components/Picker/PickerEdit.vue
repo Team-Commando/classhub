@@ -27,47 +27,38 @@
     </div>
 
     <div class="action-container">
-      <button @click="this.$emit('switchComponent', 'PickerBox', { pickerType })" class="action-button">취소하기</button>
+      <button @click="setCurrentComponent('PickerBox')" class="action-button">취소하기</button>
       <button @click="editQuestion" class="action-button start-button">수정하기</button>
     </div>
   </div>
 </template>
 
 <script>
-import {mapState} from "vuex";
-import styles from '../../css/Picker.module.css';
+import {mapMutations, mapState} from "vuex";
 import axios from "axios";
 
 export default {
   name: 'PickerEdit',
   props: {
-    question: {
-      type: String,
-    },
-    choices: {
-      type: Array,
-    },
-    // pickerType: {
-    //   type: Number,
-    // },
-    questionId: {
-      type: Number,
-    },
   },
   data() {
     return {
-      pickerType: 1,
-      internalQuestion: this.question,
-      internalChoices: this.choices,
+      internalQuestion: '',
+      internalChoices: [],
     };
   },
   computed: {
-    ...mapState(["socket"]),
+    ...mapState('websocket', ["socket"]),
+    ...mapState('picker', ["pickerType", "question", "choices", "questionId"]),
   },
   mounted() {
+    this.internalQuestion = this.question;
+    this.internalChoices= this.choices;
 
   },
   methods: {
+    ...mapMutations('picker', ["setCurrentComponent"]),
+
     addChoice() {
       this.internalChoices.push('');
     },
@@ -96,7 +87,7 @@ export default {
       axios.post('http://localhost:8080/api/picker/edit-question', payload)
         .then(response => {
           if (response.status === 200) {
-            this.$emit('switchComponent', 'PickerBox', {pickerType: this.pickerType})
+            this.setCurrentComponent('PickerBox');
           } else {
             alert('Failed to save the question');
           }
