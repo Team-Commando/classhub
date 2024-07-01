@@ -76,19 +76,15 @@
 
   <!-- 하단 위젯 선택 버튼 생성 -->
   <div class="btn-group dropup">
-    <button v-for="(wButton, i) in widget" :key="i" @click="openWidgetModal(wButton.wId)" >{{ wButton.title }}</button>
-  </div>
-
-  <div class="btn-group dropup">
+    <button type="button" class="btn btn-secondary" v-for="(wButton, i) in widget" :key="i" @click="openWidgetModal(wButton.wId)" >{{ wButton.title }}</button>
     <button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
       고르기
     </button>
     <ul class="dropdown-menu">
-<!--      <li><a @click="toggleWidgetModal(2, 1)" class="dropdown-item">OX</a></li>-->
-<!--      <li><a @click="toggleWidgetModal(2, 2)" class="dropdown-item">선다형</a></li>-->
+      <li><a @click="toggleWidgetModal(2, 1)" class="dropdown-item">OX</a></li>
+      <li><a @click="toggleWidgetModal(2, 2)" class="dropdown-item">선다형</a></li>
     </ul>
   </div>
-
 </template>
 
 <script>
