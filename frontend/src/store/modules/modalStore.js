@@ -5,7 +5,7 @@ const modalStore = {
         widget: [
             { wId: 0, title: "칠교놀이", isOpen: false },
             { wId: 1, title: "주사위", isOpen: false },
-            { wId: 2, title: "고르기", isOpen: false },
+            // { wId: 2, title: "고르기", isOpen: false },
         ],
         activeWidget: {},       // 현재 활성화된 위젯을 관리하는 Object
         activeWidgetKey: 0,     // activeWidget(Object)의 key를 동적으로 생성하기 위해 선언
