@@ -1,5 +1,5 @@
 <template>
-  <div class="modal-container" v-if="isWidgetModalOpen">
+  <div class="modal-container" v-if="activeWidget[activeWidgetKey].isOpen">
     <div class="modal-window" ref="modalWindow" @mousedown="handleMouseDown">
       <!-- modal header start -->
       <div class="modal-header">
@@ -10,7 +10,7 @@
 
       <!-- modal body start -->
       <div class="modal-body">
-          <component :is="activeWidget" v-bind="componentProps" v-on="eventListeners"/>
+          <component :is="widgetComponent" v-bind="componentProps" v-on="eventListeners"/>
       </div>
       <!-- modal body end -->
 
@@ -30,7 +30,7 @@ export default {
   name: 'WidgetModal',
   data() {
     return {
-      activeWidget: null,
+      widgetComponent: null,
       dragStartX: 0,
       dragStartY: 0,
       initialX: 0,
@@ -42,6 +42,7 @@ export default {
       componentProps: {},
       eventListeners: {},
       pickerSendToStudentMessage: null,
+      title: "",
     }
   },
 
@@ -52,16 +53,6 @@ export default {
   },
 
   props: {
-    isWidgetModalOpen: {
-      type: Boolean,
-      required: true,
-    },
-    title: {
-      type: String,
-    },
-    wId: {
-      type: Number,
-    },
     pickerType: {
       type: Number,
     },
@@ -69,22 +60,25 @@ export default {
 
   computed: {
     ...mapState(["pickerStart", "pickerEnd"]),
+    ...mapState('modalStore', ["activeWidget", "activeWidgetKey"])
   },
   watch: {
-    isWidgetModalOpen: {    // isWidgetModalOpen의 상태를 감시
+    activeWidget: {    // isWidgetModalOpen의 상태를 감시
       handler(state) {
         if (state) {        // isWidgetModalOpen === true (모달창이 활성화 되면)
           this.$nextTick(() => {
             // 모달창 내부를 구성할 위젯 컴포넌트를 지정
-            switch (this.wId) {
+            switch (this.activeWidgetKey) {
               case 0:
-                this.activeWidget = Tangram.name;
+                this.widgetComponent = Tangram.name;
+                this.title = this.activeWidget[this.activeWidgetKey].title;
                 break;
               case 1:
-                this.activeWidget = Dices.name;
+                this.widgetComponent = Dices.name;
+                this.title = this.activeWidget[this.activeWidgetKey].title;
                 break;
               case 2:
-                this.activeWidget = Picker.name;
+                this.widgetComponent = Picker.name;
                 this.componentProps = {pickerType: this.pickerType, pickerSendToStudentMessage: this.pickerSendToStudentMessage };
                 this.eventListeners = {
                   closeModal: this.closeModal,
@@ -114,6 +108,9 @@ export default {
 
     // mousedown 이벤트 발생 시, 모달창의 위치 or 크기 조정을 결정하는 handler 메서드
     handleMouseDown(event) {
+      console.log("현재 클릭하고 있는 곳은?", event.target);
+      console.log("svg", document.getElementById('SVG'));
+      console.log("CANVAS 크기", document.getElementById('WORKAREA'));
       if (event.target.classList.contains('modal-window')) {
         this.startResizeModal(event); // 모달창 크기 조정 처리 메서드 호출
       } else {
@@ -262,5 +259,7 @@ div {
   bottom: 0;
   right: 0;
   cursor: se-resize;
+  z-index: 9999;
+  background: #ff0007;
 }
 </style>
