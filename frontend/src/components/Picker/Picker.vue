@@ -15,6 +15,7 @@ import PickerSelect from "./PickerSelect.vue";
 import PickerResult from "./PickerResult.vue";
 import PickerEdit from "./PickerEdit.vue";
 import {mapState} from "vuex";
+import websocket from "../../store/modules/websocket.js";
 
 export default {
   name: 'Picker',
@@ -46,7 +47,7 @@ export default {
     };
   },
   computed: {
-    ...mapState(["socket", "pickerStart", "pickerEnd", "classCode", "sender", "userType"]),
+    ...mapState('websocket', ["socket", "pickerStart", "pickerEnd", "classCode", "sender", "userType"]),
   },
   watch: {
     // pickerStart: {

@@ -1,7 +1,9 @@
 const picker = {
     namespaced: true,
     state: {
-        data: [],
+        pickerType: 0,
+        message: {},
+        currentComponent: "",
     },
     getters: {
         data: state => state.data,
