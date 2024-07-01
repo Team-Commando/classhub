@@ -36,7 +36,6 @@
 
 <script>
 import {mapState} from "vuex";
-import styles from '../../css/Picker.module.css';
 
 export default {
   name: 'PickerSelect',
@@ -50,15 +49,12 @@ export default {
       question: '',
       studentChoice:'',
       choices: [],
-      pickerType: 0,
+      pickerType: 1,
       isSubmit: false,
     };
   },
   computed: {
-    ...mapState(["socket", "classCode", "sender"]),
-    $style() {
-      return styles;
-    },
+    ...mapState('websocket', ["socket", "classCode", "sender"]),
   },
   mounted() {
     this.pickerType = this.message.data.pickerType

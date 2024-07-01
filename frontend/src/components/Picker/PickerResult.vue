@@ -57,9 +57,9 @@ export default {
     choices: {
       type: Array,
     },
-    pickerType: {
-      type: Number,
-    },
+    // pickerType: {
+    //   type: Number,
+    // },
   },
   data() {
     return {
@@ -69,14 +69,11 @@ export default {
       totalStudents: 0,
       choicesCount: {}, // 초기 선택 수
       respondedSessionIds: new Set(), // 응답한 세션 ID 저장
-
+      pickerType: 1,
     };
   },
   computed: {
-    ...mapState(["socket", "pickerSelect", "students"]),
-    $style() {
-      return styles;
-    },
+    ...mapState('websocket', ["socket", "pickerSelect", "students"]),
     circlePercentage() {
       return ((this.circleCount / this.totalStudents) * 100).toFixed(2);
     },

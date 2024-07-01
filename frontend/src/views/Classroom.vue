@@ -84,8 +84,8 @@
       고르기
     </button>
     <ul class="dropdown-menu">
-<!--      <li><a @click="toggleWidgetModal(2, 1)" class="dropdown-item">OX</a></li>-->
-<!--      <li><a @click="toggleWidgetModal(2, 2)" class="dropdown-item">선다형</a></li>-->
+      <li><a @click="openWidgetModal(2, 1)" class="dropdown-item">OX</a></li>
+      <li><a @click="openWidgetModal(2, 2)" class="dropdown-item">선다형</a></li>
     </ul>
   </div>
 

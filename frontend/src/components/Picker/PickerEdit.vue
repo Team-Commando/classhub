@@ -47,24 +47,22 @@ export default {
     choices: {
       type: Array,
     },
-    pickerType: {
-      type: Number,
-    },
+    // pickerType: {
+    //   type: Number,
+    // },
     questionId: {
       type: Number,
     },
   },
   data() {
     return {
+      pickerType: 1,
       internalQuestion: this.question,
       internalChoices: this.choices,
     };
   },
   computed: {
     ...mapState(["socket"]),
-    $style() {
-      return styles;
-    },
   },
   mounted() {
 

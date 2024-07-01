@@ -37,26 +37,23 @@
 <script>
 import axios from 'axios';
 import {mapState} from "vuex";
-import styles from '../../css/Picker.module.css';
 
 export default {
   name: 'PickerInit',
   props: {
-    pickerType: {
-      type: Number,
-    },
+    // pickerType: {
+    //   type: Number,
+    // },
   },
   data() {
     return {
+      pickerType: 1,
       question: '',
       choices: ['A', 'B', 'C', 'D'],
     };
   },
   computed: {
     ...mapState(["socket"]),
-    $style() {
-      return styles;
-    },
   },
   methods: {
     addChoice() {

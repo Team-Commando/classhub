@@ -27,14 +27,15 @@ export default {
     PickerEdit,
   },
   props: {
-    pickerType: {
-      type: Number,
-      required: false,
-    },
+    // pickerType: {
+    //   type: Number,
+    //   required: false,
+    // },
     pickerSendToStudentMessage: {},
   },
   data() {
     return {
+      pickerType: 1,
       currentComponent: PickerInit,
       componentProps: {},
       eventListeners: {},
