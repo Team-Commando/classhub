@@ -5,20 +5,18 @@
 </template>
 
 <script>
-import {tUpred} from "../../code/tangram.js";
-import {upred} from "../../code/commmonui.js";
+import {upred} from "../../code/tangram.js";
 
 export default {
   name: 'Tangram',
   data() {
     return {
       upred: upred,
-      tUpred: tUpred
     }
   },
   mounted() {
     // 칠교판 및 모형 출력
-    new upred.ui.CommonUI().Start(new tUpred.math.Tangrams());
+    new upred.ui.CommonUI().Start(new upred.math.Tangrams());
   },
   methods: {
   }
