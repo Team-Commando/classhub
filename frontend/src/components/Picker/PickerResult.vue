@@ -5,7 +5,7 @@
       <p id="question">{{ question }}</p>
     </div>
 
-    <div class="ox-choice-container" v-if="pickerType===0">
+    <div class="ox-choice-container" v-if="pickerType===1">
       <div class="ox-choice-button-container">
         <button class="ox-choice-button">
           <div class="circle"></div>
@@ -26,7 +26,7 @@
       </div>
     </div>
 
-    <div v-if="pickerType===1">
+    <div v-if="pickerType===2">
       <canvas id="result-chart"></canvas>
     </div>
 
@@ -46,7 +46,7 @@
 
 <script>
 import { mapState } from "vuex";
-import styles from '../../assets/css/Picker.module.css';
+import styles from '../../css/Picker.module.css';
 
 export default {
   name: 'PickerResult',
@@ -92,10 +92,9 @@ export default {
     }
   },
   mounted() {
-    if(this.pickerType === 1){
+    if(this.pickerType === 2){
       this.renderChart();
     }
-    console.log("this.students", Object.keys(this.students).length );
     this.totalStudents =  Object.keys(this.students).length;
 
   },
@@ -108,13 +107,13 @@ export default {
         return;
       }
 
-      if (data.pickerType === 0) { //OX
+      if (data.pickerType === 1) { //OX
         if (data.choice === "O") {
           this.circleCount++;
         } else if (data.choice === "X") {
           this.crossCount++;
         }
-      } else if (data.pickerType === 1) { //선다형
+      } else if (data.pickerType === 2) { //선다형
           this.choicesCount[data.choice]++;
           this.updateChart();
       }
@@ -125,13 +124,13 @@ export default {
     },
     backToPicker(){
       this.$emit('endPicker');
-      this.$emit('switchComponent', 'Picker');
+      this.$emit('switchComponent', 'PickerInit', {pickerType: this.pickerType});
     },
 
     endResult() {
-      this.$emit('toggleWidgetModal')
+      this.$emit('closeModal')
       this.$emit('endPicker');
-      this.$emit('switchComponent', 'Picker');
+      this.$emit('switchComponent', 'PickerInit', {pickerType: this.pickerType});
     },
     getRandomColor() {
       const letters = '0123456789ABCDEF';
@@ -203,7 +202,7 @@ export default {
 </script>
 
 <style scoped>
-@import "../../assets/css/Picker.module.css";
+@import "../../css/Picker.module.css";
 .action-container{
   justify-content: space-between;
 }

@@ -6,7 +6,7 @@
         <p id="question">{{ question }}</p>
       </div>
 
-      <div class="ox-choice-container" v-if="pickerType===0">
+      <div class="ox-choice-container" v-if="pickerType===1">
         <button class="ox-choice-button" :class="{ selected: studentChoice === 'O' }" @click="selectChoice('O')">
           <div class="circle"></div>
         </button>
@@ -15,7 +15,7 @@
         </button>
       </div>
 
-      <div class="multi-choice-container" v-if="pickerType===1">
+      <div class="multi-choice-container" v-if="pickerType===2">
         <div v-for="(choice, index) in choices" :key="index" class="multi-choice">
           <input type="text" v-model="choices[index]" @click="selectChoice(choice)" :class="{ selected: studentChoice === choice }" readonly/>
         </div>
@@ -36,7 +36,7 @@
 
 <script>
 import {mapState} from "vuex";
-import styles from '../../assets/css/Picker.module.css';
+import styles from '../../css/Picker.module.css';
 
 export default {
   name: 'PickerSelect',
@@ -66,7 +66,7 @@ export default {
     if(this.message.data.question !== ""){
       this.question = this.message.data.question
     }else{
-      this.question = (this.pickerType===0) ? 'OX를 골라주세요':'보기를 선택해 주세요';
+      this.question = (this.pickerType===1) ? 'OX를 골라주세요':'보기를 선택해 주세요';
     }
 
     this.choices = this.message.data.choices
@@ -101,7 +101,7 @@ export default {
 </script>
 
 <style scoped>
-  @import "../../assets/css/Picker.module.css";
+  @import "../../css/Picker.module.css";
   .action-container{
     justify-content: center;
   }
