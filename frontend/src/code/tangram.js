@@ -1,6 +1,6 @@
-export var tUpred;
+export var upred;
 
-(function (tUpred) {
+(function (upred) {
     var ui;
     (function (ui) {
         ui.penColors = [
@@ -24,10 +24,10 @@ export var tUpred;
             '#424949',
             '#17202A'
         ];
-    })(ui = tUpred.ui || (tUpred.ui = {}));
-})(tUpred || (tUpred = {}));
-var tUpred;
-(function (tUpred) {
+    })(ui = upred.ui || (upred.ui = {}));
+})(upred || (upred = {}));
+var upred;
+(function (upred) {
     var ui;
     (function (ui) {
         var HTML = (function () {
@@ -116,10 +116,10 @@ var tUpred;
             return HTML;
         }());
         ui.HTML = HTML;
-    })(ui = tUpred.ui || (tUpred.ui = {}));
-})(tUpred || (tUpred = {}));
-var tUpred;
-(function (tUpred) {
+    })(ui = upred.ui || (upred.ui = {}));
+})(upred || (upred = {}));
+var upred;
+(function (upred) {
     var ui;
     (function (ui) {
         var ScreenUtil = (function () {
@@ -127,18 +127,20 @@ var tUpred;
             }
 
             ScreenUtil.GetScreenWidth = function () {
-                return window.innerWidth;
+                // return window.innerWidth;
+                return 1200;
             };
             ScreenUtil.GetScreenHeight = function () {
-                return window.innerHeight;
+                // return window.innerHeight;
+                return 800;
             };
             return ScreenUtil;
         }());
         ui.ScreenUtil = ScreenUtil;
-    })(ui = tUpred.ui || (tUpred.ui = {}));
-})(tUpred || (tUpred = {}));
-var tUpred;
-(function (tUpred) {
+    })(ui = upred.ui || (upred.ui = {}));
+})(upred || (upred = {}));
+var upred;
+(function (upred) {
     var ui;
     (function (ui) {
         var DrawingCanvas = (function () {
@@ -246,8 +248,8 @@ var tUpred;
             DrawingCanvas.prototype.OnMouseDown = function (e) {
                 var _a, _b;
                 if (e.target == this.textCanvas && this.mode == 0) {
-                    (_a = tUpred.ui.uiModule) === null || _a === void 0 ? void 0 : _a.UnselectAll();
-                    (_b = tUpred.ui.mathModule) === null || _b === void 0 ? void 0 : _b.EnableInteraction();
+                    (_a = upred.ui.uiModule) === null || _a === void 0 ? void 0 : _a.UnselectAll();
+                    (_b = upred.ui.mathModule) === null || _b === void 0 ? void 0 : _b.EnableInteraction();
                     return;
                 }
                 if (this.mode == 0) {
@@ -316,12 +318,12 @@ var tUpred;
                     item.firstChild.style.border = 'black 1px solid';
                     item.lastChild.style.zIndex = '90095';
                     item.lastChild.style.opacity = '1';
-                    (_a = tUpred.ui.mathModule) === null || _a === void 0 ? void 0 : _a.DisableInteraction();
+                    (_a = upred.ui.mathModule) === null || _a === void 0 ? void 0 : _a.DisableInteraction();
                 } else {
                     item.firstChild.style.border = 'none';
                     item.lastChild.style.zIndex = '';
                     item.lastChild.style.opacity = '0';
-                    (_b = tUpred.ui.mathModule) === null || _b === void 0 ? void 0 : _b.EnableInteraction();
+                    (_b = upred.ui.mathModule) === null || _b === void 0 ? void 0 : _b.EnableInteraction();
                 }
             };
             DrawingCanvas.prototype.RotateText = function (item, degree) {
@@ -349,7 +351,7 @@ var tUpred;
                 dup.highlighter = this.HighlightText.bind(this);
                 dup.firstChild.onfocus = this.OnTextFocused.bind(this);
                 dup.firstChild.onblur = this.OnTextChanged.bind(this);
-                (_b = tUpred.ui.uiModule) === null || _b === void 0 ? void 0 : _b.duplicated.push(dup);
+                (_b = upred.ui.uiModule) === null || _b === void 0 ? void 0 : _b.duplicated.push(dup);
             };
             DrawingCanvas.prototype.OnStartMoveTextBt = function (e) {
                 if (e.target != null && e.target.className == 'defTextMoveBt') {
@@ -380,7 +382,7 @@ var tUpred;
                         x + w < s.left ||
                         y > s.bottom ||
                         y + h < s.top)) {
-                        (_a = tUpred.ui.uiModule) === null || _a === void 0 ? void 0 : _a.SelectItemAdd(tdiv);
+                        (_a = upred.ui.uiModule) === null || _a === void 0 ? void 0 : _a.SelectItemAdd(tdiv);
                         added = true;
                     }
                 }
@@ -392,7 +394,7 @@ var tUpred;
                     e.target.className == 'defTextInput') {
                     var input = e.target;
                     input.parentNode.lastChild.style.opacity = '1';
-                    (_a = tUpred.ui.uiModule) === null || _a === void 0 ? void 0 : _a.SelectItemOnlyOne(input.parentNode);
+                    (_a = upred.ui.uiModule) === null || _a === void 0 ? void 0 : _a.SelectItemOnlyOne(input.parentNode);
                 }
             };
             DrawingCanvas.prototype.OnTextChanged = function (e) {
@@ -403,12 +405,12 @@ var tUpred;
                     var input = e.target;
                     if (input.innerHTML == '') {
                         input.parentNode.parentNode.removeChild(input.parentNode);
-                        (_a = tUpred.ui.uiModule) === null || _a === void 0 ? void 0 : _a.OnClickText(1);
+                        (_a = upred.ui.uiModule) === null || _a === void 0 ? void 0 : _a.OnClickText(1);
                     } else {
                         this.nowInput = true;
                         input.parentNode.lastChild.style.opacity = '0';
-                        (_b = tUpred.ui.uiModule) === null || _b === void 0 ? void 0 : _b.OnClickText(1);
-                        (_c = tUpred.ui.uiModule) === null || _c === void 0 ? void 0 : _c.SelectItemOnlyOne(input.parentNode);
+                        (_b = upred.ui.uiModule) === null || _b === void 0 ? void 0 : _b.OnClickText(1);
+                        (_c = upred.ui.uiModule) === null || _c === void 0 ? void 0 : _c.SelectItemOnlyOne(input.parentNode);
                     }
                 }
             };
@@ -465,10 +467,10 @@ var tUpred;
             return DrawingCanvas;
         }());
         ui.DrawingCanvas = DrawingCanvas;
-    })(ui = tUpred.ui || (tUpred.ui = {}));
-})(tUpred || (tUpred = {}));
-var tUpred;
-(function (tUpred) {
+    })(ui = upred.ui || (upred.ui = {}));
+})(upred || (upred = {}));
+var upred;
+(function (upred) {
     var ui;
     (function (ui) {
         var CommonUI = (function () {
@@ -545,15 +547,15 @@ var tUpred;
                     this.uiButtons.rotateRight.tag.className = 'uiButtonDef';
                 }
                 if (!this.disabledDuplication) {
-                    if (!(tUpred.ui.mathModule.DuplicationChecker)
-                        || (tUpred.ui.mathModule.DuplicationChecker && tUpred.ui.mathModule.DuplicationChecker())) {
+                    if (!(upred.ui.mathModule.DuplicationChecker)
+                        || (upred.ui.mathModule.DuplicationChecker && upred.ui.mathModule.DuplicationChecker())) {
                         this.uiButtons.duplicate.tag.className = 'uiButtonDef';
                     } else {
                         this.uiButtons.duplicate.tag.className = 'uiButtonDefGrayed';
                     }
                 }
-                if (tUpred.ui.mathModule.DeleteChecker) {
-                    if (tUpred.ui.mathModule.DeleteChecker()) {
+                if (upred.ui.mathModule.DeleteChecker) {
+                    if (upred.ui.mathModule.DeleteChecker()) {
                         this.uiButtons.delete.tag.className = 'uiButtonDef';
                     } else {
                         this.uiButtons.delete.tag.className = 'uiButtonDefGrayed';
@@ -676,7 +678,7 @@ var tUpred;
                 if (this.selectorArea.contains(this.selectorRect)) {
                     this.selectorSize = this.selectorRect.getBoundingClientRect();
                     this.selectorArea.removeChild(this.selectorRect);
-                    (_a = tUpred.ui.mathModule) === null || _a === void 0 ? void 0 : _a.SetSelectionBy(this.selectorSize.left, this.selectorSize.top, this.selectorSize.width, this.selectorSize.height);
+                    (_a = upred.ui.mathModule) === null || _a === void 0 ? void 0 : _a.SetSelectionBy(this.selectorSize.left, this.selectorSize.top, this.selectorSize.width, this.selectorSize.height);
                     (_b = this.drawingCanvas) === null || _b === void 0 ? void 0 : _b.SetSelectionBy(this.selectorSize.left, this.selectorSize.top, this.selectorSize.width, this.selectorSize.height);
                 }
                 this.selectorContext.started = false;
@@ -767,10 +769,10 @@ var tUpred;
                 window.addEventListener('pointerup', this.OnSelectorEnd.bind(this));
                 this.colorPalette = ui.HTML.newNode('div');
                 this.colorPalette.className = 'uiColorPalette';
-                for (var i = 0; i < tUpred.ui.penColors.length; i++) {
+                for (var i = 0; i < upred.ui.penColors.length; i++) {
                     var bt = ui.HTML.newNode('button');
                     bt.className = 'uiColorButton';
-                    bt.style.background = tUpred.ui.penColors[i];
+                    bt.style.background = upred.ui.penColors[i];
                     bt.onclick = this.OnClickChangeColor.bind(this);
                     this.colorPalette.appendChild(bt);
                 }
@@ -817,9 +819,9 @@ var tUpred;
                 this.uiButtons.color.tag.firstChild.style.background =
                     e.currentTarget.style.background;
                 (_a = this.drawingCanvas) === null || _a === void 0 ? void 0 : _a.SetColor(e.currentTarget.style.background);
-                if (tUpred.ui.mathModule) {
-                    if (tUpred.ui.mathModule.ChangeColorHandler) {
-                        tUpred.ui.mathModule.ChangeColorHandler(e.currentTarget.style.background);
+                if (upred.ui.mathModule) {
+                    if (upred.ui.mathModule.ChangeColorHandler) {
+                        upred.ui.mathModule.ChangeColorHandler(e.currentTarget.style.background);
                     }
                 }
                 for (var i = 0; i < this.selectedItems.length; i++) {
@@ -847,12 +849,12 @@ var tUpred;
                     this.curSelectedButton == this.uiButtons.text) {
                     this.SelectButton(null);
                     (_a = this.drawingCanvas) === null || _a === void 0 ? void 0 : _a.TextOff();
-                    (_b = tUpred.ui.mathModule) === null || _b === void 0 ? void 0 : _b.EnableInteraction();
+                    (_b = upred.ui.mathModule) === null || _b === void 0 ? void 0 : _b.EnableInteraction();
                 } else {
                     this.SelectButton(this.uiButtons.text);
                     if (forceMode != 2)
                         (_c = this.drawingCanvas) === null || _c === void 0 ? void 0 : _c.TextOn();
-                    (_d = tUpred.ui.mathModule) === null || _d === void 0 ? void 0 : _d.DisableInteraction();
+                    (_d = upred.ui.mathModule) === null || _d === void 0 ? void 0 : _d.DisableInteraction();
                 }
             };
             CommonUI.prototype.OnClickThin = function () {
@@ -862,11 +864,11 @@ var tUpred;
                     this.SelectButton(null);
                     (_a = this.drawingCanvas) === null || _a === void 0 ? void 0 : _a.EraserOff();
                     (_b = this.drawingCanvas) === null || _b === void 0 ? void 0 : _b.PenOff();
-                    (_c = tUpred.ui.mathModule) === null || _c === void 0 ? void 0 : _c.EnableInteraction();
+                    (_c = upred.ui.mathModule) === null || _c === void 0 ? void 0 : _c.EnableInteraction();
                 } else {
                     (_d = this.drawingCanvas) === null || _d === void 0 ? void 0 : _d.EraserOff();
                     (_e = this.drawingCanvas) === null || _e === void 0 ? void 0 : _e.PenOn();
-                    (_f = tUpred.ui.mathModule) === null || _f === void 0 ? void 0 : _f.DisableInteraction();
+                    (_f = upred.ui.mathModule) === null || _f === void 0 ? void 0 : _f.DisableInteraction();
                     (_g = this.drawingCanvas) === null || _g === void 0 ? void 0 : _g.SetThickness('2');
                     this.SelectButton(this.uiButtons.penThin);
                 }
@@ -878,11 +880,11 @@ var tUpred;
                     this.SelectButton(null);
                     (_a = this.drawingCanvas) === null || _a === void 0 ? void 0 : _a.EraserOff();
                     (_b = this.drawingCanvas) === null || _b === void 0 ? void 0 : _b.PenOff();
-                    (_c = tUpred.ui.mathModule) === null || _c === void 0 ? void 0 : _c.EnableInteraction();
+                    (_c = upred.ui.mathModule) === null || _c === void 0 ? void 0 : _c.EnableInteraction();
                 } else {
                     (_d = this.drawingCanvas) === null || _d === void 0 ? void 0 : _d.EraserOff();
                     (_e = this.drawingCanvas) === null || _e === void 0 ? void 0 : _e.PenOn();
-                    (_f = tUpred.ui.mathModule) === null || _f === void 0 ? void 0 : _f.DisableInteraction();
+                    (_f = upred.ui.mathModule) === null || _f === void 0 ? void 0 : _f.DisableInteraction();
                     (_g = this.drawingCanvas) === null || _g === void 0 ? void 0 : _g.SetThickness('8');
                     this.SelectButton(this.uiButtons.penThick);
                 }
@@ -894,11 +896,11 @@ var tUpred;
                     this.SelectButton(null);
                     (_a = this.drawingCanvas) === null || _a === void 0 ? void 0 : _a.PenOff();
                     (_b = this.drawingCanvas) === null || _b === void 0 ? void 0 : _b.EraserOff();
-                    (_c = tUpred.ui.mathModule) === null || _c === void 0 ? void 0 : _c.EnableInteraction();
+                    (_c = upred.ui.mathModule) === null || _c === void 0 ? void 0 : _c.EnableInteraction();
                 } else {
                     (_d = this.drawingCanvas) === null || _d === void 0 ? void 0 : _d.PenOff();
                     (_e = this.drawingCanvas) === null || _e === void 0 ? void 0 : _e.EraserOn();
-                    (_f = tUpred.ui.mathModule) === null || _f === void 0 ? void 0 : _f.DisableInteraction();
+                    (_f = upred.ui.mathModule) === null || _f === void 0 ? void 0 : _f.DisableInteraction();
                     this.SelectButton(this.uiButtons.eraser);
                 }
             };
@@ -910,13 +912,13 @@ var tUpred;
                     (_b = this.drawingCanvas) === null || _b === void 0 ? void 0 : _b.TextOff();
                     (_c = this.drawingCanvas) === null || _c === void 0 ? void 0 : _c.PenOff();
                     this.SelectButton(null);
-                    (_d = tUpred.ui.mathModule) === null || _d === void 0 ? void 0 : _d.RestoreInitialState();
+                    (_d = upred.ui.mathModule) === null || _d === void 0 ? void 0 : _d.RestoreInitialState();
                     this.HideModifyButtons();
                 }
             };
             CommonUI.prototype.BackToInit = function () {
                 var _a, _b;
-                (_a = tUpred.ui.mathModule) === null || _a === void 0 ? void 0 : _a.RestoreInitialState();
+                (_a = upred.ui.mathModule) === null || _a === void 0 ? void 0 : _a.RestoreInitialState();
                 (_b = this.drawingCanvas) === null || _b === void 0 ? void 0 : _b.ClearAll();
                 this.HideModifyButtons();
             };
@@ -992,14 +994,14 @@ var tUpred;
                 this.disabledDuplication = true;
             };
             CommonUI.prototype.Start = function (mathmodule) {
-                tUpred.ui.uiModule = this;
-                tUpred.ui.mathModule = mathmodule;
+                upred.ui.uiModule = this;
+                upred.ui.mathModule = mathmodule;
                 this.Init();
-                tUpred.ui.mathModule.Init();
+                upred.ui.mathModule.Init();
                 this.HideModifyButtons();
             };
             CommonUI.prototype.StartCustom = function (btSet, startupFunc) {
-                tUpred.ui.uiModule = this;
+                upred.ui.uiModule = this;
                 this.customMode = true;
                 this.uiButtons = {
                     color: {
@@ -1045,10 +1047,10 @@ var tUpred;
                 window.addEventListener('pointerup', this.OnSelectorEnd.bind(this));
                 this.colorPalette = ui.HTML.newNode('div');
                 this.colorPalette.className = 'uiColorPalette';
-                for (var i = 0; i < tUpred.ui.penColors.length; i++) {
+                for (var i = 0; i < upred.ui.penColors.length; i++) {
                     var bt = ui.HTML.newNode('button');
                     bt.className = 'uiColorButton';
-                    bt.style.background = tUpred.ui.penColors[i];
+                    bt.style.background = upred.ui.penColors[i];
                     bt.onclick = this.OnClickChangeColor.bind(this);
                     this.colorPalette.appendChild(bt);
                 }
@@ -1080,18 +1082,18 @@ var tUpred;
             return CommonUI;
         }());
         ui.CommonUI = CommonUI;
-    })(ui = tUpred.ui || (tUpred.ui = {}));
-})(tUpred || (tUpred = {}));
-var tUpred;
-(function (tUpred) {
+    })(ui = upred.ui || (upred.ui = {}));
+})(upred || (upred = {}));
+var upred;
+(function (upred) {
     var ui;
     (function (ui) {
         ui.mathModule = null;
         ui.uiModule = null;
-    })(ui = tUpred.ui || (tUpred.ui = {}));
-})(tUpred || (tUpred = {}));
-var tUpred;
-(function (tUpred) {
+    })(ui = upred.ui || (upred.ui = {}));
+})(upred || (upred = {}));
+var upred;
+(function (upred) {
     var ui;
     (function (ui) {
         var SVGSymbol = (function () {
@@ -1330,10 +1332,10 @@ var tUpred;
             return SVGSymbol;
         }());
         ui.SVGSymbol = SVGSymbol;
-    })(ui = tUpred.ui || (tUpred.ui = {}));
-})(tUpred || (tUpred = {}));
-var tUpred;
-(function (tUpred) {
+    })(ui = upred.ui || (upred.ui = {}));
+})(upred || (upred = {}));
+var upred;
+(function (upred) {
     var ui;
     (function (ui) {
         var SVGUnit = (function () {
@@ -1488,10 +1490,10 @@ var tUpred;
             return SVGUnit;
         }());
         ui.SVGUnit = SVGUnit;
-    })(ui = tUpred.ui || (tUpred.ui = {}));
-})(tUpred || (tUpred = {}));
-var tUpred;
-(function (tUpred) {
+    })(ui = upred.ui || (upred.ui = {}));
+})(upred || (upred = {}));
+var upred;
+(function (upred) {
     var ui;
     (function (ui) {
         var SVGCanvas = (function () {
@@ -1547,9 +1549,9 @@ var tUpred;
                         e.stopPropagation();
                     }
                 } else {
-                    (_a = tUpred.ui.uiModule) === null || _a === void 0 ? void 0 : _a.UnselectAll();
-                    if (tUpred.ui.mathModule && tUpred.ui.mathModule.ResetWorkMode)
-                        tUpred.ui.mathModule.ResetWorkMode();
+                    (_a = upred.ui.uiModule) === null || _a === void 0 ? void 0 : _a.UnselectAll();
+                    if (upred.ui.mathModule && upred.ui.mathModule.ResetWorkMode)
+                        upred.ui.mathModule.ResetWorkMode();
                 }
             };
             SVGCanvas.prototype.MoveToFront = function () {
@@ -1713,10 +1715,10 @@ var tUpred;
             return SVGCanvas;
         }());
         ui.SVGCanvas = SVGCanvas;
-    })(ui = tUpred.ui || (tUpred.ui = {}));
-})(tUpred || (tUpred = {}));
-var tUpred;
-(function (tUpred) {
+    })(ui = upred.ui || (upred.ui = {}));
+})(upred || (upred = {}));
+var upred;
+(function (upred) {
     var ui;
     (function (ui) {
         var GuideViewer = (function () {
@@ -1753,10 +1755,10 @@ var tUpred;
             return GuideViewer;
         }());
         ui.GuideViewer = GuideViewer;
-    })(ui = tUpred.ui || (tUpred.ui = {}));
-})(tUpred || (tUpred = {}));
-var tUpred;
-(function (tUpred) {
+    })(ui = upred.ui || (upred.ui = {}));
+})(upred || (upred = {}));
+var upred;
+(function (upred) {
     var math;
     (function (math) {
         var Point = (function () {
@@ -1802,7 +1804,7 @@ var tUpred;
                 this.isAlwaysUnder = false;
                 this.svgCanvas = canvas;
                 this.groupTag = canvas.AddGroup();
-                tUpred.ui.HTML.setStyle(this.groupTag, {
+                upred.ui.HTML.setStyle(this.groupTag, {
                     position: 'absolute',
                 });
                 this.pathTag = this.MakeTagStyled(this.groupTag, 'path', {}, {
@@ -1940,8 +1942,8 @@ var tUpred;
                 this.rotaterCircle.onpointerdown = this.OnRotaterDown.bind(this);
             };
             TangramFigure.prototype.OnRotaterDown = function (e) {
-                tUpred.ui.mathModule.dragMode = tUpred.math.DragMode.ROTATE;
-                tUpred.ui.mathModule.curDragging = this;
+                upred.ui.mathModule.dragMode = upred.math.DragMode.ROTATE;
+                upred.ui.mathModule.curDragging = this;
                 this.xyBefore.x = e.pageX;
                 this.xyBefore.y = e.pageY;
                 this.xyOrg.r = 0;
@@ -2084,6 +2086,7 @@ var tUpred;
             TangramFigure.prototype.MakeTangram = function (typenum, tsize) {
                 this.orgSize = tsize;
                 switch (typenum) {
+                    // baseSize: 20
                     case 0:
                         this.MakeFigure([0, 0, 20, 0, 10, 10], 20, tsize);
                         break;
@@ -2178,10 +2181,10 @@ var tUpred;
             return TangramFigure;
         }());
         math.TangramFigure = TangramFigure;
-    })(math = tUpred.math || (tUpred.math = {}));
-})(tUpred || (tUpred = {}));
-var tUpred;
-(function (tUpred) {
+    })(math = upred.math || (upred.math = {}));
+})(upred || (upred = {}));
+var upred;
+(function (upred) {
     var math;
     (function (math) {
         var FigureType;
@@ -2197,8 +2200,8 @@ var tUpred;
         })(DragMode = math.DragMode || (math.DragMode = {}));
         var Tangrams = (function () {
             function Tangrams() {
-                this.FIGURE_BASESIZE = 50;
-                this.WORKSIZE = 50;
+                this.FIGURE_BASESIZE = 50; //50
+                this.WORKSIZE = 50; //50
                 this.dragMode = DragMode.NONE;
                 this.xyBefore = {x: 0, y: 0};
                 this.xyNow = {x: 0, y: 0};
@@ -2225,7 +2228,7 @@ var tUpred;
                 }
             };
             Tangrams.prototype.InitPalette = function () {
-                this.svgCanvas = new tUpred.ui.SVGCanvas();
+                this.svgCanvas = new upred.ui.SVGCanvas();
                 this.paletteTag = document.getElementById('UI_PALETTE');
                 var colors = [
                     41, 133, 77,
@@ -2322,9 +2325,9 @@ var tUpred;
                     [38.2842712474619, 28.2842712474619],
                     [36.2132034355965, 27.9624522875046]
                 ];
-                this.FIGURE_BASESIZE = Math.min(tUpred.ui.ScreenUtil.GetScreenHeight(), tUpred.ui.ScreenUtil.GetScreenWidth()) * 0.2;
-                this.WORKSIZE = Math.min(tUpred.ui.ScreenUtil.GetScreenHeight(), tUpred.ui.ScreenUtil.GetScreenWidth()) * 0.3;
-                var tangramBase = new tUpred.ui.SVGUnit();
+                this.FIGURE_BASESIZE = Math.min(upred.ui.ScreenUtil.GetScreenHeight(), upred.ui.ScreenUtil.GetScreenWidth()) * 0.2;
+                this.WORKSIZE = Math.min(upred.ui.ScreenUtil.GetScreenHeight(), upred.ui.ScreenUtil.GetScreenWidth()) * 0.3;
+                var tangramBase = new upred.ui.SVGUnit();
                 for (var i = 0; i < 7; i++) {
                     var tng = new math.TangramFigure(this.svgCanvas);
                     tng.MakeTangram(i, this.FIGURE_BASESIZE);
@@ -2337,9 +2340,9 @@ var tUpred;
                 tangramBase.GetTag().style.margin = '4px 8px';
                 tangramBase.SetSize(this.FIGURE_BASESIZE, this.FIGURE_BASESIZE);
                 this.paletteTag.appendChild(tangramBase.GetTag());
-                var TEMPLET_SIZE_DIV = 4;
+                var TEMPLET_SIZE_DIV = 3;
                 for (var i = 0; i < templet.length; i++) {
-                    var templetBase = new tUpred.ui.SVGUnit();
+                    var templetBase = new upred.ui.SVGUnit();
                     var tng = new math.TangramFigure(this.svgCanvas);
                     tng.MakeFigure(templet[i], 20, this.FIGURE_BASESIZE / TEMPLET_SIZE_DIV);
                     tng.RepositionIn();
@@ -2373,7 +2376,7 @@ var tUpred;
                 this.xyBefore.x = e.pageX;
                 this.xyBefore.y = e.pageY;
                 this.AssignHandlers(newTangram, this.xyOrg.x, this.xyOrg.y);
-                (_a = tUpred.ui.uiModule) === null || _a === void 0 ? void 0 : _a.SelectItemOnlyOne(newTangram);
+                (_a = upred.ui.uiModule) === null || _a === void 0 ? void 0 : _a.SelectItemOnlyOne(newTangram);
                 this.dragMode = DragMode.MOVE;
                 this.curDragging = newTangram;
                 this.curDragging.groupTag.style.opacity = '0.9';
@@ -2384,10 +2387,10 @@ var tUpred;
                     return false;
                 var tgroup = (e.target.FINST);
                 if (!tgroup) {
-                    (_a = tUpred.ui.uiModule) === null || _a === void 0 ? void 0 : _a.UnselectAll();
+                    (_a = upred.ui.uiModule) === null || _a === void 0 ? void 0 : _a.UnselectAll();
                     return false;
                 }
-                (_b = tUpred.ui.uiModule) === null || _b === void 0 ? void 0 : _b.SelectItemOnlyOne(tgroup);
+                (_b = upred.ui.uiModule) === null || _b === void 0 ? void 0 : _b.SelectItemOnlyOne(tgroup);
                 var p = this.svgCanvas.GetGroupPositionValue(tgroup.groupTag);
                 if (!tgroup.isAlwaysUnder)
                     this.svgCanvas.SetGroupFront(tgroup.groupTag);
@@ -2445,7 +2448,7 @@ var tUpred;
                     if (this.curDragging != null) {
                         this.curDragging.groupTag.style.opacity = '1';
                         if (dx * dx + dy * dy < 32) {
-                            (_a = tUpred.ui.uiModule) === null || _a === void 0 ? void 0 : _a.SelectItemOnlyOne(this.curDragging);
+                            (_a = upred.ui.uiModule) === null || _a === void 0 ? void 0 : _a.SelectItemOnlyOne(this.curDragging);
                             this.curDragging.ShowRotater(true);
                         } else {
                             var pPos = this.paletteTag.getBoundingClientRect();
@@ -2453,7 +2456,7 @@ var tUpred;
                                 this.svgCanvas.RemoveGroup(this.curDragging.groupTag);
                                 this.tangrams.splice(this.tangrams.indexOf(this.curDragging), 1);
                             }
-                            (_b = tUpred.ui.uiModule) === null || _b === void 0 ? void 0 : _b.UnselectAll();
+                            (_b = upred.ui.uiModule) === null || _b === void 0 ? void 0 : _b.UnselectAll();
                         }
                     }
                     this.curDragging = undefined;
@@ -2511,7 +2514,7 @@ var tUpred;
                         x + w < ar.left ||
                         y > ar.bottom ||
                         y + h < ar.top)) {
-                        (_a = tUpred.ui.uiModule) === null || _a === void 0 ? void 0 : _a.SelectItemAdd(this.tangrams[i]);
+                        (_a = upred.ui.uiModule) === null || _a === void 0 ? void 0 : _a.SelectItemAdd(this.tangrams[i]);
                     }
                 }
             };
@@ -2530,8 +2533,8 @@ var tUpred;
                     var xy = this.svgCanvas.GetGroupPositionValue(targetGroup.groupTag);
                     var groupB = targetGroup.Duplicate(this.WORKSIZE);
                     this.AssignHandlers(groupB, xy.x + 20, xy.y + 20);
-                    (_a = tUpred.ui.uiModule) === null || _a === void 0 ? void 0 : _a.SelectItemAdd(targetGroup);
-                    (_b = tUpred.ui.uiModule) === null || _b === void 0 ? void 0 : _b.duplicated.push(groupB);
+                    (_a = upred.ui.uiModule) === null || _a === void 0 ? void 0 : _a.SelectItemAdd(targetGroup);
+                    (_b = upred.ui.uiModule) === null || _b === void 0 ? void 0 : _b.duplicated.push(groupB);
                 }
             };
             Tangrams.prototype.RestoreInitialState = function () {
@@ -2549,25 +2552,25 @@ var tUpred;
                 this.svgCanvas.GetTag().setAttribute('style', 'position:absolute; left:0px; top:0px; z-index:400;');
             };
             Tangrams.prototype.OnClickFlip = function () {
-                for (var i = 0; i < tUpred.ui.uiModule.selectedItems.length; i++) {
-                    if (tUpred.ui.uiModule.selectedItems[i].type && tUpred.ui.uiModule.selectedItems[i].type == 'tangram') {
-                        tUpred.ui.uiModule.selectedItems[i].Flip();
+                for (var i = 0; i < upred.ui.uiModule.selectedItems.length; i++) {
+                    if (upred.ui.uiModule.selectedItems[i].type && upred.ui.uiModule.selectedItems[i].type == 'tangram') {
+                        upred.ui.uiModule.selectedItems[i].Flip();
                     }
                 }
             };
             Tangrams.prototype.Init = function () {
                 var _a;
                 this.InitPalette();
-                (_a = tUpred.ui.uiModule) === null || _a === void 0 ? void 0 : _a.AddCustomModifier('flip', {
+                (_a = upred.ui.uiModule) === null || _a === void 0 ? void 0 : _a.AddCustomModifier('flip', {
                     img: '/assets/tangram/icon_flip.png',
                     txt: '뒤집기',
                     handler: this.OnClickFlip.bind(this)
                 });
-                tUpred.ui.GuideViewer.Show('/assets/tangram/guide.png');
+                upred.ui.GuideViewer.Show('/assets/tangram/guide.png');
             };
             return Tangrams;
         }());
         math.Tangrams = Tangrams;
-    })(math = tUpred.math || (tUpred.math = {}));
-})(tUpred || (tUpred = {}));
+    })(math = upred.math || (upred.math = {}));
+})(upred || (upred = {}));
 //# sourceMappingURL=tangram.js.map
