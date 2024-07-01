@@ -1,4 +1,17 @@
 <template>
+  <svg id="SVG">
+    <filter id="filterOutline">
+      <feMorphology in="SourceAlpha" result="EXP" operator="dilate" radius="2"></feMorphology>
+
+      <feFlood flood-color="#1F618D" flood-opacity="1" result="LINECOLOR"></feFlood>
+      <feComposite in="LINECOLOR" in2="EXP" operator="in" result="OUTLINE"></feComposite>
+
+      <feMerge>
+        <feMergeNode in="OUTLINE" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+  </svg>
   <div id="WORKAREA"></div>
   <div id="UI_PALETTE"></div>
   <div id="UI_TOOLBAR"></div>
@@ -24,6 +37,11 @@ export default {
 </script>
 
 <style>
+#SVG {
+  width: 200px;
+  height: auto;
+}
+
 #WORKAREA {
   flex: 1;
   position: relative;
@@ -42,7 +60,7 @@ export default {
   left: 0;
   top: 0;
   bottom: 80px;
-  width: 220px;
+  width: 200px;
   height: auto;
   border-right: #CCD1D1 1px solid;
   padding: 8px 4px;
