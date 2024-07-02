@@ -64,9 +64,8 @@
   <!-- Widget Modal: 버튼 클릭 시, 선택한 위젯에 대한 모달창 출력 -->
   <WidgetModal
       v-for="(w, i) in activeWidget"
+      :wId="w.wId"
       :key="i"
-      @open="openWidgetModal(w.wId)"
-      @close="closeWidgetModal(w.wId)"
       :pickerType="state.pickerType"
       :ref="'widgetModal'+ i"
   />
@@ -78,15 +77,15 @@
       고르기
     </button>
     <ul class="dropdown-menu">
-      <li><a @click="toggleWidgetModal(2, 1)" class="dropdown-item">OX</a></li>
-      <li><a @click="toggleWidgetModal(2, 2)" class="dropdown-item">선다형</a></li>
+      <li><a @click="pickerModalOpen(2, 1)" class="dropdown-item">OX</a></li>
+      <li><a @click="pickerModalOpen(2, 2)" class="dropdown-item">선다형</a></li>
     </ul>
   </div>
 </template>
 
 <script>
 import Whiteboard from "../components/Whiteboard.vue";
-import {mapMutations, mapState} from "vuex";
+import {mapActions, mapMutations, mapState} from "vuex";
 import {reactive, ref} from "vue";
 import DimModal from "../components/DimModal.vue";
 import WidgetModal from "../components/WidgetModal.vue";
@@ -101,17 +100,12 @@ export default {
     WidgetModal2,
   },
   props: {
-    classCode: {
-      type: String,
-      required: true,
-    },
   },
   setup(props, { root }) {
     const modalData = reactive({ modalTitle: "", modalBody: "" });
 
     let state = reactive({
       canLeaveSite: false,
-      pickerType: null,
     });
     const isStudentListOpen = ref(false);
 
@@ -124,20 +118,25 @@ export default {
       modalData.modalBody = props.classCode;
     };
 
+    const changeZIndexModal = (event, wId) => {
+      console.log(event.target);
+      // const selectModal = event.target.
+
+      // if (selectModal) {
+      //   selectModal.style.zIndex = 1000;
+      // }
+    };
+
     return {
       modalData,
       state,
       isStudentListOpen,
       toggleStudentList,
       changeModalData,
+      changeZIndexModal,
     };
   },
   data() {
-    return {
-      sender: this.$route.query.currentUser,
-      userType: this.$route.query.userType,
-      pickerType: null,
-    }
   },
   computed: {
     ...mapState('modalStore', {
@@ -146,18 +145,18 @@ export default {
       activeWidgetKey: state => state.activeWidgetKey,
       // pickerType: state => state.pickerType,
     }),
-    ...mapState('websocket',["socket", "students", "pickerStart"]),
+    ...mapState('websocket',["socket", "students", "sender", "userType", "pickerStart", 'classCode']),
   },
   watch: {
     pickerStart: { //학생의 경우, watch를 모달창에서 해야 Picker 적용됨
       handler(newVal) {
         if (newVal) {
-          this.toggleWidgetModal(2, newVal.data.pickerType);
+          const { pickerType, question, choices } = newVal.data
+          this.pickerModalOpen(2, pickerType);
+
           this.$nextTick(() => {
-            const widgetComponent = this.$refs['widgetModal2'][0];
-            if (widgetComponent) {
-              widgetComponent.switchToPickerSelect(newVal);
-            }
+              this.setQuestionAndChoices({ question, choices });
+              this.setCurrentComponent('pickerSelect');
           });
         }
       },
@@ -171,6 +170,7 @@ export default {
   },
   methods: {
     ...mapMutations('modalStore', ['openWidgetModal', 'closeWidgetModal']),
+    ...mapMutations('picker', ["setPickerType", "setCurrentComponent", "setQuestionAndChoices"]),
 
     unLoadEvent(event) {
       if (this.state.canLeaveSite) return;
@@ -192,17 +192,24 @@ export default {
         });
       }
     },
+    pickerModalOpen(wId, pickerType) {
+      this.setPickerType(pickerType);
+      this.openWidgetModal(2);
+    },
+
+    // getWidgetModalClass(wId) {
+    //   switch (wId) {
+    //     case 0:
+    //       return "tangram-modal";
+    //     case 1:
+    //       return "dice-modal";
+    //     case 2:
+    //       return "picker-modal";
+    //   }
+    // },
+
+
   },
-
-  toggleWidgetModal2(forceToggle, pickerType) {
-    this.pickerType = pickerType;
-
-    if (typeof forceToggle === "boolean") {
-      this.isWidgetModalOpen2 = forceToggle;
-    } else {
-      this.isWidgetModalOpen2 = !this.isWidgetModalOpen2;
-    }
-  }
 }
 </script>
 

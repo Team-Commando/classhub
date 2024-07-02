@@ -45,22 +45,11 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
+import {mapActions, mapMutations, mapState} from "vuex";
 import styles from '../../css/Picker.module.css';
 
 export default {
   name: 'PickerResult',
-  props: {
-    question: {
-      type: String,
-    },
-    choices: {
-      type: Array,
-    },
-    pickerType: {
-      type: Number,
-    },
-  },
   data() {
     return {
       circleCount: 0,
@@ -69,14 +58,12 @@ export default {
       totalStudents: 0,
       choicesCount: {}, // 초기 선택 수
       respondedSessionIds: new Set(), // 응답한 세션 ID 저장
-
     };
   },
   computed: {
-    ...mapState(["socket", "pickerSelect", "students"]),
-    $style() {
-      return styles;
-    },
+    ...mapState('websocket', ["socket", "pickerSelect", "students"]),
+    ...mapState('picker', ["pickerType", "question", "choices"]),
+
     circlePercentage() {
       return ((this.circleCount / this.totalStudents) * 100).toFixed(2);
     },
@@ -99,6 +86,10 @@ export default {
 
   },
   methods: {
+    ...mapMutations('modalStore', ["closeWidgetModal"]),
+    ...mapMutations('picker', ["setCurrentComponent"]),
+    ...mapActions('picker', ['teacherEndPicker']),
+
     handleIncomingSelect(message){
       const { sessionId, data } = message;
 
@@ -123,14 +114,14 @@ export default {
 
     },
     backToPicker(){
-      this.$emit('endPicker');
-      this.$emit('switchComponent', 'PickerInit', {pickerType: this.pickerType});
+      this.teacherEndPicker();
+      this.setCurrentComponent('PickerInit');
     },
 
     endResult() {
-      this.$emit('closeModal')
-      this.$emit('endPicker');
-      this.$emit('switchComponent', 'PickerInit', {pickerType: this.pickerType});
+      this.closeWidgetModal(2);
+      this.teacherEndPicker();
+      this.setCurrentComponent('PickerInit');
     },
     getRandomColor() {
       const letters = '0123456789ABCDEF';

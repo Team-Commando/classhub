@@ -1,30 +1,27 @@
 <template>
     <div class="container">
-      <div class="question-container">
+      <div class="list-container">
         <div v-for="(question, index) in questions" :key="question.id" class="question-item">
           <input type="radio" :value="question.id" v-model="selectedQuestion" />
           <span>{{ question.question }}</span>
           <button @click="switchToPickerEdit(question.id)" class="small-button">수정</button>
           <button @click="deleteQuestion(question.id)" class="small-button">삭제</button>
         </div>
-        <div class="action-container">
-          <button @click="this.$emit('switchComponent', 'PickerInit', { pickerType })" class="action-button">질문 생성으로 돌아가기</button>
-          <button @click="startPickerFromBox" class="action-button start-button">시작하기</button>
-        </div>
+      </div>
+      <div class="action-container">
+        <button @click="setCurrentComponent('PickerInit')" class="action-button">질문 생성으로 돌아가기</button>
+        <button @click="startPickerFromBox" class="action-button start-button">시작하기</button>
       </div>
     </div>
 </template>
   
 <script>
   import axios from 'axios';
-  
+  import {mapActions, mapMutations, mapState} from "vuex";
+
   export default {
     name: 'PickerBox',
     props: {
-      pickerType: {
-        type: Number,
-        required: true,
-      },
     },
     data() {
       return {
@@ -32,10 +29,16 @@
         selectedQuestion: null
       };
     },
+    computed: {
+      ...mapState('picker', ["pickerType"]),
+    },
     mounted() {
       this.fetchQuestions();
     },
     methods: {
+      ...mapMutations('picker', ["setCurrentComponent", 'setQuestionAndChoices', 'setQuestionId']),
+      ...mapActions('picker', ["teacherStartPicker"]),
+
       fetchQuestions() {
         axios.get('http://localhost:8080/api/picker/get-questions', {
           params: {
@@ -51,16 +54,16 @@
         });
       },
       switchToPickerEdit(id) {
-        let question = ""
-        let choices = [];
 
         //기존 정보 불러오기
         axios.get(`http://localhost:8080/api/picker/get-saved-question?id=${id}`, {
         })
         .then(response => {
-          question = response.data.question;
-          choices = response.data.choices;
-          this.$emit('switchComponent', 'PickerEdit', { pickerType: this.pickerType, question: question, choices: choices, questionId: id } )
+          const { question, choices } = response.data
+
+          this.setQuestionAndChoices({ question, choices });
+          this.setQuestionId(id);
+          this.setCurrentComponent('PickerEdit');
         })
         .catch(error => {
           console.error('Error fetching questions:', error);
@@ -82,15 +85,11 @@
         }
       },
       startPickerFromBox() {
-        let question = ""
-        let choices = [];
-
         axios.get(`http://localhost:8080/api/picker/get-saved-question?id=${this.selectedQuestion}`, {
         })
         .then(response => {
-          question = response.data.question;
-          choices = response.data.choices;
-          this.$emit('startPicker', question, choices)
+          const { question, choices } = response.data
+          this.teacherStartPicker({ question, choices });
         })
         .catch(error => {
           console.error('Error fetching questions:', error);
@@ -101,53 +100,10 @@
 </script>
   
 <style scoped>
+@import "../../css/Picker.module.css";
   .container {
-    display: flex;
     flex-direction: column;
-    align-items: center;
-    margin-top: 20px;
   }
-  .question-container {
-    width: 80%;
-  }
-  .question-item {
-    display: flex;
-    align-items: center;
-    margin-bottom: 10px;
-  }
-  .question-item span {
-    flex-grow: 1;
-    margin-left: 10px;
-  }
-  .question-item button {
-    margin-left: 5px;
-  }
-  
-  .small-button {
-    padding: 10px 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    cursor: pointer;
-  }
-  
-  .action-button {
-    padding: 20px 40px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 1.1em;
-    font-weight: bold;
-  }
-  
-  .start-button {
-    background-color: skyblue;
-  }
-  
-  .action-container {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-    margin-top: 20px;
-  }
+
 </style>
   
