@@ -59,6 +59,7 @@ export default {
     },
   },
   methods: {
+    ...mapMutations('modalStore', ["closeWidgetModal"]),
     ...mapMutations('picker', ["setCurrentComponent"]),
 
     // thisModalOFF(){
@@ -68,7 +69,7 @@ export default {
     // },
     handlePickerEnd(){
       // Handle picker end event for students
-      this.$emit('closeModal');
+      this.closeWidgetModal(2);
     },
   }
 };

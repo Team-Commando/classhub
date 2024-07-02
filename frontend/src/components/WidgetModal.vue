@@ -1,10 +1,10 @@
 <template>
-  <div class="modal-container" v-if="activeWidget[activeWidgetKey].isOpen">
+  <div class="modal-container" v-if="activeWidget[this.wId].isOpen">
     <div class="modal-window" ref="modalWindow" @mousedown="handleMouseDown">
       <!-- modal header start -->
       <div class="modal-header">
-        <span class="modal-title">{{ title }}</span>
-        <button class="close-button" @click="closeModal">X</button>
+        <span class="modal-title">{{ this.title }}</span>
+        <button class="close-button" @click="closeWidgetModal(this.wId)">X</button>
       </div>
       <!-- modal header end -->
 
@@ -24,7 +24,7 @@
 import Tangram from "./widget/Tangram.vue";
 import Dices from "./widget/Dices.vue";
 import Picker from "./Picker/Picker.vue";
-import {mapState} from "vuex";
+import {mapMutations, mapState} from "vuex";
 
 export default {
   name: 'WidgetModal',
@@ -40,6 +40,7 @@ export default {
       initialWidth: 0,
       initialHeight: 0,
       title: "",
+      modalZIndex: 1000,
     }
   },
 
@@ -50,6 +51,7 @@ export default {
   },
 
   props: {
+    wId: Number,
   },
 
   computed: {
@@ -57,23 +59,26 @@ export default {
     ...mapState('modalStore', ["activeWidget", "activeWidgetKey"])
   },
   watch: {
-    activeWidget: {    // isWidgetModalOpen의 상태를 감시
+    activeWidget: {         // isWidgetModalOpen의 상태를 감시
       handler(state) {
         if (state) {        // isWidgetModalOpen === true (모달창이 활성화 되면)
           this.$nextTick(() => {
             // 모달창 내부를 구성할 위젯 컴포넌트를 지정
-            switch (this.activeWidgetKey) {
+            switch (this.wId) {
               case 0:
                 this.widgetComponent = Tangram.name;
-                this.title = this.activeWidget[this.activeWidgetKey].title;
+                this.title = this.activeWidget[this.wId].title;
+                // this.title = this.activeWidget[this.activeWidgetKey].title;
                 break;
               case 1:
                 this.widgetComponent = Dices.name;
-                this.title = this.activeWidget[this.activeWidgetKey].title;
+                this.title = this.activeWidget[this.wId].title;
+                // this.title = this.activeWidget[this.activeWidgetKey].title;
                 break;
               case 2:
                 this.widgetComponent = Picker.name;
-                this.title = this.activeWidget[this.activeWidgetKey].title;
+                this.title = this.activeWidget[this.wId].title;
+                // this.title = this.activeWidget[this.activeWidgetKey].title;
                 break;
               default:
                 console.log("지정할 컴포넌트가 존재하지 않습니다.");
@@ -86,21 +91,15 @@ export default {
   },
 
   methods: {
-    // 모달창 종료 메서드
-    closeModal() {
-      this.$emit('close');
-    },
+    ...mapMutations('modalStore', ['closeWidgetModal']),
 
     // 모달창 오픈 메서드
-    openModal() {
-      this.$emit('open');
-    },
+    // openModal() {
+    //   this.$emit('open');
+    // },
 
     // mousedown 이벤트 발생 시, 모달창의 위치 or 크기 조정을 결정하는 handler 메서드
     handleMouseDown(event) {
-      console.log("현재 클릭하고 있는 곳은?", event.target);
-      console.log("svg", document.getElementById('SVG'));
-      console.log("CANVAS 크기", document.getElementById('WORKAREA'));
       if (event.target.classList.contains('modal-window')) {
         this.startResizeModal(event); // 모달창 크기 조정 처리 메서드 호출
       } else {
@@ -171,7 +170,6 @@ export default {
       document.removeEventListener('mousemove', this.resizeModal);
       document.removeEventListener('mouseup', this.stopResizeModal);
     },
-
   },
 }
 </script>
@@ -186,6 +184,7 @@ export default {
   display: flex;
   justify-content: center;
   pointer-events: none;
+  z-index: 999;
 }
 
 .modal-window {
@@ -245,7 +244,5 @@ div {
   bottom: 0;
   right: 0;
   cursor: se-resize;
-  z-index: 9999;
-  background: #ff0007;
 }
 </style>

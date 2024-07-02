@@ -86,6 +86,7 @@ export default {
 
   },
   methods: {
+    ...mapMutations('modalStore', ["closeWidgetModal"]),
     ...mapMutations('picker', ["setCurrentComponent"]),
     ...mapActions('picker', ['teacherEndPicker']),
 
@@ -118,7 +119,7 @@ export default {
     },
 
     endResult() {
-      this.$emit('closeModal')
+      this.closeWidgetModal(2);
       this.teacherEndPicker();
       this.setCurrentComponent('PickerInit');
     },
