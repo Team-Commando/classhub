@@ -1,10 +1,10 @@
 <template>
-  <div class="modal-container" v-if="activeWidget[activeWidgetKey].isOpen">
+  <div class="modal-container" v-if="activeWidget[this.wId].isOpen">
     <div class="modal-window" ref="modalWindow" @mousedown="handleMouseDown">
       <!-- modal header start -->
       <div class="modal-header">
-        <span class="modal-title">{{ title }}</span>
-        <button class="close-button" @click="closeWidgetModal(activeWidgetKey)">X</button>
+        <span class="modal-title">{{ this.title }}</span>
+        <button class="close-button" @click="closeWidgetModal(this.wId)">X</button>
       </div>
       <!-- modal header end -->
 
@@ -51,6 +51,7 @@ export default {
   },
 
   props: {
+    wId: Number,
   },
 
   computed: {
@@ -63,18 +64,21 @@ export default {
         if (state) {        // isWidgetModalOpen === true (모달창이 활성화 되면)
           this.$nextTick(() => {
             // 모달창 내부를 구성할 위젯 컴포넌트를 지정
-            switch (this.activeWidgetKey) {
+            switch (this.wId) {
               case 0:
                 this.widgetComponent = Tangram.name;
-                this.title = this.activeWidget[this.activeWidgetKey].title;
+                this.title = this.activeWidget[this.wId].title;
+                // this.title = this.activeWidget[this.activeWidgetKey].title;
                 break;
               case 1:
                 this.widgetComponent = Dices.name;
-                this.title = this.activeWidget[this.activeWidgetKey].title;
+                this.title = this.activeWidget[this.wId].title;
+                // this.title = this.activeWidget[this.activeWidgetKey].title;
                 break;
               case 2:
                 this.widgetComponent = Picker.name;
-                this.title = this.activeWidget[this.activeWidgetKey].title;
+                this.title = this.activeWidget[this.wId].title;
+                // this.title = this.activeWidget[this.activeWidgetKey].title;
                 break;
               default:
                 console.log("지정할 컴포넌트가 존재하지 않습니다.");
@@ -90,9 +94,9 @@ export default {
     ...mapMutations('modalStore', ['closeWidgetModal']),
 
     // 모달창 오픈 메서드
-    openModal() {
-      this.$emit('open');
-    },
+    // openModal() {
+    //   this.$emit('open');
+    // },
 
     // mousedown 이벤트 발생 시, 모달창의 위치 or 크기 조정을 결정하는 handler 메서드
     handleMouseDown(event) {

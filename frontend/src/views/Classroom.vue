@@ -64,9 +64,8 @@
   <!-- Widget Modal: 버튼 클릭 시, 선택한 위젯에 대한 모달창 출력 -->
   <WidgetModal
       v-for="(w, i) in activeWidget"
+      :wId="w.wId"
       :key="i"
-      @open="openWidgetModal(w.wId)"
-      @close="closeWidgetModal(w.wId)"
       :pickerType="state.pickerType"
       :ref="'widgetModal'+ i"
   />
